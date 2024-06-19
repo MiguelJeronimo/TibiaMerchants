@@ -22,14 +22,38 @@ open class NPCs(val scrapper: Document){
      * Ashta'daramai (Blue Djinn Fortress).
      ***/
     fun horoun(): NPC {
-        return npcData()
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = "${data[0]}, SubArea: ${data[1]}"
+        npc.gender = data[2]
+        npc.race = data[3]
+        npc.job = data[4]
+        npc.version = data[5]
+        npc.status = data[6]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
     /**
      * Location:
      * Ashta'daramai (Blue Djinn Fortress).
      * **/
     fun nashBob(): NPC {
-        return npcData()
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = "${data[0]}, SubArea: ${data[1]}"
+        npc.gender = data[2]
+        npc.race = data[3]
+        npc.job = data[4]
+        npc.version = data[5]
+        npc.status = data[6]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
 
     /**
@@ -45,7 +69,19 @@ open class NPCs(val scrapper: Document){
      * Mal'ouquah (Green Djinn Fortress).
      * **/
     fun alesar(): NPC {
-        return npcData()
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = "${data[0]}, SubArea: ${data[1]}"
+        npc.gender = data[2]
+        npc.race = data[3]
+        npc.job = data[4]
+        npc.version = data[5]
+        npc.status = data[6]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
 
     /**
@@ -53,14 +89,38 @@ open class NPCs(val scrapper: Document){
      * Mal'ouquah (Green Djinn Fortress).
      * **/
     fun yalam(): NPC {
-        return npcData()
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = "${data[0]}, SubArea: ${data[1]}"
+        npc.gender = data[2]
+        npc.race = data[3]
+        npc.job = data[4]
+        npc.version = data[5]
+        npc.status = data[6]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
     /**
      * Location:
      * Farmine, north of the steamship.
      * **/
     fun esrik(): NPC {
-        return npcData()
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = data[0]
+        npc.gender = data[3]
+        npc.race = data[4]
+        npc.job = data[5]
+        npc.version = data[6]
+        npc.status = data[7]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
 
     /**
@@ -80,7 +140,20 @@ open class NPCs(val scrapper: Document){
      * Magician Quarter, far north-east.
      * **/
     fun tamoril(): NPC {
-        return npcSpells()
+        println(data)
+        npc.map = mapImage
+        npc.imgNPC = imgNPC
+        npc.nameNPC = nameNPC
+        npc.nearestCity = "${data[0]}, SubArea: ${data[1]}"
+        npc.gender = data[2]
+        npc.race = data[3]
+        npc.job = data[4]
+        npc.version = data[5]
+        npc.status = data[6]
+        npc.description = npcNotes?.text()
+        npc.buyingItems = getBuyingItems()
+        npc.sellingItems = getSellingItems()
+        return npc
     }
 
     private fun npcData(): NPC {

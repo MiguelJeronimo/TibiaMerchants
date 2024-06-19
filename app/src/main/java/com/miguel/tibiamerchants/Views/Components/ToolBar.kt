@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -18,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +57,48 @@ fun Toobar() {
     Divider(
         modifier= Modifier.padding(5.dp)
     )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ToobarNPC(tittle:String) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        Backbutton(stateDeleteButton = null)
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = tittle,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            DropDownMenu()
+        }
+    }
+    Divider(
+        modifier= Modifier.padding(5.dp)
+    )
+}
+
+@Composable
+fun Backbutton(stateDeleteButton: MutableState<Boolean>?) {
+    Box {
+        IconButton(onClick = {
+           // stateDeleteButton.value = false
+            //viewModelUserList.stateDataUser(0, null)
+        }) {
+            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+        }
+    }
 }
 
 @SuppressLint("SuspiciousIndentation")

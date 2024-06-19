@@ -18,12 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -45,6 +47,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.Views.Components.Toobar
+import com.miguel.tibiamerchants.Views.Components.ToobarNPC
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import model.Tibia.NPC
@@ -73,13 +76,15 @@ class NPCInformation : ComponentActivity() {
                         npcInformationState = it
                     }
                 })
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                ) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        Toobar()
+                        ToobarNPC(tittle = stateName)
                         Row (
                             Modifier
                                 .padding(10.dp)
@@ -316,11 +321,19 @@ fun CardItems(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview2() {
     TibiaMerchantsTheme {
-        Column {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                ToobarNPC("Rashid")
+            }
         }
     }
 }
