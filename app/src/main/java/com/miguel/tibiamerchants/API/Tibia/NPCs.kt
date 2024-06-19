@@ -152,7 +152,7 @@ open class NPCs(val scrapper: Document){
         npc.status = data[6]
         npc.description = npcNotes?.text()
         npc.buyingItems = getBuyingItems()
-        npc.sellingItems = getSellingItems()
+        npc.sellingSpells = getSellingSpells()
         return npc
     }
 
