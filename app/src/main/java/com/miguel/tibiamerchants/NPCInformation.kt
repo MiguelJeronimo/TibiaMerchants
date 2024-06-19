@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +29,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,9 +47,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.Views.Components.Toobar
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
 import model.Tibia.NPC
 
 class NPCInformation : ComponentActivity() {
@@ -65,13 +62,15 @@ class NPCInformation : ComponentActivity() {
                 val nameNPC = intent.extras?.getString("npc")
                 var stateName by rememberSaveable { mutableStateOf("") }
                 var npcInformationState by remember { mutableStateOf(NPC()) }
+                val stateChipBuyItems = rememberSaveable { mutableStateOf(false) }
+                val stateChipSellItems = rememberSaveable { mutableStateOf(false) }
+                val stateChipSellSpells = rememberSaveable { mutableStateOf(false) }
                 stateName = nameNPC.toString()
                 viewmodel = ViewModelProvider(this)[ViewModelNPC::class.java]
                 viewmodel.setNpcInformation(stateName)
                 viewmodel.npcInformation.observe(this, Observer {
                     if(it!= null){
                         npcInformationState = it
-                        npcInformationState.buyingItems?.forEach { println(it) }
                     }
                 })
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -81,14 +80,37 @@ class NPCInformation : ComponentActivity() {
                             .padding(innerPadding)
                     ) {
                         Toobar()
-                        println("STate:"+npcInformationState)
-                        Row (Modifier.padding(10.dp).align(Alignment.CenterHorizontally)){
-                            ChipFilter()
-                            ChipFilter()
-                            ChipFilter()
+                        Row (
+                            Modifier
+                                .padding(10.dp)
+                                .align(Alignment.CenterHorizontally)
+                         ){
+                            if (npcInformationState.buyingItems != null){
+                                ChipFilter(
+                                    text = "Buy items",
+                                    state = stateChipBuyItems
+                                )
+                            }
+                            if (npcInformationState.sellingItems != null){
+                                ChipFilter(
+                                    text ="Sell items",
+                                    state = stateChipSellItems
+                                )
+                            }
+                            if (npcInformationState.sellingSpells != null){
+                                ChipFilter(
+                                    text = "Sell spells",
+                                    state = stateChipSellSpells
+                                )
+                            }
                         }
                         if (npcInformationState.nameNPC != null){
-                            ListItems(npc = npcInformationState)
+                            ListItems(
+                                npc = npcInformationState,
+                                stateChipBuyItems,
+                                stateChipSellItems,
+                                stateChipSellSpells
+                            )
                         }
                     }
                 }
@@ -98,13 +120,17 @@ class NPCInformation : ComponentActivity() {
 }
 
 @Composable
-fun ChipFilter(){
-    var selected by remember { mutableStateOf(false) }
+fun ChipFilter(text: String, state: MutableState<Boolean>){
+    var selected by remember { mutableStateOf(true) }
+    state.value = selected
     FilterChip(
         modifier = Modifier.padding(5.dp, 0.dp, 5.dp, 0.dp),
-        onClick = { selected = !selected },
+        onClick = {
+            selected = !selected
+            state.value = selected
+        },
         label = {
-            Text("Filter chip")
+            Text(text)
         },
         selected = selected,
         leadingIcon = if (selected) {
@@ -185,25 +211,79 @@ fun CardDescription(itemNPC: NPC?) {
 }
 
 @Composable
-fun ListItems(npc: NPC, modifier: Modifier = Modifier) {
-    val npcList = npc.buyingItems
-    println("List $npcList")
+fun ListItems(
+    npc: NPC,
+    stateChipBuyItems: MutableState<Boolean>,
+    stateChipSellItems: MutableState<Boolean>,
+    stateChip3SellSpells: MutableState<Boolean>,
+) {
     LazyColumn {
         item {
             CardDescription(npc)
-            Divider()
         }
-        if (npc.buyingItems != null){
-            items(npc.buyingItems!!.size) { item->
+//        if (npc.buyingItems != null) {
+//            stateChipBuyItems.value = true
+//        }
+//        if (npc.sellingSpells != null) {
+//            stateChip3SellSpells.value = true
+//        }
+//        if (npc.sellingItems != null) {
+//            stateChipSellItems.value = true
+//        }
+        println("STATE IN LIST: ${stateChipBuyItems.value}")
+        if (stateChipBuyItems.value) {
+            item {
+                Column {
+                    Text(text = "Buy Items", Modifier.align(Alignment.CenterHorizontally))
+                    Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                }
+            }
+            items(npc.buyingItems!!.size) { item ->
                 CardItems(
                     nameItem = npc.buyingItems!![item].name.toString(),
                     url = npc.buyingItems!![item].img.toString(),
-                    price = npc.buyingItems!![item].price.toString()
-                    , Modifier.padding(16.dp, 5.dp, 16.dp,5.dp))
+                    price = npc.buyingItems!![item].price.toString(),
+                    Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp)
+                )
+            }
+        }
+        if (stateChipSellItems.value) {
+            item {
+                Column {
+                    Text(text = "Sell Items", Modifier.align(Alignment.CenterHorizontally))
+                    Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                }
+            }
+            items(npc.sellingItems!!.size) { item ->
+                CardItems(
+                    nameItem = npc.sellingItems!![item].name.toString(),
+                    url = npc.sellingItems!![item].img.toString(),
+                    price = npc.sellingItems!![item].price.toString(),
+                    Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp)
+                )
+            }
+        }
+
+        if (stateChip3SellSpells.value) {
+            item {
+                Column {
+                    Text(text = "Sell Spells", Modifier.align(Alignment.CenterHorizontally))
+                    Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                }
+            }
+            items(npc.sellingSpells!!.size) { item ->
+                CardItems(
+                    nameItem = npc.sellingSpells!![item].name.toString(),
+                    url = npc.sellingSpells!![item].img.toString(),
+                    price = npc.sellingSpells!![item].price.toString(),
+                    Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp)
+                )
             }
         }
     }
+
 }
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -241,11 +321,6 @@ fun CardItems(
 fun GreetingPreview2() {
     TibiaMerchantsTheme {
         Column {
-          CardItems(
-              "algo",
-                "algo",
-              "9000"
-          )
         }
     }
 }

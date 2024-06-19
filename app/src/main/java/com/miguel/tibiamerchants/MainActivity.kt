@@ -91,7 +91,6 @@ fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
         onClick = {
             println("click ${npc.imgNPC}")
             viewModel.setNPCName(npc.nameNPC.toString())
-
                   },
         Modifier
             //.size(width = 80.dp, height = 80.dp)

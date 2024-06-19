@@ -4,20 +4,7 @@ import model.Tibia.*
 import org.jsoup.nodes.Document
 
 open class NPCs(val scrapper: Document){
-    val npc = NPC(
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null)
+    val npc = NPC()
     val npcNotes = scrapper.getElementById("npc-notes")
     val nameNPC = scrapper.getElementsByClass("mw-page-title-main").text()
     val imgNPC = scrapper.getElementById("twbox-image")?.select("img")?.attr("src")
@@ -125,7 +112,7 @@ open class NPCs(val scrapper: Document){
         npc.status = data[5]
         npc.description = npcNotes?.text()
         npc.buyingItems = getBuyingItems()
-        npc.sellingItems = getSellingItems()
+        npc.sellingSpells = getSellingSpells()
         return npc
     }
 
