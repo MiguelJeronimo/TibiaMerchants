@@ -14,6 +14,17 @@ class ViewModelNPC: ViewModel() {
     private val repository = Repository()
     private val _npcInformation = MutableLiveData<NPC?>()
     val npcInformation: MutableLiveData<NPC?>get() = _npcInformation
+
+    private val _isBack = MutableLiveData<Boolean>()
+    val isBack: MutableLiveData<Boolean>get() = _isBack
+
+    private val _isVisibleProgressBar = MutableLiveData<Boolean>()
+    val isVisibleProgressBar: MutableLiveData<Boolean>get() = _isVisibleProgressBar
+
+    init {
+        _isVisibleProgressBar.value = true
+    }
+
     private val uiScope = CoroutineScope(Dispatchers.Main)
     fun setNpcInformation(name: String?) {
         uiScope.launch {
@@ -44,4 +55,13 @@ class ViewModelNPC: ViewModel() {
         super.onCleared()
         uiScope.cancel()
     }
+
+    fun setBack(status:Boolean){
+        _isBack.value = status
+    }
+
+    fun setProgressBar(status:Boolean){
+        _isVisibleProgressBar.value = status
+    }
+
 }

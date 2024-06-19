@@ -18,23 +18,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,14 +49,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.miguel.tibiamerchants.Views.Components.Toobar
 import com.miguel.tibiamerchants.Views.Components.ToobarNPC
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import kotlinx.coroutines.launch
 import model.Tibia.NPC
 
 class NPCInformation : ComponentActivity() {
-    lateinit var viewmodel: ViewModelNPC
+    private lateinit var viewmodel: ViewModelNPC
     lateinit var viewModelProvider: ViewModelProvider
     @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -62,29 +65,52 @@ class NPCInformation : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {
+                viewmodel = ViewModelProvider(this)[ViewModelNPC::class.java]
                 val nameNPC = intent.extras?.getString("npc")
                 var stateName by rememberSaveable { mutableStateOf("") }
                 var npcInformationState by remember { mutableStateOf(NPC()) }
                 val stateChipBuyItems = rememberSaveable { mutableStateOf(false) }
                 val stateChipSellItems = rememberSaveable { mutableStateOf(false) }
                 val stateChipSellSpells = rememberSaveable { mutableStateOf(false) }
+                val isVisibleProgressBar = remember { mutableStateOf(false) }
+                //snackbar
+                val scope = rememberCoroutineScope()
+                val snackbarHostState = remember { SnackbarHostState() }
                 stateName = nameNPC.toString()
-                viewmodel = ViewModelProvider(this)[ViewModelNPC::class.java]
                 viewmodel.setNpcInformation(stateName)
                 viewmodel.npcInformation.observe(this, Observer {
                     if(it!= null){
                         npcInformationState = it
+                    } else{
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Error!, conection time out, try again")
+                        }
+                    }
+                    viewmodel.setProgressBar(false)
+                })
+                viewmodel.isVisibleProgressBar.observe(this, Observer {
+                    isVisibleProgressBar.value = it
+                })
+                viewmodel.isBack.observe(this, Observer {
+                    if (it){
+                        finish()
                     }
                 })
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    }
                 ) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        ToobarNPC(tittle = stateName)
+                        if (isVisibleProgressBar.value){
+                            IndeterminateIndicator()
+                        }
+                        ToobarNPC(tittle = stateName, viewmodel = viewmodel)
                         Row (
                             Modifier
                                 .padding(10.dp)
@@ -116,17 +142,24 @@ class NPCInformation : ComponentActivity() {
                                 stateChipSellItems,
                                 stateChipSellSpells
                             )
+                        //isVisibleProgressBar.value = false
                         }
                     }
                 }
             }
         }
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
+    }
 }
 
 @Composable
 fun ChipFilter(text: String, state: MutableState<Boolean>){
-    var selected by remember { mutableStateOf(true) }
+    var selected by rememberSaveable { mutableStateOf(true) }
     state.value = selected
     FilterChip(
         modifier = Modifier.padding(5.dp, 0.dp, 5.dp, 0.dp),
@@ -149,6 +182,13 @@ fun ChipFilter(text: String, state: MutableState<Boolean>){
         } else {
             null
         },
+    )
+}
+
+@Composable
+fun IndeterminateIndicator() {
+    LinearProgressIndicator(
+        Modifier.fillMaxWidth()
     )
 }
 
@@ -226,15 +266,6 @@ fun ListItems(
         item {
             CardDescription(npc)
         }
-//        if (npc.buyingItems != null) {
-//            stateChipBuyItems.value = true
-//        }
-//        if (npc.sellingSpells != null) {
-//            stateChip3SellSpells.value = true
-//        }
-//        if (npc.sellingItems != null) {
-//            stateChipSellItems.value = true
-//        }
         println("STATE IN LIST: ${stateChipBuyItems.value}")
         if (stateChipBuyItems.value) {
             item {
@@ -332,7 +363,7 @@ fun GreetingPreview2() {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                ToobarNPC("Rashid")
+                ToobarNPC("Rashid", null)
             }
         }
     }

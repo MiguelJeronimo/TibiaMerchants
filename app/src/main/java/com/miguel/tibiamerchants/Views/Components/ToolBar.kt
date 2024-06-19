@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -51,23 +52,23 @@ fun Toobar() {
                 .align(Alignment.CenterVertically),
             horizontalArrangement = Arrangement.End
         ) {
-            DropDownMenu()
+            DropDownMenu(null)
         }
     }
-    Divider(
-        modifier= Modifier.padding(5.dp)
-    )
+//    Divider(
+//        modifier= Modifier.padding(5.dp)
+//    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ToobarNPC(tittle:String) {
+fun ToobarNPC(tittle: String, viewmodel: ViewModelNPC?) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        Backbutton(stateDeleteButton = null)
+        Backbutton(stateDeleteButton = null, viewmodel = viewmodel!!)
         Text(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
@@ -81,20 +82,16 @@ fun ToobarNPC(tittle:String) {
                 .align(Alignment.CenterVertically),
             horizontalArrangement = Arrangement.End
         ) {
-            DropDownMenu()
+            //DropDownMenu(viewmodel)
         }
     }
-    Divider(
-        modifier= Modifier.padding(5.dp)
-    )
 }
 
 @Composable
-fun Backbutton(stateDeleteButton: MutableState<Boolean>?) {
+fun Backbutton(stateDeleteButton: MutableState<Boolean>?, viewmodel: ViewModelNPC) {
     Box {
         IconButton(onClick = {
-           // stateDeleteButton.value = false
-            //viewModelUserList.stateDataUser(0, null)
+          viewmodel.setBack(true)
         }) {
             Icon(Icons.Default.ArrowBack , contentDescription = "delete")
         }
@@ -103,7 +100,7 @@ fun Backbutton(stateDeleteButton: MutableState<Boolean>?) {
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DropDownMenu(){
+fun DropDownMenu(viewmodel: ViewModelNPC?) {
     var expanded by remember { mutableStateOf(false) }
     //val contextForToast = LocalContext.current.applicationContext
     Box {
@@ -128,6 +125,7 @@ fun DropDownMenu(){
                 },
                     onClick = {
                         expanded = false
+                        viewmodel?.setBack(true)
                     }
                 )
             }
