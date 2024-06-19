@@ -27,21 +27,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.Views.Components.Toobar
-import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.utils
 import model.Tibia.NPCModel
 
 
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: ViewModelNPC
+    private lateinit var viewModel: ViewModelNPCS
     private lateinit var viewModelProvider: ViewModelProvider
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelProvider = ViewModelProvider(this)
-        viewModel = viewModelProvider.get(ViewModelNPC::class.java)
+        viewModel = viewModelProvider.get(ViewModelNPCS::class.java)
         viewModel.npc.observe(this, Observer {npc->
             Intent(this, NPCInformation::class.java).also{
                 it.putExtra("npc", npc)
@@ -72,9 +72,9 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPC?) {
+fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPCS?) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(200.dp),
+        columns = StaggeredGridCells.Adaptive(150.dp),
         verticalItemSpacing = 4.dp,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -86,7 +86,7 @@ fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPC?) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardNPC(npc: NPCModel, viewModel: ViewModelNPC) {
+fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
     Card(
         onClick = {
             println("click ${npc.imgNPC}")

@@ -2,13 +2,46 @@ package com.miguel.tibiamerchants.Views.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.miguel.tibiamerchants.Repository.Repository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import model.Tibia.NPC
 
 class ViewModelNPC: ViewModel() {
+    private val repository = Repository()
+    private val _npcInformation = MutableLiveData<NPC?>()
+    val npcInformation: MutableLiveData<NPC?>get() = _npcInformation
+    private val uiScope = CoroutineScope(Dispatchers.Main)
+    fun setNpcInformation(name: String?) {
+        uiScope.launch {
+            withContext(Dispatchers.IO){
+               val response =  when(name){
+                    "Rashid"->{repository.rashid()}
+                    "Yasir"->{repository.yasir()}
+                    "Haroun"->{repository.horoun()}
+                    "Nah'Bob"->{repository.nashBob()}
+                    "Asnarus"->{repository.asnarus()}
+                    "Alesar"->{repository.alesar()}
+                    "Yaman"->{repository.yalam()}
+                    "Esrik"->{repository.esrik()}
+                    "Alexander"->{repository.alexander()}
+                    "Tamoril"->{repository.tamoril()}
+                    "Grizzly Adams"->{repository.grizzlyAdams()}
+                    else -> {
+                        println("Se fue al null")
+                        null
+                    }
+                }
+                _npcInformation.postValue(response)
+            }
+        }
+    }
 
-    private val _npcName = MutableLiveData<String>()
-    val npc: MutableLiveData<String> get() = _npcName
-
-    fun setNPCName(name: String){
-        _npcName.value = name
+    override fun onCleared() {
+        super.onCleared()
+        uiScope.cancel()
     }
 }
