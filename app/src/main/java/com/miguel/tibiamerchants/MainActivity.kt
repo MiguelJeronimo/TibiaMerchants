@@ -18,6 +18,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +39,6 @@ import model.Tibia.NPCModel
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: ViewModelNPCS
     private lateinit var viewModelProvider: ViewModelProvider
-
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,13 @@ class MainActivity : ComponentActivity() {
             Intent(this, NPCInformation::class.java).also{
                 it.putExtra("npc", npc)
                 startActivity(it)
+            }
+        })
+        viewModel.stateAbout.observe(this, Observer {
+            if (it){
+                Intent(this, About::class.java).also{
+                    startActivity(it)
+                }
             }
         })
         enableEdgeToEdge()
@@ -59,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Toobar()
+                        Toobar(stateAbout =viewModel)
                         val npcs = utils().listNPC()
                         GridLayoutNPC(npcs, viewModel)
                     }
@@ -127,7 +136,7 @@ fun GreetingPreview() {
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Toobar()
+                Toobar(stateAbout = null)
             }
         }
     }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -30,10 +29,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toobar() {
+fun Toobar(stateAbout: ViewModelNPCS?) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
@@ -52,12 +52,9 @@ fun Toobar() {
                 .align(Alignment.CenterVertically),
             horizontalArrangement = Arrangement.End
         ) {
-            DropDownMenu(null)
+            DropDownMenu(null, stateAbout = stateAbout!!)
         }
     }
-//    Divider(
-//        modifier= Modifier.padding(5.dp)
-//    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -68,7 +65,7 @@ fun ToobarNPC(tittle: String, viewmodel: ViewModelNPC?) {
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        Backbutton(stateDeleteButton = null, viewmodel = viewmodel!!)
+        Backbutton(viewmodel = viewmodel!!)
         Text(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
@@ -88,7 +85,7 @@ fun ToobarNPC(tittle: String, viewmodel: ViewModelNPC?) {
 }
 
 @Composable
-fun Backbutton(stateDeleteButton: MutableState<Boolean>?, viewmodel: ViewModelNPC) {
+fun Backbutton(viewmodel: ViewModelNPC) {
     Box {
         IconButton(onClick = {
           viewmodel.setBack(true)
@@ -100,7 +97,7 @@ fun Backbutton(stateDeleteButton: MutableState<Boolean>?, viewmodel: ViewModelNP
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DropDownMenu(viewmodel: ViewModelNPC?) {
+fun DropDownMenu(viewmodel: ViewModelNPC?, stateAbout: ViewModelNPCS) {
     var expanded by remember { mutableStateOf(false) }
     //val contextForToast = LocalContext.current.applicationContext
     Box {
@@ -113,13 +110,14 @@ fun DropDownMenu(viewmodel: ViewModelNPC?) {
 //                    onClick = {
 //                        expanded = false
 //                    })
-//                DropdownMenuItem(text = {
-//                    Text("Acerca de")
-//                },
-//                    onClick = {
-//                        expanded = false
-//                    }
-//                )
+                DropdownMenuItem(text = {
+                    Text("About")
+                },
+                    onClick = {
+                        stateAbout.setAboutState(true)
+                        expanded = false
+                    }
+                )
                 DropdownMenuItem(text = {
                     Text("Salir")
                 },

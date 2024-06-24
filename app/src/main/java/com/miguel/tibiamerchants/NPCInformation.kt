@@ -57,7 +57,6 @@ import model.Tibia.NPC
 
 class NPCInformation : ComponentActivity() {
     private lateinit var viewmodel: ViewModelNPC
-    lateinit var viewModelProvider: ViewModelProvider
     @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,18 +141,11 @@ class NPCInformation : ComponentActivity() {
                                 stateChipSellItems,
                                 stateChipSellSpells
                             )
-                        //isVisibleProgressBar.value = false
                         }
                     }
                 }
             }
         }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finishAffinity()
     }
 }
 

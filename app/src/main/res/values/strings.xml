@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Tibia Merchants</string>
     <string name="title_activity_npcinformation">NPCInformation</string>
+    <string name="title_activity_about">About</string>
 </resources>
