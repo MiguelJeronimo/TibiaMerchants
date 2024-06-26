@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants
+package com.miguel.tibiamerchants.Views
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.Views.Components.ToobarNPC
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
@@ -83,6 +84,7 @@ fun ContentAbout() {
         Column(
             Modifier
                 .height(520.dp)
+                .padding(10.dp)
                 .wrapContentHeight(align = Alignment.Top)
                 .align(Alignment.TopCenter)
         ) {
@@ -128,7 +130,7 @@ fun ContentAbout() {
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "You can contact me in game as: Selur Zaole \uD83D\uDE0E",
+                text = "You can find me online as: Selur Zaole \uD83D\uDE0E",
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center

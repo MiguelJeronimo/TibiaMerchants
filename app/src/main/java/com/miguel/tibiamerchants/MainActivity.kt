@@ -18,9 +18,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +26,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.miguel.tibiamerchants.Views.About
 import com.miguel.tibiamerchants.Views.Components.Toobar
+import com.miguel.tibiamerchants.Views.NPCInformation
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.utils
@@ -43,11 +42,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelProvider = ViewModelProvider(this)
-        viewModel = viewModelProvider.get(ViewModelNPCS::class.java)
+        viewModel = viewModelProvider[ViewModelNPCS::class.java]
         viewModel.npc.observe(this, Observer {npc->
-            Intent(this, NPCInformation::class.java).also{
-                it.putExtra("npc", npc)
-                startActivity(it)
+            println("NPC: $npc")
+            if (npc != null){
+                Intent(this, NPCInformation::class.java).also{
+                    it.putExtra("npc", npc)
+                    startActivity(it)
+                }
             }
         })
         viewModel.stateAbout.observe(this, Observer {
@@ -75,6 +77,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setNPCName(null)
     }
 }
 
@@ -122,6 +129,7 @@ fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
         }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)

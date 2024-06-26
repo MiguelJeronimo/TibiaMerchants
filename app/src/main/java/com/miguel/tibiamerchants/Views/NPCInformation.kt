@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants
+package com.miguel.tibiamerchants.Views
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -28,7 +28,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -262,7 +261,11 @@ fun ListItems(
         if (stateChipBuyItems.value) {
             item {
                 Column {
-                    Text(text = "Buy Items", Modifier.align(Alignment.CenterHorizontally))
+                    Text(
+                        text = "Buy Items",
+                        Modifier.align(Alignment.CenterHorizontally),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                 }
             }
@@ -278,7 +281,11 @@ fun ListItems(
         if (stateChipSellItems.value) {
             item {
                 Column {
-                    Text(text = "Sell Items", Modifier.align(Alignment.CenterHorizontally))
+                    Text(
+                        text = "Sell Items",
+                        Modifier.align(Alignment.CenterHorizontally),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                 }
             }
@@ -295,7 +302,11 @@ fun ListItems(
         if (stateChip3SellSpells.value) {
             item {
                 Column {
-                    Text(text = "Sell Spells", Modifier.align(Alignment.CenterHorizontally))
+                    Text(
+                        text = "Sell Spells",
+                        Modifier.align(Alignment.CenterHorizontally),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                     Divider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                 }
             }

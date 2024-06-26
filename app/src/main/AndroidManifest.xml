@@ -16,12 +16,12 @@
         android:theme="@style/Theme.TibiaMerchants"
         tools:targetApi="31">
         <activity
-            android:name=".About"
+            android:name=".Views.About"
             android:exported="false"
             android:label="@string/title_activity_about"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".NPCInformation"
+            android:name=".Views.NPCInformation"
             android:exported="false"
             android:label="@string/title_activity_npcinformation"
             android:theme="@style/Theme.TibiaMerchants" />
