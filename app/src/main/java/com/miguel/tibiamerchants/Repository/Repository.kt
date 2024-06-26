@@ -23,25 +23,25 @@ class Repository {
     val tamoril = "https://tibia.fandom.com/wiki/Tamoril"
     val grizzlyAdams = "https://tibia.fandom.com/wiki/Grizzly_Adams"
 
-    fun rashid(): Rashid? {
+    fun rashid(): NPC? {
         try {
             val url = rashid
             val scrapper = Scrapper().Soup(url)
             val tibia = Tibia(scrapper).rashid()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error Rashid: ${e}")
             return null
         }
     }
-    fun yasir(): Yasir? {
+    fun yasir(): NPC? {
         try {
             val url = yasir
             val scrapper = Scrapper().Soup(url)
             val tibia = Tibia(scrapper).yasir()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error yasir: ${e.message}")
             return null
         }
     }
@@ -53,7 +53,7 @@ class Repository {
             val tibia = Tibia(scrapper).horoun()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error horoun: ${e.message}")
             return null
         }
     }
@@ -65,7 +65,7 @@ class Repository {
             val tibia = Tibia(scrapper).nashBob()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error nashBob: ${e.message}")
             return null
         }
     }
@@ -77,7 +77,7 @@ class Repository {
             val tibia = Tibia(scrapper).asnarus()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error asnarus: ${e.message}")
             return null
         }
     }
@@ -89,7 +89,7 @@ class Repository {
             val tibia = Tibia(scrapper).alesar()
             return tibia
         } catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error alesar: ${e.message}")
             return null
         }
     }
@@ -101,7 +101,7 @@ class Repository {
             val tibia = Tibia(scrapper).yalam()
             return tibia
         }catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error yalam: ${e.message}")
             return null
         }
     }
@@ -113,7 +113,7 @@ class Repository {
             val tibia = Tibia(scrapper).esrik()
             return tibia
         }catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error esrik: ${e.message}")
             return null
         }
     }
@@ -125,7 +125,7 @@ class Repository {
             val tibia = Tibia(scrapper).alexander()
             return tibia
         }catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error alexander: ${e.message}")
             return null
         }
     }
@@ -136,7 +136,7 @@ class Repository {
             val tibia = Tibia(scrapper).tamoril()
             return tibia
         }catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error tamoril: ${e.message}")
             return null
         }
     }
@@ -147,7 +147,7 @@ class Repository {
             val tibia = Tibia(scrapper).grizzlyAdams()
             return tibia
         }catch (e:Exception){
-            println("Error: ${e.message}")
+            println("Error grizzlyAdams: ${e.message}")
             return null
         }
     }

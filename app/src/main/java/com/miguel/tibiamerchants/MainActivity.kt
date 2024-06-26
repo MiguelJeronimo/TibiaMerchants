@@ -26,26 +26,37 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.miguel.tibiamerchants.Views.About
 import com.miguel.tibiamerchants.Views.Components.Toobar
-import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.Views.NPCInformation
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.utils
 import model.Tibia.NPCModel
 
 
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: ViewModelNPC
+    private lateinit var viewModel: ViewModelNPCS
     private lateinit var viewModelProvider: ViewModelProvider
-
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelProvider = ViewModelProvider(this)
-        viewModel = viewModelProvider.get(ViewModelNPC::class.java)
+        viewModel = viewModelProvider[ViewModelNPCS::class.java]
         viewModel.npc.observe(this, Observer {npc->
-            Intent(this, NPCInformation::class.java).also{
-                it.putExtra("npc", npc)
-                startActivity(it)
+            println("NPC: $npc")
+            if (npc != null){
+                Intent(this, NPCInformation::class.java).also{
+                    it.putExtra("npc", npc)
+                    startActivity(it)
+                }
+            }
+        })
+        viewModel.stateAbout.observe(this, Observer {
+            if (it){
+                Intent(this, About::class.java).also{
+                    startActivity(it)
+                }
             }
         })
         enableEdgeToEdge()
@@ -59,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Toobar()
+                        Toobar(stateAbout =viewModel)
                         val npcs = utils().listNPC()
                         GridLayoutNPC(npcs, viewModel)
                     }
@@ -67,14 +78,19 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setNPCName(null)
+    }
 }
 
 
 
 @Composable
-fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPC?) {
+fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPCS?) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(200.dp),
+        columns = StaggeredGridCells.Adaptive(150.dp),
         verticalItemSpacing = 4.dp,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -86,12 +102,11 @@ fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPC?) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardNPC(npc: NPCModel, viewModel: ViewModelNPC) {
+fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
     Card(
         onClick = {
             println("click ${npc.imgNPC}")
             viewModel.setNPCName(npc.nameNPC.toString())
-
                   },
         Modifier
             //.size(width = 80.dp, height = 80.dp)
@@ -115,6 +130,7 @@ fun CardNPC(npc: NPCModel, viewModel: ViewModelNPC) {
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -128,7 +144,7 @@ fun GreetingPreview() {
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Toobar()
+                Toobar(stateAbout = null)
             }
         }
     }
