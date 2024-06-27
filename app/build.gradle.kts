@@ -9,9 +9,9 @@ android {
 
     defaultConfig {
         applicationId = "com.miguel.tibiamerchants"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,11 +42,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+//    packaging {
+//        resources {
+//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//        }
+//    }
 }
 
 dependencies {
@@ -59,9 +59,9 @@ dependencies {
     // LiveData
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation("org.jsoup:jsoup:1.16.1")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+//    implementation("io.coil-kt:coil-gif:2.6.0")
+//    implementation("io.coil-kt:coil-compose:2.6.0")
+//    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
