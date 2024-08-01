@@ -11,7 +11,7 @@ android {
         applicationId = "com.miguel.tibiamerchants"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,7 +42,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-//    packaging {
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    //    packaging {
 //        resources {
 //            excludes += "/META-INF/{AL2.0,LGPL2.1}"
 //        }
@@ -63,6 +68,13 @@ dependencies {
 //    implementation("io.coil-kt:coil-compose:2.6.0")
 //    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    //para consumo de apis
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    // LiveData
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

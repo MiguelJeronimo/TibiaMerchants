@@ -18,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
 
@@ -57,6 +57,11 @@ fun Toobar(stateAbout: ViewModelNPCS?) {
     }
 }
 
+/**
+ * @param tittle Title for NPCInfation view
+ * @param viewmodel Viewmodel for NPCInfation view
+ * Toolbar for items list view
+ * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ToobarNPC(tittle: String, viewmodel: ViewModelNPC?) {
@@ -84,11 +89,86 @@ fun ToobarNPC(tittle: String, viewmodel: ViewModelNPC?) {
     }
 }
 
+/**
+ * @param tittle Title for items view
+ * @param viewmodel Viewmodel for items view
+ * Toolbar for items list view
+ * **/
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Backbutton(viewmodel: ViewModelNPC) {
+fun Toolbar(tittle: String, viewmodel: ViewModelItems) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        Backbutton(viewmodel = viewmodel)
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = tittle,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+/**
+ * @param tittle Title for items view type
+ * @param viewmodel Viewmodel for items view type
+ * Toolbar for items list type
+ * **/
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Toolbar(tittle: String) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        //Backbutton(viewmodel = viewmodel)
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = tittle,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+@Composable
+fun Backbutton(viewmodel: ViewModelItems) {
     Box {
         IconButton(onClick = {
-          viewmodel.setBack(true)
+            viewmodel.setBack(true)
+        }) {
+            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+        }
+    }
+}
+
+@Composable
+fun Backbutton(viewmodel: ViewModelNPC?) {
+    Box {
+        IconButton(onClick = {
+          viewmodel?.setBack(true)
         }) {
             Icon(Icons.Default.ArrowBack , contentDescription = "delete")
         }
