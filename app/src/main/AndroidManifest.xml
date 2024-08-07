@@ -16,6 +16,16 @@
         android:theme="@style/Theme.TibiaMerchants"
         tools:targetApi="31">
         <activity
+            android:name=".Itemsype"
+            android:exported="false"
+            android:label="@string/title_activity_itemsype"
+            android:theme="@style/Theme.TibiaMerchants" />
+        <activity
+            android:name=".Views.Items"
+            android:exported="false"
+            android:label="@string/title_activity_items"
+            android:theme="@style/Theme.TibiaMerchants" />
+        <activity
             android:name=".Views.About"
             android:exported="false"
             android:label="@string/title_activity_about"
