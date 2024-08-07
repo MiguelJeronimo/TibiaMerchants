@@ -71,8 +71,10 @@ data class DamageType(
 //Household Items models
 data class HouseHoldModel(
     val statusCode:Int? = null,
-    val body: ArrayList<HouseHold>? = null
+    val body: Items? = null
 )
+
+data class Items(val items: ArrayList<BodyItemstype>? = null)
 
 data class HouseHold(
     val name: String? = null,

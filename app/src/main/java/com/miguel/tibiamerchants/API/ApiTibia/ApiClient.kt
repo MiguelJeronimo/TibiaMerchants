@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.API.ApiTibia
 
+import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModels
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
@@ -20,4 +21,8 @@ interface ApiClient {
     //weapons
     @POST("api/v1/items/type/")
     fun itemsTypeWeapons(@Body postItemsType: PostItemsType): Call<ItemsModelsTypeWeapons>
+
+    //weapons
+    @POST("api/v1/items/type/")
+    fun itemsTypeHouseHold(@Body postItemsType: PostItemsType): Call<HouseHoldModel>
 }

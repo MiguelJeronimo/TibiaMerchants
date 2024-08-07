@@ -3,6 +3,7 @@ package com.miguel.tibiamerchants.Repository
 import androidx.lifecycle.MutableLiveData
 import com.miguel.tibiamerchants.API.ApiTibia.ApiClient
 import com.miguel.tibiamerchants.API.ApiTibia.retrofit.RetrofitClient
+import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModels
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
@@ -67,11 +68,31 @@ class RepositoryItems : Items {
                     _items.value = null
                 }
             }
+
             override fun onFailure(call: Call<ItemsModelsTypeWeapons>, t: Throwable) {
                 _items.value = null
             }
         })
     }
 
+    override fun itemsTypeHouseHold(_items: MutableLiveData<HouseHoldModel>, body: PostItemsType) {
+        println(body)
+        val call = service.itemsTypeHouseHold(body)
+        call.enqueue(object: Callback<HouseHoldModel>{
+            override fun onResponse(call: Call<HouseHoldModel>, response: Response<HouseHoldModel>) {
+                println("response ${response.body()}")
+                if (response.isSuccessful){
+                    val items = response.body()
+                    _items.value = items
+                } else{
+                    _items.value = null
+                }
+            }
+
+            override fun onFailure(call: Call<HouseHoldModel>, t: Throwable) {
+                _items.value = null
+            }
+        })
+    }
 
 }

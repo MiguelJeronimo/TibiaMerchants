@@ -34,6 +34,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.Models.BodyItemstype
 import com.miguel.tibiamerchants.Models.BodyItemstypeWeapon
+import com.miguel.tibiamerchants.Models.HouseHold
+import com.miguel.tibiamerchants.Models.HouseHoldModel
+import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
 import com.miguel.tibiamerchants.Models.PostItemsType
 import com.miguel.tibiamerchants.Views.Components.Toolbar
@@ -56,12 +59,13 @@ class Itemsype : ComponentActivity() {
                 val nameState = rememberSaveable { mutableStateOf(name) }
                 val listItems = remember { mutableStateOf(ArrayList<BodyItemstype>()) }
                 val listItemsWapons = remember { mutableStateOf(ItemsModelsTypeWeapons()) }
-                println("Title $titleState")
-                println("Name $nameState")
+                val listItemsHouseHold = remember { mutableStateOf(HouseHoldModel()) }
+                println("Title: ${titleState.value}")
+                println("Name: ${nameState.value}")
                 when(titleState.value?.lowercase()){
                     "body equipment"-> viewModel.setItems(PostItemsType(titleState.value, nameState.value))
                     "weapons"-> viewModel.setItemsWeapons(PostItemsType(titleState.value, nameState.value))
-                    "household items"->{}
+                    "household items"-> viewModel.setItemsHouseHold(PostItemsType(titleState.value, nameState.value))
                     "plants, animal products, food and drink"->{}
                     "tools and other equipment"->{}
                     "other items"->{}
@@ -79,9 +83,17 @@ class Itemsype : ComponentActivity() {
                 })
 
                 viewModel.itemsTypeWeapons.observe(this, Observer {
-                    println("ITEMS WEAPONS $it")
                     if (it != null) {
                         listItemsWapons.value = it
+                    } else {
+                        viewModel.setProgressBar(false)
+                    }
+                })
+
+                viewModel.itemsTypeHouseHold.observe(this, Observer {
+                    println("Viewmodel ${it}")
+                    if (it != null) {
+                        listItemsHouseHold.value = it
                     } else {
                         viewModel.setProgressBar(false)
                     }
@@ -103,6 +115,12 @@ class Itemsype : ComponentActivity() {
                             )
                         }
 
+                        if (listItemsHouseHold.value.body != null){
+                            ListItems(
+                                modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                                items = listItemsHouseHold.value
+                            )
+                        }
                     }
                 }
             }
@@ -196,6 +214,29 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
     }
 }
 
+@Composable
+fun ListItems(modifier: Modifier, items: HouseHoldModel) {
+    LazyColumn(modifier = modifier) {
+        val houseHold = items.body
+        item {
+            Column {
+                Text(
+                    text = "Household Items",
+                    Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+            }
+        }
+        items(houseHold?.items!!.size) { item ->
+            CardItems(
+                modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                item = houseHold.items[item]
+            )
+        }
+
+    }
+}
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -336,7 +377,7 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?){
                                 contentDescription ="itemtibia",
                                 Modifier
                                     .size(35.dp)
-                                    .padding(0.dp,10.dp,10.dp,10.dp))
+                                    .padding(0.dp, 10.dp, 10.dp, 10.dp))
                             Text(text = item.damageType?.damageName!!, Modifier.align(Alignment.CenterVertically))
                         }
                     }
@@ -363,6 +404,69 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?){
                     }
                     if (!item?.npcPrice.isNullOrEmpty()){
                         Text(text = "Npc Price: ${item?.level!!}")
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun CardItems(modifier: Modifier, item: HouseHold){
+    /**
+     *.fillMaxWidth(1f)
+     *             .padding(16.dp)
+     * */
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(Modifier.fillMaxWidth(1f)){
+                GlideImage(model = item.img, contentDescription ="itemtibia",
+                    Modifier
+                        .size(80.dp)
+                        .padding(10.dp))
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+                        text = item.name!!,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            OutlinedCard {
+                Column(Modifier.padding(16.dp)) {
+                    if (!item.price.isNullOrEmpty()){
+                        Text(text = "Price: ${item.price}")
+                    }
+                    if (!item.vol.isNullOrEmpty()){
+                        Text(text = "Vol: ${item.vol}")
+                    }
+                    if (!item.weight.isNullOrEmpty()){
+                        Text(text = "Weight: ${item.weight}")
+                    }
+                    if (!item.slots.isNullOrEmpty()){
+                        Text(text = "Slots: ${item.slots}")
+                    }
+                    if (!item.weightPerVol.isNullOrEmpty()){
+                        Text(text = "Weight Per Vol: ${item.weightPerVol}")
+                    }
+                    if (!item.buyFrom.isNullOrEmpty()){
+                        Text(text = "Buy From: ${item.buyFrom}")
+                    }
+                    if (!item.light.isNullOrEmpty()){
+                        Text(text = "Light: ${item.light}")
+                    }
+                    if (!item.writable.isNullOrEmpty()){
+                        Text(text = "Writable: ${item.writable}")
                     }
                 }
             }

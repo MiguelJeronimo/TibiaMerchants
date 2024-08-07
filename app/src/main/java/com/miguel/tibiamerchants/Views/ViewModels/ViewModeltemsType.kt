@@ -2,6 +2,7 @@ package com.miguel.tibiamerchants.Views.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
 import com.miguel.tibiamerchants.Models.PostItemsType
@@ -13,6 +14,8 @@ class ViewModeltemsType: ViewModel() {
     val items: MutableLiveData<ItemsModelsType> = _items
     private val _itemsTypeWeapons = MutableLiveData<ItemsModelsTypeWeapons>()
     val itemsTypeWeapons: MutableLiveData<ItemsModelsTypeWeapons> = _itemsTypeWeapons
+    private val _itemsTypeHouseHold = MutableLiveData<HouseHoldModel>()
+    val itemsTypeHouseHold: MutableLiveData<HouseHoldModel> = _itemsTypeHouseHold
     private val _isVisibleProgressBar = MutableLiveData<Boolean>()
     val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
     init {
@@ -29,4 +32,8 @@ class ViewModeltemsType: ViewModel() {
     fun setItemsWeapons(body: PostItemsType) {
         repository.itemsTypeWeapons(_itemsTypeWeapons, body)
     }
+    fun setItemsHouseHold(body: PostItemsType) {
+        repository.itemsTypeHouseHold(_itemsTypeHouseHold, body)
+    }
+
 }
