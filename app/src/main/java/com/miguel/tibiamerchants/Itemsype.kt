@@ -1,10 +1,12 @@
 package com.miguel.tibiamerchants
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +48,7 @@ import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 class Itemsype : ComponentActivity() {
     private lateinit var viewModel: ViewModeltemsType
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -268,37 +271,39 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?){
             }
 
             Spacer(modifier = Modifier.height(5.dp))
-            OutlinedCard {
-                Column(Modifier.padding(16.dp)) {
-                    if (!item!!.arm.isNullOrEmpty()){
-                        Text(text = "Arm: ${item.arm!!}")
-                    }
-                    if (!item.defense.isNullOrEmpty()){
-                        Text(text = "Defense: ${item.defense}")
-                    }
-                    if (!item.vol.isNullOrEmpty()) {
-                        Text(text = "Vol: ${item.vol}")
-                    }
-                    if (!item.weight.isNullOrEmpty()) {
-                        Text(text = "Weight: ${item.weight}")
-                    }
-                    if (!item.attributes.isNullOrEmpty()) {
-                        Text(text = "Attributes: ${item.attributes}")
-                    }
-                    if (!item.resist.isNullOrEmpty()) {
-                        Text(text = "Resist: ${item.resist}")
-                    }
-                    if (!item.slots.isNullOrEmpty()) {
-                        Text(text = "Slots: ${item.slots}")
-                    }
-                    if (!item.classs.isNullOrEmpty()) {
-                        Text(text = "Class: ${item.classs}")
-                    }
-                    if (!item.level.isNullOrEmpty()) {
-                        Text(text = "Level: ${item.level}")
-                    }
-                    if (!item.vocation.isNullOrEmpty()) {
-                        Text(text = "Vocation: ${item.vocation}")
+            if (!item?.weight.isNullOrEmpty()){
+                OutlinedCard {
+                    Column(Modifier.padding(16.dp)) {
+                        if (!item!!.arm.isNullOrEmpty()){
+                            Text(text = "Arm: ${item.arm!!}")
+                        }
+                        if (!item.defense.isNullOrEmpty()){
+                            Text(text = "Defense: ${item.defense}")
+                        }
+                        if (!item.vol.isNullOrEmpty()) {
+                            Text(text = "Vol: ${item.vol}")
+                        }
+                        if (!item.weight.isNullOrEmpty()) {
+                            Text(text = "Weight: ${item.weight}")
+                        }
+                        if (!item.attributes.isNullOrEmpty()) {
+                            Text(text = "Attributes: ${item.attributes}")
+                        }
+                        if (!item.resist.isNullOrEmpty()) {
+                            Text(text = "Resist: ${item.resist}")
+                        }
+                        if (!item.slots.isNullOrEmpty()) {
+                            Text(text = "Slots: ${item.slots}")
+                        }
+                        if (!item.classs.isNullOrEmpty()) {
+                            Text(text = "Class: ${item.classs}")
+                        }
+                        if (!item.level.isNullOrEmpty()) {
+                            Text(text = "Level: ${item.level}")
+                        }
+                        if (!item.vocation.isNullOrEmpty()) {
+                            Text(text = "Vocation: ${item.vocation}")
+                        }
                     }
                 }
             }
@@ -307,6 +312,10 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?){
     }
 }
 
+
+/*
+* Cards of body items
+**/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?){
