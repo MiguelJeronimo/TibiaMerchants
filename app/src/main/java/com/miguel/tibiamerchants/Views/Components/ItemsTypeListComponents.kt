@@ -25,6 +25,8 @@ import com.miguel.tibiamerchants.Models.HouseHold
 import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemOtherPlants
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.OtherItem
+import com.miguel.tibiamerchants.Models.OtherItemsModel
 import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
@@ -157,6 +159,29 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink) {
 //Tools and other Equipment
 @Composable
 fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel) {
+    LazyColumn(modifier = modifier) {
+        val tools = items.body
+        item {
+            Column {
+                Text(
+                    text = "Tools and other Equipment",
+                    Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+            }
+        }
+        items(tools?.items!!.size) { item ->
+            CardItems(
+                modifier = modifier, item = tools.items[item]
+            )
+        }
+    }
+}
+
+//Tools and other Equipment
+@Composable
+fun ListItems(modifier: Modifier, items: OtherItemsModel) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -512,6 +537,96 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?){
                     Column(Modifier.padding(16.dp)) {
                         if (!item?.level.isNullOrEmpty()){
                             Text(text = "Level: ${item?.level!!}")
+                        }
+                        if (!item?.arm.isNullOrEmpty()){
+                            Text(text = "Arm: ${item?.arm!!}")
+                        }
+                        if (!item?.resist.isNullOrEmpty()){
+                            Text(text = "Resist: ${item?.resist!!}")
+                        }
+                        if (!item?.duration.isNullOrEmpty()){
+                            Text(text = "Duration: ${item?.duration!!}")
+                        }
+                        if (!item?.charges.isNullOrEmpty()){
+                            Text(text = "Charges: ${item?.charges!!}")
+                        }
+                        if (!item?.attributes.isNullOrEmpty()){
+                            Text(text = "Attributes: ${item?.attributes!!}")
+                        }
+                        if (!item?.weight.isNullOrEmpty()){
+                            Text(text = "Weight: ${item?.weight!!}")
+                        }
+                        if (!item?.vocation.isNullOrEmpty()){
+                            Text(text = "Vocation: ${item?.vocation!!}")
+                        }
+
+                        if (!item?.writable.isNullOrEmpty()){
+                            Text(text = "Writable: ${item?.writable}")
+                        }
+                        if (item?.radius != null) {
+                            Text(text = "Radius: ${item.radius}")
+                        }
+                        if (!item?.sellForNPC.isNullOrEmpty()) {
+                            Text(text = "Sell for NPC: ${item?.sellForNPC}")
+                        }
+                        if (!item?.buyForNPC.isNullOrEmpty()) {
+                            Text(text = "Buy for NPC: ${item?.buyForNPC}")
+                        }
+                        if (!item?.value.isNullOrEmpty()) {
+                            Text(text = "Value: ${item?.value}")
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun CardItems(modifier: Modifier, item: OtherItem?){
+    /**
+     *.fillMaxWidth(1f)
+     *             .padding(16.dp)
+     * */
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(Modifier.fillMaxWidth(1f)){
+                GlideImage(model = item?.img, contentDescription ="itemtibia",
+                    Modifier
+                        .size(80.dp)
+                        .padding(10.dp))
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+                        text = item?.name!!,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            if (!item?.weight.isNullOrEmpty()){
+                OutlinedCard {
+                    Column(Modifier.padding(16.dp)) {
+                        if (!item?.level.isNullOrEmpty()){
+                            Text(text = "Level: ${item?.level!!}")
+                        }
+                        if (!item?.magicLevel.isNullOrEmpty()){
+                            Text(text = "Magic Level: ${item?.magicLevel!!}")
+                        }
+                        if (!item?.type.isNullOrEmpty()){
+                            Text(text = "Type: ${item?.type!!}")
+                        }
+                        if (!item?.npcPrice.isNullOrEmpty()){
+                            Text(text = "Npc Price: ${item?.npcPrice!!}")
                         }
                         if (!item?.arm.isNullOrEmpty()){
                             Text(text = "Arm: ${item?.arm!!}")

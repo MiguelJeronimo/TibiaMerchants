@@ -131,3 +131,34 @@ data class ToolsAndOtherEquipment(
     val buyForNPC: String? = null,
     val value: String? = null
 )
+
+
+//dataclass for Tools and other equipment
+data class OtherItemsModel(
+    val statusCode:Int? = null,
+    val body: OtherItemsWeapons? = null
+)
+data class OtherItemsWeapons(val items: ArrayList<OtherItem>? = null)
+data class OtherItem(
+    val name: String? = null,
+    val img: String? = null,
+    val type: String? = null,
+    val magicLevel: String? = null,
+    val npcPrice: String? = null,
+    val arm: String? = null,
+    val location: String? = null,
+    val note: String? = null,
+    val resist: String? = null,
+    val duration: String? = null,
+    val charges: String? = null,
+    val level: String? = null,
+    val attributes: String? = null,
+    val weight: String? = null,
+    val vocation: String? = null,
+    val writable: String? = null,
+    val radius: String? = null,
+    val color: String? = null,
+    val sellForNPC: String? = null,
+    val buyForNPC: String? = null,
+    val value: String? = null
+)

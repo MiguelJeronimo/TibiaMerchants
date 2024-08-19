@@ -7,6 +7,7 @@ import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModels
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.OtherItemsModel
 import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.PostItemsType
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
@@ -146,4 +147,24 @@ class RepositoryItems : Items {
         })
     }
 
+    override fun itemsTypeOtherItems(
+        _items: MutableLiveData<OtherItemsModel>,
+        body: PostItemsType,
+    ) {
+        val call = service.itemsTypeOtherItems(body)
+        call.enqueue(object: Callback<OtherItemsModel>{
+            override fun onResponse(call: Call<OtherItemsModel>, response: Response<OtherItemsModel>) {
+                if (response.isSuccessful){
+                    val items = response.body()
+                    _items.value = items
+                } else{
+                    _items.value = null
+                }
+            }
+
+            override fun onFailure(call: Call<OtherItemsModel>, t: Throwable) {
+                _items.value = null
+            }
+        })
+    }
 }

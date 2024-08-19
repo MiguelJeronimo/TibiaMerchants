@@ -4,6 +4,7 @@ import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModels
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.OtherItemsModel
 import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.PostItemsType
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
@@ -35,4 +36,9 @@ interface ApiClient {
     //Plants Animals Products Food Drink catalog
     @POST("api/v1/items/type/")
     fun itemsTypeToolsAndOthers(@Body postItemsType: PostItemsType): Call<ToolsAndOtherEquipmentModel>
+
+    //Other items catalog
+    @POST("api/v1/items/type/")
+    fun itemsTypeOtherItems(@Body postItemsType: PostItemsType): Call<OtherItemsModel>
+
 }

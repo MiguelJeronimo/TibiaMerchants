@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.Models.BodyItemstype
 import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.OtherItemsModel
 import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.PostItemsType
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
@@ -52,6 +53,7 @@ class Itemsype : ComponentActivity() {
                 val listItemsHouseHold = remember { mutableStateOf(HouseHoldModel()) }
                 val listPlantsAnimalsProductsFoodDrink = remember { mutableStateOf(PlantsAnimalsProductsFoodDrink()) }
                 val listToolsAndOtherEquipment = remember { mutableStateOf(ToolsAndOtherEquipmentModel()) }
+                val listOtherItems = remember { mutableStateOf(OtherItemsModel()) }
                 println("Title: ${titleState.value}")
                 println("Name: ${nameState.value}")
                 when(titleState.value?.lowercase()){
@@ -60,7 +62,7 @@ class Itemsype : ComponentActivity() {
                     "household items"-> viewModel.setItemsHouseHold(PostItemsType(titleState.value, nameState.value))
                     "plants, animal products, food and drink"-> viewModel.setPlantsAnimalsProductsFoodDrink(PostItemsType(titleState.value, nameState.value))
                     "tools and other equipment"-> viewModel.setItemsToolsAndOthers(PostItemsType(titleState.value, nameState.value))
-                    "other items"->{}
+                    "other items"-> viewModel.setItemsOtherItems(PostItemsType(titleState.value, nameState.value))
                     else->{
                         viewModel.setItems(PostItemsType(titleState.value, nameState.value))
                     }
@@ -107,6 +109,13 @@ class Itemsype : ComponentActivity() {
                     }
                 })
 
+                viewModel.itemsTypeOtherItems.observe(this, Observer {
+                    if (it != null) {
+                        listOtherItems.value = it
+                    } else {
+                        viewModel.setProgressBar(false)}
+                })
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Toolbar(nameState.value.toString())
@@ -141,6 +150,12 @@ class Itemsype : ComponentActivity() {
                             ListItems(
                                 modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
                                 items = listToolsAndOtherEquipment.value
+                            )
+                        }
+                        if (listOtherItems.value.body != null){
+                            ListItems(
+                                modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                                items = listOtherItems.value
                             )
                         }
                     }

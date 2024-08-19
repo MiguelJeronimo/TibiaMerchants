@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.OtherItemsModel
 import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.PostItemsType
 import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
@@ -27,6 +28,10 @@ class ViewModeltemsType: ViewModel() {
 
     private val _itemsTypeToolsAndOthers = MutableLiveData<ToolsAndOtherEquipmentModel>()
     val itemsTypeToolsAndOthers: MutableLiveData<ToolsAndOtherEquipmentModel> get() = _itemsTypeToolsAndOthers
+
+    private val _itemsTypeOtherItems = MutableLiveData<OtherItemsModel>()
+    val itemsTypeOtherItems: MutableLiveData<OtherItemsModel> get() = _itemsTypeOtherItems
+
     private val _isVisibleProgressBar = MutableLiveData<Boolean>()
     val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
     init {
@@ -54,6 +59,7 @@ class ViewModeltemsType: ViewModel() {
     fun setItemsToolsAndOthers(body: PostItemsType){
         repository.itemsTypeToolsAndOthers(_itemsTypeToolsAndOthers, body)
     }
-
-
+    fun setItemsOtherItems(body: PostItemsType){
+        repository.itemsTypeOtherItems(_itemsTypeOtherItems, body)
+    }
 }
