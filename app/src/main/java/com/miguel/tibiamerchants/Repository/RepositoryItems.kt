@@ -7,7 +7,9 @@ import com.miguel.tibiamerchants.Models.HouseHoldModel
 import com.miguel.tibiamerchants.Models.ItemsModels
 import com.miguel.tibiamerchants.Models.ItemsModelsType
 import com.miguel.tibiamerchants.Models.ItemsModelsTypeWeapons
+import com.miguel.tibiamerchants.Models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.Models.PostItemsType
+import com.miguel.tibiamerchants.Models.ToolsAndOtherEquipmentModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -90,6 +92,55 @@ class RepositoryItems : Items {
             }
 
             override fun onFailure(call: Call<HouseHoldModel>, t: Throwable) {
+                _items.value = null
+            }
+        })
+    }
+
+    override fun itemsTypeOthers(_items: MutableLiveData<PlantsAnimalsProductsFoodDrink>, body: PostItemsType) {
+        println(body)
+        val call = service.itemsTypeOthers(body)
+        call.enqueue(object: Callback<PlantsAnimalsProductsFoodDrink>{
+            override fun onResponse(
+                call: Call<PlantsAnimalsProductsFoodDrink>,
+                response: Response<PlantsAnimalsProductsFoodDrink>,
+            ) {
+                println("response ${response.body()}")
+                if (response.isSuccessful){
+                    val items = response.body()
+                    _items.value = items
+                } else{
+                    _items.value = null
+                }
+            }
+
+            override fun onFailure(call: Call<PlantsAnimalsProductsFoodDrink>, t: Throwable) {
+                _items.value = null
+            }
+        })
+    }
+
+    override fun itemsTypeToolsAndOthers(
+        _items: MutableLiveData<ToolsAndOtherEquipmentModel>,
+        body: PostItemsType,
+    ) {
+        println(body)
+        val call = service.itemsTypeToolsAndOthers(body)
+        call.enqueue(object: Callback<ToolsAndOtherEquipmentModel>{
+            override fun onResponse(
+                call: Call<ToolsAndOtherEquipmentModel>,
+                response: Response<ToolsAndOtherEquipmentModel>,
+            ) {
+                println("response ${response.body()}")
+                if (response.isSuccessful){
+                    val items = response.body()
+                    _items.value = items
+                } else{
+                    _items.value = null
+                }
+            }
+
+            override fun onFailure(call: Call<ToolsAndOtherEquipmentModel>, t: Throwable) {
                 _items.value = null
             }
         })

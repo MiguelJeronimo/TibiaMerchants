@@ -74,7 +74,7 @@ data class HouseHoldModel(
     val body: Items? = null
 )
 
-data class Items(val items: ArrayList<BodyItemstype>? = null)
+data class Items(val items: ArrayList<HouseHold>? = null)
 
 data class HouseHold(
     val name: String? = null,
@@ -89,3 +89,45 @@ data class HouseHold(
     val writable: String? = null
 )
 
+//dataclass for Other items catalog
+data class PlantsAnimalsProductsFoodDrink(
+    val statusCode:Int? = null,
+    val body: ItemOthersPlants? = null
+)
+data class ItemOthersPlants(val items: ArrayList<ItemOtherPlants>? = null)
+data class ItemOtherPlants(
+    val name: String? = null,
+    val img: String? = null,
+    val price: String? = null,
+    val attributes: String?= null,
+    val weight: String? = null,
+    val writable: String? = null,
+    val stackable: String? = null
+)
+
+//dataclass for Tools and other equipment
+data class ToolsAndOtherEquipmentModel(
+    val statusCode:Int? = null,
+    val body: ToolsAndOtherEquipments? = null
+)
+data class ToolsAndOtherEquipments(val items: ArrayList<ToolsAndOtherEquipment>? = null)
+data class ToolsAndOtherEquipment(
+    val name: String? = null,
+    val img: String? = null,
+    val arm: String? = null,
+    val location: String? = null,
+    val note: String? = null,
+    val resist: String? = null,
+    val duration: String? = null,
+    val charges: String? = null,
+    val level: String? = null,
+    val attributes: String? = null,
+    val weight: String? = null,
+    val vocation: String? = null,
+    val writable: String? = null,
+    val radius: String? = null,
+    val color: String? = null,
+    val sellForNPC: String? = null,
+    val buyForNPC: String? = null,
+    val value: String? = null
+)
