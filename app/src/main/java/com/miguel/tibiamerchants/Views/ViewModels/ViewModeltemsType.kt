@@ -32,6 +32,13 @@ class ViewModeltemsType: ViewModel() {
     private val _itemsTypeOtherItems = MutableLiveData<OtherItemsModel>()
     val itemsTypeOtherItems: MutableLiveData<OtherItemsModel> get() = _itemsTypeOtherItems
 
+    private val _back = MutableLiveData<Boolean>()
+    val back: MutableLiveData<Boolean> = _back
+
+    fun setBack(state: Boolean){
+        _back.value = state
+    }
+
     private val _isVisibleProgressBar = MutableLiveData<Boolean>()
     val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
     init {

@@ -12,6 +12,7 @@ class ViewModelNPCS: ViewModel() {
 
     private val _stateItems = MutableLiveData<Boolean>()
     val stateItems: MutableLiveData<Boolean> get() = _stateItems
+
     init{
         _npcName.value = null
         _stateAbout.value = false

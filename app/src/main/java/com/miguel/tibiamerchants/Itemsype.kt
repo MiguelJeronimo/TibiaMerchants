@@ -115,10 +115,15 @@ class Itemsype : ComponentActivity() {
                     } else {
                         viewModel.setProgressBar(false)}
                 })
+                viewModel.back.observe(this, Observer {
+                    if (it){
+                        finish()
+                    }
+                })
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        Toolbar(nameState.value.toString())
+                        Toolbar(nameState.value.toString(), viewModel)
                         if (listItems.value.isNotEmpty()){
                             ListItems(
                                 modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),

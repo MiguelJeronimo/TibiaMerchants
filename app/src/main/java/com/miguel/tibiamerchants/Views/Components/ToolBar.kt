@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.Views.ViewModels.ViewModeltemsType
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -128,13 +129,13 @@ fun Toolbar(tittle: String, viewmodel: ViewModelItems) {
  * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toolbar(tittle: String) {
+fun Toolbar(tittle: String,  viewModel: ViewModeltemsType) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        //Backbutton(viewmodel = viewmodel)
+        Backbutton(viewmodel = viewModel)
         Text(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
@@ -169,6 +170,16 @@ fun Backbutton(viewmodel: ViewModelNPC?) {
     Box {
         IconButton(onClick = {
           viewmodel?.setBack(true)
+        }) {
+            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+        }
+    }
+}
+@Composable
+fun Backbutton(viewmodel:  ViewModeltemsType?) {
+    Box {
+        IconButton(onClick = {
+            viewmodel?.setBack(true)
         }) {
             Icon(Icons.Default.ArrowBack , contentDescription = "delete")
         }
