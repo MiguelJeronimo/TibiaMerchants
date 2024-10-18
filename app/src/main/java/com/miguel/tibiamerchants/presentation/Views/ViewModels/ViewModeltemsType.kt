@@ -2,6 +2,7 @@ package com.miguel.tibiamerchants.presentation.Views.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.models.HouseHoldModel
 import com.miguel.tibiamerchants.domain.models.ItemsModelsType
 import com.miguel.tibiamerchants.domain.models.ItemsModelsTypeWeapons
@@ -9,10 +10,11 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
-import com.miguel.tibiamerchants.data.repositories.RepositoryItems
+import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
+import kotlinx.coroutines.launch
 
-class ViewModeltemsType: ViewModel() {
-    private val repository = RepositoryItems()
+class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType) : ViewModel() {
+    //private val repository = RepositoryItems()
 
     private val _items = MutableLiveData<ItemsModelsType>()
     val items: MutableLiveData<ItemsModelsType> = _items
@@ -49,24 +51,36 @@ class ViewModeltemsType: ViewModel() {
     }
 
     fun setItems(body: PostItemsType) {
-        repository.itemsType(_items, body)
+        viewModelScope.launch {
+            _items.value = useCaseItemsType.itemsType(body)
+        }
     }
 
     fun setItemsWeapons(body: PostItemsType) {
-        repository.itemsTypeWeapons(_itemsTypeWeapons, body)
+        viewModelScope.launch {
+            _itemsTypeWeapons.value = useCaseItemsType.itemsTypeWeapons(body)
+        }
     }
     fun setItemsHouseHold(body: PostItemsType) {
-        repository.itemsTypeHouseHold(_itemsTypeHouseHold, body)
+        viewModelScope.launch {
+            _itemsTypeHouseHold.value = useCaseItemsType.itemsTypeHouseHold(body)
+        }
     }
 
     fun setPlantsAnimalsProductsFoodDrink(body: PostItemsType){
-        repository.itemsTypeOthers(_plantsAnimalsProductsFoodDrink, body)
+        viewModelScope.launch {
+            _plantsAnimalsProductsFoodDrink.value = useCaseItemsType.itemsTypeOthers(body)
+        }
     }
 
     fun setItemsToolsAndOthers(body: PostItemsType){
-        repository.itemsTypeToolsAndOthers(_itemsTypeToolsAndOthers, body)
+        viewModelScope.launch {
+            _itemsTypeToolsAndOthers.value = useCaseItemsType.itemsTypeToolsAndOthers(body)
+        }
     }
     fun setItemsOtherItems(body: PostItemsType){
-        repository.itemsTypeOtherItems(_itemsTypeOtherItems, body)
+        viewModelScope.launch {
+            _itemsTypeOtherItems.value = useCaseItemsType.itemsTypeOtherItems(body)
+        }
     }
 }

@@ -31,7 +31,9 @@ import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.presentation.Views.Components.ListItems
 import com.miguel.tibiamerchants.presentation.Views.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModeltemsType
+import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import org.koin.android.ext.android.inject
 
 class Itemsype : ComponentActivity() {
     private lateinit var viewModel: ViewModeltemsType
@@ -42,7 +44,8 @@ class Itemsype : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val title = intent.getStringExtra("title")
         val name = intent.getStringExtra("name")
-        viewModel = ViewModelProvider(this)[ViewModeltemsType::class.java]
+        val factory: ViewModelItemsTypeFactory by inject()
+        viewModel = ViewModelProvider(this, factory)[ViewModeltemsType::class.java]
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {
@@ -176,13 +179,6 @@ class Itemsype : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable

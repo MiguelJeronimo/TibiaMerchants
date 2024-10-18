@@ -45,8 +45,10 @@ import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.presentation.Views.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
+import org.koin.android.ext.android.inject
 
 class Items : ComponentActivity() {
 
@@ -55,7 +57,8 @@ class Items : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[ViewModelItems::class.java]
+        val factory: ViewModelItemsFactory by inject()
+        viewModel = ViewModelProvider(this, factory)[ViewModelItems::class.java]
         enableEdgeToEdge()
         setContent {
             val stateList = remember { mutableStateOf(ItemsModels()) }
@@ -79,6 +82,7 @@ class Items : ComponentActivity() {
 
             TibiaMerchantsTheme {
                 viewModel.items.observe(this, Observer {
+                    println("ITEMS: "+it)
                     if (it != null){
                         stateList.value = it
                     } else{

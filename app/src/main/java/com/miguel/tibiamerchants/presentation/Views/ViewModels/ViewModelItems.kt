@@ -2,12 +2,13 @@ package com.miguel.tibiamerchants.presentation.Views.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
-import com.miguel.tibiamerchants.data.repositories.RepositoryItems
+import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
+import kotlinx.coroutines.launch
 
-class ViewModelItems: ViewModel() {
-    private val repository = RepositoryItems()
+class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : ViewModel() {
     private val _items = MutableLiveData<ItemsModels>()
     val items: MutableLiveData<ItemsModels> = _items
     private val _isVisibleProgressBar = MutableLiveData<Boolean>()
@@ -21,13 +22,15 @@ class ViewModelItems: ViewModel() {
 
     init {
         _isVisibleProgressBar.value = true
-        setItems()
+        viewModelScope.launch {
+            _items.value = useCaseItemsCatalog.items()
+        }
     }
     fun setProgressBar(state: Boolean){
         _isVisibleProgressBar.value = state
     }
     fun setItems() {
-        repository.items(_items)
+
     }
     fun setBack(status:Boolean){
         _isBack.value = status

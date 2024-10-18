@@ -9,6 +9,7 @@ import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,29 +17,29 @@ import retrofit2.http.POST
 interface ApiClient {
 
     @GET("api/v1/items")
-    fun items(): Call<ItemsModels>
+    suspend fun items(): Response<ItemsModels>
 
     @POST("api/v1/items/type/")
-    fun itemsType(@Body postItemsType: PostItemsType): Call<ItemsModelsType>
-
-    //weapons
-    @POST("api/v1/items/type/")
-    fun itemsTypeWeapons(@Body postItemsType: PostItemsType): Call<ItemsModelsTypeWeapons>
+    suspend fun itemsType(@Body postItemsType: PostItemsType): Response<ItemsModelsType>
 
     //weapons
     @POST("api/v1/items/type/")
-    fun itemsTypeHouseHold(@Body postItemsType: PostItemsType): Call<HouseHoldModel>
+    suspend fun itemsTypeWeapons(@Body postItemsType: PostItemsType): Response<ItemsModelsTypeWeapons>
+
+    //weapons
+    @POST("api/v1/items/type/")
+    suspend fun itemsTypeHouseHold(@Body postItemsType: PostItemsType): Response<HouseHoldModel>
 
     //Plants Animals Products Food Drink catalog
     @POST("api/v1/items/type/")
-    fun itemsTypeOthers(@Body postItemsType: PostItemsType): Call<PlantsAnimalsProductsFoodDrink>
+    suspend fun itemsTypeOthers(@Body postItemsType: PostItemsType): Response<PlantsAnimalsProductsFoodDrink>
 
     //Plants Animals Products Food Drink catalog
     @POST("api/v1/items/type/")
-    fun itemsTypeToolsAndOthers(@Body postItemsType: PostItemsType): Call<ToolsAndOtherEquipmentModel>
+    suspend fun itemsTypeToolsAndOthers(@Body postItemsType: PostItemsType): Response<ToolsAndOtherEquipmentModel>
 
     //Other items catalog
     @POST("api/v1/items/type/")
-    fun itemsTypeOtherItems(@Body postItemsType: PostItemsType): Call<OtherItemsModel>
+    suspend fun itemsTypeOtherItems(@Body postItemsType: PostItemsType): Response<OtherItemsModel>
 
 }
