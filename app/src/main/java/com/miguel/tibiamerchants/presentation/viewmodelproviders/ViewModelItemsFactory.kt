@@ -1,9 +1,9 @@
-package com.miguel.tibiamerchants.presentation.Views.viewmodelproviders
+package com.miguel.tibiamerchants.presentation.viewmodelproviders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 
 class ViewModelItemsFactory(private val useCaseItemsCatalog: UseCaseItemsCatalog)
     : ViewModelProvider.Factory {

@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views
+package com.miguel.tibiamerchants.presentation
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -39,13 +39,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.miguel.tibiamerchants.presentation.Itemsype
 import com.miguel.tibiamerchants.domain.models.Data
 import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
-import com.miguel.tibiamerchants.presentation.Views.Components.Toolbar
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelItems
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsFactory
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject

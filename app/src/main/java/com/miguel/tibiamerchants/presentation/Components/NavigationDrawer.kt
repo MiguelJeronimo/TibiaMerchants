@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views.Components
+package com.miguel.tibiamerchants.presentation.Components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider

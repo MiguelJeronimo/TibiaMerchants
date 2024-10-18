@@ -12,12 +12,12 @@ import com.miguel.tibiamerchants.data.repositories.RepositoryItemsTypeImp
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
 import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelItems
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModeltemsType
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsFactory
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsTypeFactory
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelNPCFactory
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

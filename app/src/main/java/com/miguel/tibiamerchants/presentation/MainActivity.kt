@@ -40,15 +40,13 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.presentation.Views.About
-import com.miguel.tibiamerchants.presentation.Views.Components.Toobar
-import com.miguel.tibiamerchants.presentation.Views.Items
-import com.miguel.tibiamerchants.presentation.Views.NPCInformation
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.Components.Toobar
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.utils
 import kotlinx.coroutines.launch
 import model.Tibia.NPCModel
+import model.Tibia.Spells
 
 
 class MainActivity : ComponentActivity() {
@@ -82,6 +80,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
+
+        viewModel.stateSpells.observe(this, Observer {
+            if(it){
+                Intent(this, SpellsListActivity::class.java).also{
+                    startActivity(it)
+                }
+            }
+        })
+
+
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {
@@ -94,10 +102,10 @@ class MainActivity : ComponentActivity() {
                             Text("Tibiamerchants", modifier = Modifier.padding(16.dp))
                             HorizontalDivider()
                             NavigationDrawerItem(
-                                label = { Text(text = "Catalog") },
+                                label = { Text(text = "Spells") },
                                 selected = false,
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.setSpellsState(true) }
                             )
                             NavigationDrawerItem(
                                 label = { Text(text = "Items") },
@@ -151,6 +159,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         viewModel.setNPCName(null)
         viewModel.setItemsState(false)
+        viewModel.setSpellsState(false)
     }
 }
 

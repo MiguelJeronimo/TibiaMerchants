@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views
+package com.miguel.tibiamerchants.presentation
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -48,14 +48,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.miguel.tibiamerchants.presentation.Views.Components.ToobarNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPC
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelNPCFactory
+import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.launch
 import model.Tibia.NPC
 import org.koin.android.ext.android.inject
-import org.koin.dsl.koinApplication
 
 class NPCInformation : ComponentActivity() {
     private lateinit var viewmodel: ViewModelNPC

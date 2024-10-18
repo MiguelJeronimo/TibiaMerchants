@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views.Components
+package com.miguel.tibiamerchants.presentation.Components
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -27,10 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelItems
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPCS
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModeltemsType
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

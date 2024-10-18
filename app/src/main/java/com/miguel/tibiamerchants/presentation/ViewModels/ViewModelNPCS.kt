@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views.ViewModels
+package com.miguel.tibiamerchants.presentation.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +13,9 @@ class ViewModelNPCS: ViewModel() {
     private val _stateItems = MutableLiveData<Boolean>()
     val stateItems: MutableLiveData<Boolean> get() = _stateItems
 
+    private val _stateSpells = MutableLiveData<Boolean>()
+    val stateSpells: MutableLiveData<Boolean> get() = _stateSpells
+
     init{
         _npcName.value = null
         _stateAbout.value = false
@@ -25,6 +28,10 @@ class ViewModelNPCS: ViewModel() {
     }
     fun setItemsState(state: Boolean){
         _stateItems.value = state
+    }
+
+    fun setSpellsState(state: Boolean){
+        _stateSpells.value = state
     }
 
 }

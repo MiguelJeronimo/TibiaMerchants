@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views
+package com.miguel.tibiamerchants.presentation
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -43,8 +43,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.presentation.Views.Components.ToobarNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 
 class About : ComponentActivity() {

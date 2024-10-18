@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.presentation.Views.ViewModels
+package com.miguel.tibiamerchants.presentation.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

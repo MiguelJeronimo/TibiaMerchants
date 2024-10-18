@@ -1,9 +1,9 @@
-package com.miguel.tibiamerchants.presentation.Views.viewmodelproviders
+package com.miguel.tibiamerchants.presentation.viewmodelproviders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 
 class ViewModelNPCFactory(private val useCase: UseCaseNPC): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -28,10 +28,10 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
-import com.miguel.tibiamerchants.presentation.Views.Components.ListItems
-import com.miguel.tibiamerchants.presentation.Views.Components.Toolbar
-import com.miguel.tibiamerchants.presentation.Views.ViewModels.ViewModeltemsType
-import com.miguel.tibiamerchants.presentation.Views.viewmodelproviders.ViewModelItemsTypeFactory
+import com.miguel.tibiamerchants.presentation.Components.ListItems
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import org.koin.android.ext.android.inject
 
