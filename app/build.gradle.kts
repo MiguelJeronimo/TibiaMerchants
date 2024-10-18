@@ -65,7 +65,7 @@ dependencies {
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation("org.jsoup:jsoup:1.16.1")
     //injeccion de dependencias
-    implementation ("io.insert-koin:koin-android:3.4.0")
+    implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
 //    implementation("io.coil-kt:coil-gif:2.6.0")
 //    implementation("io.coil-kt:coil-compose:2.6.0")
 //    implementation("io.coil-kt:coil-compose:2.0.0-rc01")

@@ -7,6 +7,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".MainApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -16,27 +17,27 @@
         android:theme="@style/Theme.TibiaMerchants"
         tools:targetApi="31">
         <activity
-            android:name=".Itemsype"
+            android:name=".presentation.Itemsype"
             android:exported="false"
             android:label="@string/title_activity_itemsype"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".Views.Items"
+            android:name=".presentation.Views.Items"
             android:exported="false"
             android:label="@string/title_activity_items"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".Views.About"
+            android:name=".presentation.Views.About"
             android:exported="false"
             android:label="@string/title_activity_about"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".Views.NPCInformation"
+            android:name=".presentation.Views.NPCInformation"
             android:exported="false"
             android:label="@string/title_activity_npcinformation"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.TibiaMerchants">
