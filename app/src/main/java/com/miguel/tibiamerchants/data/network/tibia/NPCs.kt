@@ -1,4 +1,4 @@
-package API.Tibia
+package com.miguel.tibiamerchants.data.network.tibia
 
 import model.Tibia.*
 import org.jsoup.nodes.Document

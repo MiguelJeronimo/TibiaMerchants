@@ -9,9 +9,9 @@ android {
 
     defaultConfig {
         applicationId = "com.miguel.tibiamerchants"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
-        versionCode = 1
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -47,6 +47,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    //    packaging {
+//        resources {
+//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//        }
+//    }
 }
 
 dependencies {
@@ -59,10 +64,19 @@ dependencies {
     // LiveData
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation("org.jsoup:jsoup:1.16.1")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-    implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+    //injeccion de dependencias
+    implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
+//    implementation("io.coil-kt:coil-gif:2.6.0")
+//    implementation("io.coil-kt:coil-compose:2.6.0")
+//    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    //para consumo de apis
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    // ViewModel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    // LiveData
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -1,8 +1,8 @@
-package com.miguel.tibiamerchants.Views.ViewModels
+package com.miguel.tibiamerchants.presentation.ViewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.miguel.tibiamerchants.Repository.Repository
+import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -10,8 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import model.Tibia.NPC
 
-class ViewModelNPC: ViewModel() {
-    private val repository = Repository()
+class ViewModelNPC(private val useCase: UseCaseNPC): ViewModel() {
     private val _npcInformation = MutableLiveData<NPC?>()
     val npcInformation: MutableLiveData<NPC?>get() = _npcInformation
 
@@ -30,17 +29,17 @@ class ViewModelNPC: ViewModel() {
         uiScope.launch {
             withContext(Dispatchers.IO){
                val response =  when(name){
-                    "Rashid"->{repository.rashid()}
-                    "Yasir"->{repository.yasir()}
-                    "Haroun"->{repository.horoun()}
-                    "Nah'Bob"->{repository.nashBob()}
-                    "Asnarus"->{repository.asnarus()}
-                    "Alesar"->{repository.alesar()}
-                    "Yaman"->{repository.yalam()}
-                    "Esrik"->{repository.esrik()}
-                    "Alexander"->{repository.alexander()}
-                    "Tamoril"->{repository.tamoril()}
-                    "Grizzly Adams"->{repository.grizzlyAdams()}
+                    "Rashid"->{useCase.rashid()}
+                    "Yasir"->{useCase.yasir()}
+                    "Haroun"->{useCase.horoun()}
+                    "Nah'Bob"->{useCase.nashBob()}
+                    "Asnarus"->{useCase.asnarus()}
+                    "Alesar"->{useCase.alesar()}
+                    "Yaman"->{useCase.yalam()}
+                    "Esrik"->{useCase.esrik()}
+                    "Alexander"->{useCase.alexander()}
+                    "Tamoril"->{useCase.tamoril()}
+                    "Grizzly Adams"->{useCase.grizzlyAdams()}
                     else -> {
                         println("Se fue al null")
                         null

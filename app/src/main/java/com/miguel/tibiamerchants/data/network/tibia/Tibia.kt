@@ -1,8 +1,6 @@
-package API.Tibia
+package com.miguel.tibiamerchants.data.network.tibia
 
 import model.Tibia.NPC
-import model.Tibia.Rashid
-import model.Tibia.Yasir
 import org.jsoup.nodes.Document
 
 class Tibia(scrapper: Document): NPCs(scrapper) {

@@ -1,4 +1,4 @@
-package com.miguel.tibiamerchants.Views
+package com.miguel.tibiamerchants.presentation
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -48,11 +48,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.miguel.tibiamerchants.Views.Components.ToobarNPC
-import com.miguel.tibiamerchants.Views.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.launch
 import model.Tibia.NPC
+import org.koin.android.ext.android.inject
 
 class NPCInformation : ComponentActivity() {
     private lateinit var viewmodel: ViewModelNPC
@@ -63,7 +65,8 @@ class NPCInformation : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {
-                viewmodel = ViewModelProvider(this)[ViewModelNPC::class.java]
+                val viewModelFactory: ViewModelNPCFactory by inject()
+                viewmodel = ViewModelProvider(this,viewModelFactory)[ViewModelNPC::class.java]
                 val nameNPC = intent.extras?.getString("npc")
                 var stateName by rememberSaveable { mutableStateOf("") }
                 var npcInformationState by remember { mutableStateOf(NPC()) }
