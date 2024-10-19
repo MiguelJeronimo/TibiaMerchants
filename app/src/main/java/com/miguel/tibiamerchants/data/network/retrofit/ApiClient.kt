@@ -8,6 +8,7 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
+import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -41,5 +42,11 @@ interface ApiClient {
     //Other items catalog
     @POST("api/v1/items/type/")
     suspend fun itemsTypeOtherItems(@Body postItemsType: PostItemsType): Response<OtherItemsModel>
+
+    //Spells list
+    @GET("/api/v1/spells")
+    suspend fun spellsList(): Response<ResponseSpells>
+
+
 
 }

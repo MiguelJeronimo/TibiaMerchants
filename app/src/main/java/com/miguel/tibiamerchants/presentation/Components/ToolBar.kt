@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -155,12 +156,51 @@ fun Toolbar(tittle: String,  viewModel: ViewModeltemsType) {
 }
 
 @Composable
+fun ToolBarSpells(tittle: String){
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        BackButtonSpells(Modifier)
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = tittle,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+
+@Composable
+fun BackButtonSpells(Modifier: Modifier) {
+    Box {
+        IconButton(onClick = {
+            //viewmodel.setBack(true)
+        }) {
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
+        }
+    }
+}
+
+
+@Composable
 fun Backbutton(viewmodel: ViewModelItems) {
     Box {
         IconButton(onClick = {
             viewmodel.setBack(true)
         }) {
-            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
     }
 }
@@ -171,7 +211,7 @@ fun Backbutton(viewmodel: ViewModelNPC?) {
         IconButton(onClick = {
           viewmodel?.setBack(true)
         }) {
-            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
     }
 }
@@ -181,7 +221,7 @@ fun Backbutton(viewmodel:  ViewModeltemsType?) {
         IconButton(onClick = {
             viewmodel?.setBack(true)
         }) {
-            Icon(Icons.Default.ArrowBack , contentDescription = "delete")
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete",modifier = Modifier.size(30.dp))
         }
     }
 }

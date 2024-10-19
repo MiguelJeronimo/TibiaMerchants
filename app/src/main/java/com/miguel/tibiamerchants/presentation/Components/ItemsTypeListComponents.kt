@@ -30,6 +30,8 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
+import com.miguel.tibiamerchants.domain.models.spells.Runes
+import com.miguel.tibiamerchants.domain.models.spells.Spell
 
 @Composable
 fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?){
@@ -664,6 +666,165 @@ fun CardItems(modifier: Modifier, item: OtherItem?){
                         }
                         if (!item?.value.isNullOrEmpty()) {
                             Text(text = "Value: ${item?.value}")
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+    }
+}
+
+
+
+/**
+ * Card items of spells
+ * **/
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun CardSpells(modifier: Modifier, item:  Spell?){
+    /**
+     *.fillMaxWidth(1f)
+     *             .padding(16.dp)
+     * */
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(Modifier.fillMaxWidth(1f)){
+                GlideImage(model = item?.img, contentDescription ="itemtibia",
+                    Modifier
+                        .size(80.dp)
+                        .padding(10.dp))
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+                        text = item?.name!!,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            OutlinedCard {
+                Column(Modifier.padding(16.dp)) {
+                    if (!item?.formula.isNullOrEmpty()) {
+                        Text(text = "Fomula: ${item?.formula!!}")
+                    }
+                    if (!item?.premium.isNullOrEmpty()) {
+                        Text(text = "Premium: ${item?.premium!!}")
+                    }
+                    if (!item?.level.isNullOrEmpty()) {
+                        Text(text = "Level: ${item?.level!!}")
+                    }
+                    if (!item?.mana.isNullOrEmpty()) {
+                        Text(text = "Mana: ${item?.mana!!}")
+                    }
+                    if (!item?.price.isNullOrEmpty()) {
+                        Text(text = "Price: ${item?.price!!}")
+                    }
+                    if (!item?.group.isNullOrEmpty()) {
+                        Text(text = "Group: ${item?.group!!}")
+                    }
+                    if (item?.effect != null) {
+                        Row {
+                            if (!item.effect!!.img.isNullOrEmpty()) {
+                                GlideImage(
+                                    model = item.effect!!.img,
+                                    contentDescription = "itemtibia",
+                                    Modifier
+                                        .size(35.dp)
+                                        .padding(0.dp, 10.dp, 10.dp, 10.dp)
+                                )
+                            }
+                            Text(
+                                text = item.effect!!.description!!,
+                                Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+    }
+}
+
+/**
+ * Card items of spells runes
+ * **/
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun CardSpellsRunes(modifier: Modifier, item: Runes){
+    /**
+     *.fillMaxWidth(1f)
+     *             .padding(16.dp)
+     * */
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(Modifier.fillMaxWidth(1f)){
+                GlideImage(model = item.img, contentDescription ="itemtibia",
+                    Modifier
+                        .size(80.dp)
+                        .padding(10.dp))
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+                        text = item?.name!!,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            OutlinedCard {
+                Column(Modifier.padding(16.dp)) {
+                    if (!item.formula.isNullOrEmpty()) {
+                        Text(text = "Fomula: ${item.formula!!}")
+                    }
+                    if (!item.premium.isNullOrEmpty()) {
+                        Text(text = "Premium: ${item.premium!!}")
+                    }
+                    if (!item.level.isNullOrEmpty()) {
+                        Text(text = "Level: ${item.level!!}")
+                    }
+                    if (!item.soul_points.isNullOrEmpty()) {
+                        Text(text = "Soul Point: ${item.soul_points!!}")
+                    }
+                    if (!item.mana.isNullOrEmpty()) {
+                        Text(text = "Mana: ${item.mana!!}")
+                    }
+                    if (!item.price.isNullOrEmpty()) {
+                        Text(text = "Price: ${item.price!!}")
+                    }
+                    if (!item.rune_group.isNullOrEmpty()) {
+                        Text(text = "Group Rune: ${item.rune_group!!}")
+                    }
+                    if (item.effect != null) {
+                        Row {
+                            if (!item.effect!!.img.isNullOrEmpty()) {
+                                GlideImage(
+                                    model = item.effect!!.img,
+                                    contentDescription = "itemtibia",
+                                    Modifier
+                                        .size(35.dp)
+                                        .padding(0.dp, 10.dp, 10.dp, 10.dp)
+                                )
+                            }
+                            Text(
+                                text = item.effect!!.description!!,
+                                Modifier.align(Alignment.CenterVertically)
+                            )
                         }
                     }
                 }
