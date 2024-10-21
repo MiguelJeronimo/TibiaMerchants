@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -156,20 +157,22 @@ fun Toolbar(tittle: String,  viewModel: ViewModeltemsType) {
 }
 
 @Composable
-fun ToolBarSpells(tittle: String){
+fun ToolBarSpells(tittle: String? = null, viewmodel: ViewModelSpells?= null){
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        BackButtonSpells(Modifier)
-        Text(
-            modifier = Modifier
-                .padding(5.dp, 10.dp, 0.dp, 0.dp),
-            text = tittle,
-            color = MaterialTheme.colorScheme.secondary,
-            style = textStle
-        )
+        BackButtonSpells(Modifier, viewmodel)
+        tittle?.let {
+            Text(
+                modifier = Modifier
+                    .padding(5.dp, 10.dp, 0.dp, 0.dp),
+                text = it,
+                color = MaterialTheme.colorScheme.secondary,
+                style = textStle
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,10 +186,10 @@ fun ToolBarSpells(tittle: String){
 
 
 @Composable
-fun BackButtonSpells(Modifier: Modifier) {
+fun BackButtonSpells(Modifier: Modifier, viewModel: ViewModelSpells? = null) {
     Box {
         IconButton(onClick = {
-            //viewmodel.setBack(true)
+            viewModel?.setBack(true)
         }) {
             Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }

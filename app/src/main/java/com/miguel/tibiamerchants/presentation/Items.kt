@@ -85,7 +85,7 @@ class Items : ComponentActivity() {
                     if (it != null){
                         stateList.value = it
                     } else{
-                        Toast.makeText(this, "Error, conection time out", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Error, conection time out", Toast.LENGTH_SHORT).show()
                     }
                     viewModel.setProgressBar(false)
                 })
@@ -96,12 +96,11 @@ class Items : ComponentActivity() {
                     modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
                 ) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
+                        Toolbar("Items", viewmodel = viewModel)
                         if (stateProgressBar.value){
                             StatusBar()
                         }
-                        Toolbar("Items", viewmodel = viewModel)
                         SwipeRefresh(stateList, viewModel, pullToRefreshState)
-
                     }
                 }
             }

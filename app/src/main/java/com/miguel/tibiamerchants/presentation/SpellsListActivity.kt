@@ -1,23 +1,33 @@
 package com.miguel.tibiamerchants.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -28,33 +38,62 @@ import com.miguel.tibiamerchants.presentation.Components.ToolBarSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
 class SpellsListActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val factory: ViewModelSpellsFactory by inject()
         val viewModel = ViewModelProvider(this, factory)[ViewModelSpells::class.java]
+        viewModel.isBack.observe(this){
+            if (it){
+                finish()
+            }
+        }
         enableEdgeToEdge()
         setContent {
+            val pullToRefreshState = rememberPullToRefreshState()
             TibiaMerchantsTheme {
                 val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
+                val progressState = remember { mutableStateOf(false) }
                 viewModel.spells.observe(this) {
-                    println("Spells: $it")
+                    println("SPELLS: $it")
                     if (it != null) {
                         spellsDataState.value = it
+                    } else {
+                        Toast.makeText(this, "Error, Error conection", Toast.LENGTH_SHORT).show()
+                    }
+                    viewModel.isProgress(false)
+                }
+
+                viewModel.progress.observe(this){
+                    println("PROGRESS: $it")
+                    if (it!= null){
+                        progressState.value = it
                     }
                 }
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
+                Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)){
-                        ToolBarSpells("Spells")
-                        ListSpellsandRuneslist(Modifier.padding(innerPadding), spellsDataState)
+                        ToolBarSpells("Spells", viewModel)
+                        if (progressState.value){
+                            ProgressIndicator()
+                        }
+                        SwipeRefreshSpells(
+                            stateList = spellsDataState,
+                            viewModel = viewModel,
+                            pullToRefreshState = pullToRefreshState,
+                            modifier = Modifier.padding(innerPadding)
+                        )
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun ListSpellsandRuneslist(
@@ -96,11 +135,62 @@ fun ListSpellsandRuneslist(
             }
             items(runes.size) { item ->
                 CardSpellsRunes(
-                    modifier = modifier, item = runes[item]
+                    modifier = modifier,
+                    item = runes[item]
                 )
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeRefreshSpells(
+    stateList: MutableState<ResponseSpells>,
+    viewModel: ViewModelSpells,
+    pullToRefreshState: PullToRefreshState,
+    modifier: Modifier,
+) {
+    val stateProgress = remember { mutableStateOf(false) }
+    if (pullToRefreshState.isRefreshing) {
+        viewModel.isProgress(true)
+        LaunchedEffect(true) {
+            viewModel.setSpells()
+            delay(1500)
+            viewModel.isProgress(false)
+            pullToRefreshState.endRefresh()
+        }
+    }
+    //while to SwipeRefresh is executing
+    if (pullToRefreshState.progress>0.0){
+        stateProgress.value = true
+    }
+
+    Box(
+        Modifier
+            .padding(0.dp, 10.dp, 0.dp, 0.dp)
+            .fillMaxSize()
+    ) {
+        if (!pullToRefreshState.isRefreshing) {
+            ListSpellsandRuneslist(modifier, stateList)
+        }
+        if (stateProgress.value){
+            PullToRefreshContainer(
+                modifier = Modifier.align(Alignment.TopCenter),
+                state = pullToRefreshState
+            )
+            stateProgress.value = false
+        }
+    }
+}
+
+@Composable
+fun ProgressIndicator() {
+    LinearProgressIndicator(
+        Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 10.dp, 0.dp, 10.dp)
+    )
 }
 
 
@@ -108,6 +198,6 @@ fun ListSpellsandRuneslist(
 @Composable
 fun GreetingPreview6() {
     TibiaMerchantsTheme {
-        ToolBarSpells("Spells")
+        ToolBarSpells("Spells", null)
     }
 }
