@@ -30,7 +30,7 @@ class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : Vie
         _isVisibleProgressBar.value = state
     }
     fun setItems() {
-
+        viewModelScope.launch { _items.value = useCaseItemsCatalog.items() }
     }
     fun setBack(status:Boolean){
         _isBack.value = status
