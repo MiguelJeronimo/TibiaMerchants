@@ -18,6 +18,7 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
     val isBack: MutableLiveData<Boolean>get() = _isBack
 
     init {
+        _progress.value = true
         viewModelScope.launch {
             _spells.value = useCase.spells()
         }

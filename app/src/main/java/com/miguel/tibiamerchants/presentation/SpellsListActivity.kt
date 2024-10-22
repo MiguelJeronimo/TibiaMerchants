@@ -55,11 +55,10 @@ class SpellsListActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val pullToRefreshState = rememberPullToRefreshState()
+            val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
+            val progressState = remember { mutableStateOf(false) }
             TibiaMerchantsTheme {
-                val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
-                val progressState = remember { mutableStateOf(false) }
                 viewModel.spells.observe(this) {
-                    println("SPELLS: $it")
                     if (it != null) {
                         spellsDataState.value = it
                     } else {
@@ -69,7 +68,6 @@ class SpellsListActivity : ComponentActivity() {
                 }
 
                 viewModel.progress.observe(this){
-                    println("PROGRESS: $it")
                     if (it!= null){
                         progressState.value = it
                     }
