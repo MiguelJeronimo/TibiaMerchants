@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.data.network.retrofit
 
+import com.miguel.tibia_merchants_api.domain.models.ResponseItemProfile
 import com.miguel.tibiamerchants.domain.models.HouseHoldModel
 import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.ItemsModelsType
@@ -14,6 +15,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiClient {
 
@@ -46,6 +48,9 @@ interface ApiClient {
     //Spells list
     @GET("/api/v1/spells")
     suspend fun spellsList(): Response<ResponseSpells>
+
+    @POST("api/v1/items/type/{name}")
+    suspend fun itemProfile(@Path("name")name: String): Response<ResponseItemProfile>
 
 
 

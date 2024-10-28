@@ -1,5 +1,11 @@
 package com.miguel.tibia_merchants_api.domain.models
 
+
+data class ResponseItemProfile(
+    val statusCode: Int? = null,
+    val body: Profile? = null
+)
+
 data class Profile(
     var name: String? = null,
     var img: String? = null,
