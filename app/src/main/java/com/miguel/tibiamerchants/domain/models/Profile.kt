@@ -1,5 +1,7 @@
 package com.miguel.tibia_merchants_api.domain.models
 
+import com.google.gson.annotations.SerializedName
+
 
 data class ResponseItemProfile(
     val statusCode: Int? = null,
@@ -9,17 +11,26 @@ data class ResponseItemProfile(
 data class Profile(
     var name: String? = null,
     var img: String? = null,
-    var tibia_lengend: String? = null,
+    @SerializedName("tibia_lengend")
+    var tibiaLengend: String? = null,
     var notes: String? = null,
     var requeriments: Requeriments? = null,
-    var combat_propierties: CombatPropierties? = null,
-    var general_propierties: GeneralPropierties? = null,
-    var trader_propierties: TraderPropierties? = null,
-    var magic_properties: MagicProperties? = null,
-    var field_propierties: FieldPropierties? = null,
-    var other_propierties: OtherPropierties? = null,
-    var buy_from: ArrayList<BuyFrom>? = null,
-    var sell_from: ArrayList<SellFrom>? = null
+    @SerializedName("combat_propierties")
+    var combatPropierties: CombatPropierties? = null,
+    @SerializedName("general_propierties")
+    var generalPropierties: GeneralPropierties? = null,
+    @SerializedName("trader_propierties")
+    var traderPropierties: TraderPropierties? = null,
+    @SerializedName("magic_properties")
+    var magicProperties: MagicProperties? = null,
+    @SerializedName("field_propierties")
+    var fieldPropierties: FieldPropierties? = null,
+    @SerializedName("other_propierties")
+    var otherPropierties: OtherPropierties? = null,
+    @SerializedName("buy_from")
+    var buyFrom: ArrayList<BuyFrom>? = null,
+    @SerializedName("sell_from")
+    var sellFrom: ArrayList<SellFrom>? = null
 )
 
 data class BuyFrom(

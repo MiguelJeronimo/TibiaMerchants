@@ -49,8 +49,8 @@ interface ApiClient {
     @GET("/api/v1/spells")
     suspend fun spellsList(): Response<ResponseSpells>
 
-    @POST("api/v1/items/type/{name}")
-    suspend fun itemProfile(@Path("name")name: String): Response<ResponseItemProfile>
+    @GET("api/v1/item/{name}")
+    suspend fun itemProfile(@Path("name") name: String): Response<ResponseItemProfile>
 
 
 

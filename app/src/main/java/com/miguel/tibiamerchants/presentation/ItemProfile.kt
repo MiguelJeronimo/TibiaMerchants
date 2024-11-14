@@ -1,8 +1,6 @@
 package com.miguel.tibiamerchants.presentation
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,60 +26,47 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
-import com.miguel.tibiamerchants.presentation.Components.CardSpells
-import com.miguel.tibiamerchants.presentation.Components.CardSpellsRunes
-import com.miguel.tibiamerchants.presentation.Components.ToolBarSpells
-import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
-import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
+import com.miguel.tibiamerchants.presentation.Components.ToolBarItemsProfile
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
-class SpellsListActivity : ComponentActivity() {
+class ItemProfile : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory: ViewModelSpellsFactory by inject()
-        val viewModel = ViewModelProvider(this, factory)[ViewModelSpells::class.java]
-        viewModel.isBack.observe(this){
-            if (it){
-                finish()
-            }
-        }
         enableEdgeToEdge()
         setContent {
             val pullToRefreshState = rememberPullToRefreshState()
-            val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
             val progressState = remember { mutableStateOf(false) }
+            val nameIntent = remember { mutableStateOf("") }
+            val factory: ViewModelItemProfileFactory by inject ()
+            val viewModel = ViewModelProvider(this, factory)[ViewModelItemProfile::class.java]
+            val name = intent.getStringExtra("name")
+            if (name != null) {
+                nameIntent.value = name
+                println("NAMEEEEEEE: $name")
+            }
+            viewModel.setItemProfiel(nameIntent.value)
+            viewModel.itemProfile.observe(this){
+                println("DATAAA: ${it.body}")
+            }
             TibiaMerchantsTheme {
-                viewModel.spells.observe(this) {
-                    if (it != null) {
-                        spellsDataState.value = it
-                    } else {
-                        Toast.makeText(this, "Error, Error conection", Toast.LENGTH_SHORT).show()
-                    }
-                    viewModel.isProgress(false)
-                }
-
-                viewModel.progress.observe(this){
-                    if (it!= null){
-                        progressState.value = it
-                    }
-                }
-
-                Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)){
-                        ToolBarSpells("Spells", viewModel)
+                        ToolBarItemsProfile("Spells")
                         if (progressState.value){
                             ProgressIndicator()
                         }
-                        SwipeRefreshSpells(
-                            stateList = spellsDataState,
+                        SwipeRefreshItemProfile(
+                           // stateList = spellsDataState,
+                            nameIntent.value,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
                             modifier = Modifier.padding(innerPadding)
@@ -93,16 +78,55 @@ class SpellsListActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeRefreshItemProfile(
+    name: String? = null,
+    viewModel: ViewModelItemProfile? = null,
+    pullToRefreshState: PullToRefreshState?= null,
+    modifier: Modifier
+) {
+    val stateProgress = remember { mutableStateOf(false) }
+    if (pullToRefreshState!!.isRefreshing) {
+        viewModel?.loading(true)
+        LaunchedEffect(true) {
+            //
+            delay(1500)
+            viewModel?.loading(false)
+            pullToRefreshState.endRefresh()
+        }
+    }
+    //while to SwipeRefresh is executing
+    if (pullToRefreshState.progress>0.0){
+        stateProgress.value = true
+    }
+
+    Box(
+        Modifier
+            .padding(0.dp, 10.dp, 0.dp, 0.dp)
+            .fillMaxSize()
+    ) {
+        if (!pullToRefreshState.isRefreshing) {
+            //ListItemProfile(modifier!!, stateList)
+        }
+        if (stateProgress.value){
+            PullToRefreshContainer(
+                modifier = Modifier.align(Alignment.TopCenter),
+                state = pullToRefreshState
+            )
+            stateProgress.value = false
+        }
+    }
+}
 
 @Composable
-fun ListSpellsandRuneslist(
+fun ListItemProfile(
     modifier: Modifier = Modifier,
-    spellsDataState: MutableState<ResponseSpells>,
-    viewModel: ViewModelSpells,
+    spellsDataState: MutableState<ResponseSpells>? = null,
 ) {
     LazyColumn(modifier = modifier) {
         //val tools = items.body
-        val spells = spellsDataState.value.body?.spells
+        val spells = spellsDataState!!.value.body?.spells
         val runes = spellsDataState.value.body?.runes
         if (spells != null) {
             item {
@@ -116,10 +140,9 @@ fun ListSpellsandRuneslist(
                 }
             }
             items(spells.size) { item ->
-                CardSpells(
-                    modifier = modifier, item = spells[item],
-                    viewModel = viewModel
-                )
+//                CardSpells(
+//                    modifier = modifier, item = spells[item]
+//                )
             }
         }
 
@@ -135,59 +158,17 @@ fun ListSpellsandRuneslist(
                 }
             }
             items(runes.size) { item ->
-                CardSpellsRunes(
-                    modifier = modifier,
-                    item = runes[item],
-                    viewModel = viewModel
-                )
+//                CardSpellsRunes(
+//                    modifier = modifier,
+//                    item = runes[item]
+//                )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwipeRefreshSpells(
-    stateList: MutableState<ResponseSpells>,
-    viewModel: ViewModelSpells,
-    pullToRefreshState: PullToRefreshState,
-    modifier: Modifier,
-) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState.isRefreshing) {
-        viewModel.isProgress(true)
-        LaunchedEffect(true) {
-            viewModel.setSpells()
-            delay(1500)
-            viewModel.isProgress(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress>0.0){
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            ListSpellsandRuneslist(modifier, stateList, viewModel)
-        }
-        if (stateProgress.value){
-            PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState
-            )
-            stateProgress.value = false
-        }
-    }
-}
-
-@Composable
-fun     ProgressIndicator() {
+fun ProgressIndicatorItemProfile() {
     LinearProgressIndicator(
         Modifier
             .fillMaxWidth()
@@ -196,10 +177,18 @@ fun     ProgressIndicator() {
 }
 
 
+@Composable
+fun Greeting2(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview6() {
+fun GreetingPreview7() {
     TibiaMerchantsTheme {
-        ToolBarSpells("Spells", null)
+        Greeting2("Android")
     }
 }

@@ -233,42 +233,48 @@ fun SwipeRefreshItemsType(
             if (listItems.value.isNotEmpty()){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    body = listItems.value
+                    body = listItems.value,
+                    viewModel = viewModel
                 )
             }
 
             if (listItemsWapons.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    items = listItemsWapons.value
+                    items = listItemsWapons.value,
+                    viewModel = viewModel
                 )
             }
 
             if (listItemsHouseHold.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    items = listItemsHouseHold.value
+                    items = listItemsHouseHold.value,
+                    viewModel = viewModel
                 )
             }
 
             if (listPlantsAnimalsProductsFoodDrink.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    items = listPlantsAnimalsProductsFoodDrink.value
+                    items = listPlantsAnimalsProductsFoodDrink.value,
+                    viewModel = viewModel
                 )
             }
 
             if (listToolsAndOtherEquipment.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    items = listToolsAndOtherEquipment.value
+                    items = listToolsAndOtherEquipment.value,
+                    viewModel = viewModel
                 )
             }
 
             if (listOtherItems.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
                     modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
-                    items = listOtherItems.value
+                    items = listOtherItems.value,
+                    viewModel = viewModel
                 )
             }
         }
