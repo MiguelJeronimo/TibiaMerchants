@@ -10,7 +10,7 @@ import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 
 class UseCaseItemsType(private val repository: RepositoryItemsType) {
-        suspend fun itemsType(body: PostItemsType): ItemsModelsType? {
+    suspend fun itemsType(body: PostItemsType): ItemsModelsType? {
         return repository.itemsType(body)
     }
     suspend fun itemsTypeWeapons( body: PostItemsType): ItemsModelsTypeWeapons?{

@@ -1,11 +1,13 @@
 package com.miguel.tibiamerchants.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -21,15 +22,24 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
+import com.miguel.tibia_merchants_api.domain.models.Profile
+import com.miguel.tibiamerchants.presentation.Components.CardBuyFrom
+import com.miguel.tibiamerchants.presentation.Components.CardDetails
+import com.miguel.tibiamerchants.presentation.Components.CardHeaderItemInfo
+import com.miguel.tibiamerchants.presentation.Components.CardMagicPropierties
+import com.miguel.tibiamerchants.presentation.Components.CardOtherPropierties
+import com.miguel.tibiamerchants.presentation.Components.CardRequeriments
+import com.miguel.tibiamerchants.presentation.Components.CardSellFrom
+import com.miguel.tibiamerchants.presentation.Components.CardTibiaLegends
 import com.miguel.tibiamerchants.presentation.Components.ToolBarItemsProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
@@ -46,27 +56,36 @@ class ItemProfile : ComponentActivity() {
             val pullToRefreshState = rememberPullToRefreshState()
             val progressState = remember { mutableStateOf(false) }
             val nameIntent = remember { mutableStateOf("") }
-            val factory: ViewModelItemProfileFactory by inject ()
+            var profileState by remember { mutableStateOf(Profile()) }
+            val factory: ViewModelItemProfileFactory by inject()
             val viewModel = ViewModelProvider(this, factory)[ViewModelItemProfile::class.java]
             val name = intent.getStringExtra("name")
             if (name != null) {
                 nameIntent.value = name
-                println("NAMEEEEEEE: $name")
             }
             viewModel.setItemProfiel(nameIntent.value)
-            viewModel.itemProfile.observe(this){
-                println("DATAAA: ${it.body}")
+            viewModel.itemProfile.observe(this) {
+                if (it != null) {
+                    profileState = it.body!!
+                } else {
+                    Toast.makeText(this, "Error, profile not found", Toast.LENGTH_SHORT).show()
+                }
+                viewModel.loading(false)
             }
+            viewModel.isLoading.observe(this){
+                progressState.value = it
+            }
+
             TibiaMerchantsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column (modifier = Modifier.padding(innerPadding)){
-                        ToolBarItemsProfile("Spells")
-                        if (progressState.value){
-                            ProgressIndicator()
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        ToolBarItemsProfile(nameIntent.value)
+                        if (progressState.value) {
+                            ProgressIndicatorItemProfile()
                         }
                         SwipeRefreshItemProfile(
-                           // stateList = spellsDataState,
-                            nameIntent.value,
+                            profileState = profileState,
+                            name = nameIntent.value,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
                             modifier = Modifier.padding(innerPadding)
@@ -83,21 +102,22 @@ class ItemProfile : ComponentActivity() {
 fun SwipeRefreshItemProfile(
     name: String? = null,
     viewModel: ViewModelItemProfile? = null,
-    pullToRefreshState: PullToRefreshState?= null,
-    modifier: Modifier
+    pullToRefreshState: PullToRefreshState? = null,
+    modifier: Modifier,
+    profileState: Profile,
 ) {
     val stateProgress = remember { mutableStateOf(false) }
     if (pullToRefreshState!!.isRefreshing) {
         viewModel?.loading(true)
         LaunchedEffect(true) {
-            //
+            viewModel?.setItemProfiel(name!!)
             delay(1500)
             viewModel?.loading(false)
             pullToRefreshState.endRefresh()
         }
     }
     //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress>0.0){
+    if (pullToRefreshState.progress > 0.0) {
         stateProgress.value = true
     }
 
@@ -107,9 +127,12 @@ fun SwipeRefreshItemProfile(
             .fillMaxSize()
     ) {
         if (!pullToRefreshState.isRefreshing) {
-            //ListItemProfile(modifier!!, stateList)
+            ProfileComposable(
+                modifier = modifier,
+                profileState = profileState
+            )
         }
-        if (stateProgress.value){
+        if (stateProgress.value) {
             PullToRefreshContainer(
                 modifier = Modifier.align(Alignment.TopCenter),
                 state = pullToRefreshState
@@ -120,52 +143,57 @@ fun SwipeRefreshItemProfile(
 }
 
 @Composable
-fun ListItemProfile(
+fun ProfileComposable(
     modifier: Modifier = Modifier,
-    spellsDataState: MutableState<ResponseSpells>? = null,
+    profileState: Profile,
 ) {
     LazyColumn(modifier = modifier) {
         //val tools = items.body
-        val spells = spellsDataState!!.value.body?.spells
-        val runes = spellsDataState.value.body?.runes
-        if (spells != null) {
-            item {
-                Column {
-                    Text(
-                        text = "Spells",
-                        Modifier.align(Alignment.CenterHorizontally),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+        item {
+            Column {
+                CardHeaderItemInfo(profile = profileState)
+                HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                //CardNotes(profile = profileState)
+                Row(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    com.miguel.tibiamerchants.presentation.Components.ChipFilter("Buy for", null)
+                    com.miguel.tibiamerchants.presentation.Components.ChipFilter("Sell to", null)
+                }
+                CardDetails(profile = profileState)
+                profileState.requeriments?.let {
+                    CardRequeriments(profileState.requeriments)
+                }
+                profileState.otherPropierties?.let {
+                    CardOtherPropierties(profileState.otherPropierties)
+                }
+
+                profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties)  }
+                profileState.tibiaLengend?.let {
+                    CardTibiaLegends(it)
                 }
             }
-            items(spells.size) { item ->
-//                CardSpells(
-//                    modifier = modifier, item = spells[item]
-//                )
+        }
+        profileState.buyFrom?.let {
+            val buyFrom = profileState.buyFrom
+            if (buyFrom != null) {
+                items(buyFrom.size) { buy ->
+                    CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
+                }
             }
         }
 
-        if (runes != null){
-            item {
-                Column {
-                    Text(
-                        text = "Runes",
-                        Modifier.align(Alignment.CenterHorizontally),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+        profileState.sellFrom?.let {
+            val sellFrom = profileState.sellFrom
+            if (sellFrom != null) {
+                items(sellFrom.size) { buy ->
+                    CardSellFrom(sellFrom = profileState.sellFrom!![buy])
                 }
-            }
-            items(runes.size) { item ->
-//                CardSpellsRunes(
-//                    modifier = modifier,
-//                    item = runes[item]
-//                )
             }
         }
     }
 }
+
 
 @Composable
 fun ProgressIndicatorItemProfile() {

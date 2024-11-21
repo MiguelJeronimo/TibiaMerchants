@@ -5,9 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -15,7 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -38,109 +35,163 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.miguel.tibia_merchants_api.domain.models.BuyFrom
+import com.miguel.tibia_merchants_api.domain.models.CombatPropierties
+import com.miguel.tibia_merchants_api.domain.models.FieldPropierties
+import com.miguel.tibia_merchants_api.domain.models.GeneralPropierties
+import com.miguel.tibia_merchants_api.domain.models.MagicProperties
+import com.miguel.tibia_merchants_api.domain.models.OtherPropierties
+import com.miguel.tibia_merchants_api.domain.models.Profile
+import com.miguel.tibia_merchants_api.domain.models.Requeriments
+import com.miguel.tibia_merchants_api.domain.models.SellFrom
+import com.miguel.tibia_merchants_api.domain.models.TraderPropierties
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardHeaderItemInfo() {
-    Box(Modifier.fillMaxWidth().padding(10.dp)) {
+fun CardHeaderItemInfo(profile: Profile? = null) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(10.dp)) {
         Card (
             modifier = Modifier.padding(start = 35.dp)
         ){
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(5.dp),
             ) {
-                Text(
-                    text = "Demon Shield",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "Level: 400",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 3.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "Vocation: Paladin",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 3.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "Clasification: Body Equipment",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 3.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                println("Profileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee: ${profile?.name}")
+                println("Profileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee: $profile")
+                profile?.name?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 5.dp),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                if (profile?.requeriments != null){
+                    profile.requeriments?.level.let{
+                        Text(
+                            text = "Level: $it",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 3.dp),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    profile.requeriments?.vocation.let {
+                        Text(
+                            text = "Vocation: $it",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 3.dp),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                }
+                if (profile?.generalPropierties != null){
+                    profile.generalPropierties?.classification.let {
+                        Text(
+                            text = "Classification: $it",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 3.dp),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             }
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.swift_shop_logo),
-            contentDescription = "demon logo",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .size(80.dp)
-                .clip(CircleShape)
-                .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-        )
+        profile?.img?.let {
+            GlideImage(
+                model = it,
+                contentDescription = "demon logo",
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+        }
     }
 }
 
 
 //Card details
 @Composable
-fun CardDetails() {
+fun CardDetails(profile: Profile? = null) {
     Card(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column {
-            GeneralPropierties()
-            HorizontalDivider(
-                modifier = Modifier.padding(
-                    top = 5.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 5.dp
-                ),
-            )
-            CompatPropierties()
-            HorizontalDivider(
-                modifier = Modifier.padding(
-                    top = 5.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 5.dp
-                ),
-            )
-            TradePropierties()
-            HorizontalDivider(
-                modifier = Modifier.padding(
-                    top = 5.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 5.dp
-                ),
-            )
-            FieldPropierties()
+            profile?.generalPropierties?.let {
+                CardGeneralPropierties(profile.generalPropierties)
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = 5.dp
+                    )
+                )
+            }
+
+            profile?.combatPropierties?.let {
+                CompatPropierties(profile.combatPropierties)
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = 5.dp
+                    ),
+                )
+            }
+
+            profile?.traderPropierties?.let{
+                TradePropierties(profile.traderPropierties)
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        top = 5.dp,
+                        start = 20.dp,
+                        end = 20.dp,
+                        bottom = 5.dp
+                    ),
+                )
+            }
+
+            profile?.fieldPropierties?.let {
+                CardFieldPropierties(profile.fieldPropierties)
+            }
         }
     }
 }
 
 @Composable
-fun CardNotes(){
+fun CardNotes(profile: Profile? = null) {
     OutlinedCard(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column {
+
             Text(
                 text = "Notes",
                 modifier = Modifier
@@ -148,21 +199,27 @@ fun CardNotes(){
                     .padding(top = 5.dp),
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Part of the Alicorn Set.\nIt is a possible reward of the Primal Ordeal Quest, which guarantees one random item from the Primal Set through the Hazard System.\n",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
+
+            profile?.notes?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CardRequeriments(){
+fun CardRequeriments(requeriments: Requeriments? = null){
     Card(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -174,35 +231,45 @@ fun CardRequeriments(){
                     .padding(top = 5.dp),
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Level: 33",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Vocation: sorcerers",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = "Magic level: 34",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
+
+            requeriments?.level?.let {
+                Text(
+                    text = "Level: $it",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            requeriments?.vocation?.let {
+                Text(
+                    text = "Vocation: $it",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            requeriments?.magic_level?.let {
+                Text(
+                    text = "Magic level: $it",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CardOtherPropierties(){
+fun CardOtherPropierties(otherPropierties: OtherPropierties? = null) {
     Card(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -214,21 +281,26 @@ fun CardOtherPropierties(){
                     .padding(top = 5.dp),
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Version: 7.6 December 12, 2005 Christmas Update 2005",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
+            otherPropierties?.version?.let {
+                Text(
+                    text = "Version: $it",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CardMagicPropierties(){
+fun CardMagicPropierties( magicProperties: MagicProperties? = null){
     ElevatedCard(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -240,60 +312,74 @@ fun CardMagicPropierties(){
                     .padding(top = 5.dp),
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Words: exevo gran mas flam",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
+            magicProperties?.let {
+                Text(
+                    text = "Words: $it",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CardTibiaLegends(){
+fun CardTibiaLegends(tibiaLegend:String? = null){
     OutlinedCard(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "You see a wand of inferno. Classification: 1 Tier: 0. It can only be wielded properly by sorcerers of level 33 or higher. It weighs 27.00 oz. It unleashes the very fires of hell.",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 10.dp),
-                style = MaterialTheme.typography.bodySmall
-            )
+            tibiaLegend?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 10.dp),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
 
 @Composable
-fun GeneralPropierties(){
+fun CardGeneralPropierties(generalPropierties: GeneralPropierties? = null) {
     Box (
         Modifier.fillMaxWidth()
     ){
         Row(
-            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+            modifier = Modifier
+                .padding(5.dp)
+                .align(Alignment.TopCenter)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.github),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp).align(Alignment.CenterVertically)
+                    .size(20.dp)
+                    .align(Alignment.CenterVertically)
                     //.clip(CircleShape)
                     .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
-                modifier = Modifier.padding(5.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterVertically),
                 text = "General Propierties",
                 style = MaterialTheme.typography.labelLarge
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(
                     top = 45.dp,
                     start = 10.dp,
@@ -303,57 +389,87 @@ fun GeneralPropierties(){
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Weight: 39.0 oz",
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Set Part: Alicon Set",
-                    style = MaterialTheme.typography.labelSmall
-                )
+               generalPropierties?.weight?.let {
+                   Text(
+                       modifier = Modifier.padding(5.dp),
+                       text = "Weight: $it",
+                       style = MaterialTheme.typography.labelSmall
+                   )
+               }
+                generalPropierties?.also_known_as?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Set Part: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+                generalPropierties?.item_class?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Item Class: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
             Column {
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Pickuable: x",
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Stackeable: x",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                //x
+                generalPropierties?.pickupable?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Pickuable: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+                generalPropierties?.stackable?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Stackeable: x",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+                generalPropierties?.origin?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Origin: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun CompatPropierties(){
+fun CompatPropierties(combatPropierties: CombatPropierties? = null) {
     Box (
         Modifier.fillMaxWidth()
     ){
         Row(
-            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+            modifier = Modifier
+                .padding(5.dp)
+                .align(Alignment.TopCenter)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.github),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp).align(Alignment.CenterVertically)
+                    .size(20.dp)
+                    .align(Alignment.CenterVertically)
                     //.clip(CircleShape)
                     .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
-                modifier = Modifier.padding(5.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterVertically),
                 text = "Combat Propierties",
                 style = MaterialTheme.typography.labelLarge
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(
                     top = 45.dp,
                     start = 10.dp,
@@ -363,72 +479,99 @@ fun CompatPropierties(){
             Column(
                 modifier = Modifier
             ) {
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Embuing Slots: 2",
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Upgrade Classification: 4",
-                    style = MaterialTheme.typography.labelSmall
-                )
 
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Attributes: distance fighting +3",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                combatPropierties?.imbuing_slots?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Embuing Slots: 2",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                combatPropierties?.upgrade_classification?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Upgrade Classification: 4",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                combatPropierties?.attributes?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Attributes: distance fighting +3",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
-                    text = "Armor: 11",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                combatPropierties?.armor?.let{
+                    Text(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .align(Alignment.End),
+                        text = "Armor: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
 
-                Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
-                    text = "Protection/Resist: fire +5%, earth +5%, energy +5%, ice +5%, holy +5%, death +5%, physical +5%",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                combatPropierties?.resists?.let{
+                    Text(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .align(Alignment.End),
+                        text = "Protection/Resist: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
 
-                Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
-                    text = "Element: x",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                combatPropierties?.element?.let{
+                    Text(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .align(Alignment.End),
+                        text = "Element: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun TradePropierties(){
+fun TradePropierties(traderPropierties: TraderPropierties?= null){
     Box (
         Modifier.fillMaxWidth()
     ){
         Row(
-            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+            modifier = Modifier
+                .padding(5.dp)
+                .align(Alignment.TopCenter)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.github),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp).align(Alignment.CenterVertically)
+                    .size(20.dp)
+                    .align(Alignment.CenterVertically)
                     //.clip(CircleShape)
                     .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
-                modifier = Modifier.padding(5.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterVertically),
                 text = "Trade Propierties",
                 style = MaterialTheme.typography.labelLarge
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(
                     top = 45.dp,
                     start = 10.dp,
@@ -438,11 +581,14 @@ fun TradePropierties(){
             Column(
                 modifier = Modifier
             ) {
-                Text(
-                    modifier = Modifier.padding(5.dp),
-                    text = "Marketable: X",
-                    style = MaterialTheme.typography.labelSmall
-                )
+                traderPropierties?.marketable?.let {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "Marketable: $it",
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
                 Text(
                     modifier = Modifier.padding(5.dp),
                     text = "Value: Negotiable gp gp",
@@ -459,19 +605,25 @@ fun TradePropierties(){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.End),
                     text = "Bought for: (not sold by NPCs)",
                     style = MaterialTheme.typography.labelSmall
                 )
 
                 Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.End),
                     text = "Loot value: 50000 gol coins",
                     style = MaterialTheme.typography.labelSmall
                 )
 
                 Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.End),
                     text = "Store price: 50 tc",
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -481,29 +633,36 @@ fun TradePropierties(){
 }
 
 @Composable
-fun FieldPropierties(){
+fun CardFieldPropierties(fieldPropierties: FieldPropierties? = null){
     Box (
         Modifier.fillMaxWidth()
     ){
         Row(
-            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+            modifier = Modifier
+                .padding(5.dp)
+                .align(Alignment.TopCenter)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.github),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp).align(Alignment.CenterVertically)
+                    .size(20.dp)
+                    .align(Alignment.CenterVertically)
                     //.clip(CircleShape)
                     .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
-                modifier = Modifier.padding(5.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterVertically),
                 text = "Field Propierties",
                 style = MaterialTheme.typography.labelLarge
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(
                     top = 45.dp,
                     start = 10.dp,
@@ -524,7 +683,9 @@ fun FieldPropierties(){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    modifier = Modifier.padding(5.dp).align(Alignment.End),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.End),
                     text = "Light: 3 sqm",
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -564,9 +725,12 @@ fun ChipFilter(text: String, state: MutableState<Boolean>?){
 
 //CardsList buy from, sell from
 @Composable
-fun CardBuyFrom(){
+fun CardBuyFrom(buyFrom: BuyFrom? = null){
     Card(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight()
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
     ){
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -574,18 +738,24 @@ fun CardBuyFrom(){
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = "Haroun",
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 10.dp).fillMaxWidth(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "Location: Ashta'daramai",
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp).fillMaxWidth(),
-                    style = MaterialTheme.typography.titleSmall
-                )
+                buyFrom?.npc?.let{
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                buyFrom?.location?.let {
+                    Text(
+                        text = "Location: $it",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
             Row(
                 modifier = Modifier.align(Alignment.CenterVertically)
@@ -597,20 +767,25 @@ fun CardBuyFrom(){
                         .size(10.dp)
                         .align(Alignment.CenterVertically)
                 )
-                Text(
-                    text = "Price: 10000000 gp",
-                    modifier = Modifier
-                        .padding(10.dp),
-                    style = MaterialTheme.typography.titleSmall
-                )
+                buyFrom?.price?.let {
+                    Text(
+                        text = "Price: $it gp",
+                        modifier = Modifier
+                            .padding(10.dp),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
         }
     }
 }
 @Composable
-fun CardSellFrom(){
+fun CardSellFrom(sellFrom: SellFrom? = null){
     Card(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().wrapContentHeight()
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
     ){
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -618,18 +793,24 @@ fun CardSellFrom(){
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = "Haroun",
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, top = 10.dp).fillMaxWidth(),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "Location: Ashta'daramai",
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp).fillMaxWidth(),
-                    style = MaterialTheme.typography.titleSmall
-                )
+                sellFrom?.npc?.let{
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                sellFrom?.location?.let {
+                    Text(
+                        text = "Location: $it",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
             Row(
                 modifier = Modifier.align(Alignment.CenterVertically)
@@ -641,12 +822,14 @@ fun CardSellFrom(){
                         .size(10.dp)
                         .align(Alignment.CenterVertically)
                 )
-                Text(
-                    text = "Price: 10000000 gp",
-                    modifier = Modifier
-                        .padding(10.dp),
-                    style = MaterialTheme.typography.titleSmall
-                )
+                sellFrom?.price?.let {
+                    Text(
+                        text = "Price: $it gp",
+                        modifier = Modifier
+                            .padding(10.dp),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
             }
         }
     }

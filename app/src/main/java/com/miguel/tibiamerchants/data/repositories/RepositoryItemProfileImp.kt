@@ -8,6 +8,7 @@ class RepositoryItemProfileImp(private val retrofit: ApiClient): RepositoryItems
     override suspend fun item(name: String): ResponseItemProfile? {
         return try {
             val response = retrofit.itemProfile(name)
+            println("RESPONSE: ${response.body()}")
             val item = when(response.code()){
                 200->response.body()
                 else-> null

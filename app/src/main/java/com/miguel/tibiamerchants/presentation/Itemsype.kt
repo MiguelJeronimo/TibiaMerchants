@@ -1,6 +1,7 @@
 package com.miguel.tibiamerchants.presentation
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -83,14 +84,21 @@ class Itemsype : ComponentActivity() {
                     "weapons"-> viewModel.setItemsWeapons(PostItemsType(titleState.value, nameState.value))
                     "household items"-> viewModel.setItemsHouseHold(PostItemsType(titleState.value, nameState.value))
                     "plants, animal products, food and drink"-> viewModel.setPlantsAnimalsProductsFoodDrink(
-                        PostItemsType(titleState.value, nameState.value)
-                    )
-                    "tools and other equipment"-> viewModel.setItemsToolsAndOthers(PostItemsType(titleState.value, nameState.value))
-                    "other items"-> viewModel.setItemsOtherItems(PostItemsType(titleState.value, nameState.value))
-                    else->{
-                        viewModel.setItems(PostItemsType(titleState.value, nameState.value))
-                    }
+                PostItemsType(titleState.value, nameState.value)
+                )
+                "tools and other equipment"-> viewModel.setItemsToolsAndOthers(PostItemsType(titleState.value, nameState.value))
+                "other items"-> viewModel.setItemsOtherItems(PostItemsType(titleState.value, nameState.value))
+                else->{
+                viewModel.setItems(PostItemsType(titleState.value, nameState.value))
+            }
+            }
+
+            viewModel.name.observe(this){ name ->
+                Intent(this, ItemProfile::class.java).also {
+                    it.putExtra("name", name)
+                    startActivity(it)
                 }
+            }
 
                 viewModel.isVisibleProgressBar.observe(this){
                     if (it != null){
@@ -184,7 +192,7 @@ fun ProgressIndicatorItemsType() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwipeRefreshItemsType(
+fun     SwipeRefreshItemsType(
     listItems: MutableState<ArrayList<BodyItemstype>>,
     viewModel: ViewModeltemsType,
     pullToRefreshState: PullToRefreshState,
@@ -225,7 +233,7 @@ fun SwipeRefreshItemsType(
     }
 
     Box(
-            Modifier
+        Modifier
             .padding(0.dp, 10.dp, 0.dp, 0.dp)
             .fillMaxSize()
     ) {

@@ -37,8 +37,8 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType) : ViewMo
     private val _back = MutableLiveData<Boolean>()
     val back: MutableLiveData<Boolean> = _back
 
-    private val name = MutableLiveData<String>()
-    val nameUser: MutableLiveData<String> = name
+    private val _name = MutableLiveData<String>()
+    val name: MutableLiveData<String> = _name
 
     fun setName(name: String?){
         this.name.value = name
