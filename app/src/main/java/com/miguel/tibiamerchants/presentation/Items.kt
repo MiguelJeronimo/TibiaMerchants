@@ -89,9 +89,11 @@ class Items : ComponentActivity() {
                     }
                     viewModel.setProgressBar(false)
                 })
+
                 viewModel.isVisibleProgressBar.observe(this, Observer {
                     stateProgressBar.value = it
                 })
+
                 Scaffold(
                     modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
                 ) { innerPadding ->

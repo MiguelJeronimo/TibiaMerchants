@@ -45,14 +45,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import org.koin.android.ext.android.inject
 
 class About : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewmodel = ViewModelProvider(this)[ViewModelNPC::class.java]
+        val factory: ViewModelNPCFactory by inject()
+        val viewmodel = ViewModelProvider(this, factory)[ViewModelNPC::class.java]
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {

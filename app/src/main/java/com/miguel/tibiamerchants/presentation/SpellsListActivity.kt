@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -55,11 +56,10 @@ class SpellsListActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val pullToRefreshState = rememberPullToRefreshState()
+            val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
+            val progressState = remember { mutableStateOf(false) }
             TibiaMerchantsTheme {
-                val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
-                val progressState = remember { mutableStateOf(false) }
                 viewModel.spells.observe(this) {
-                    println("SPELLS: $it")
                     if (it != null) {
                         spellsDataState.value = it
                     } else {
@@ -69,7 +69,6 @@ class SpellsListActivity : ComponentActivity() {
                 }
 
                 viewModel.progress.observe(this){
-                    println("PROGRESS: $it")
                     if (it!= null){
                         progressState.value = it
                     }
@@ -99,6 +98,7 @@ class SpellsListActivity : ComponentActivity() {
 fun ListSpellsandRuneslist(
     modifier: Modifier = Modifier,
     spellsDataState: MutableState<ResponseSpells>,
+    viewModel: ViewModelSpells,
 ) {
     LazyColumn(modifier = modifier) {
         //val tools = items.body
@@ -117,7 +117,8 @@ fun ListSpellsandRuneslist(
             }
             items(spells.size) { item ->
                 CardSpells(
-                    modifier = modifier, item = spells[item]
+                    modifier = modifier, item = spells[item],
+                    viewModel = viewModel
                 )
             }
         }
@@ -136,7 +137,8 @@ fun ListSpellsandRuneslist(
             items(runes.size) { item ->
                 CardSpellsRunes(
                     modifier = modifier,
-                    item = runes[item]
+                    item = runes[item],
+                    viewModel = viewModel
                 )
             }
         }
@@ -172,7 +174,7 @@ fun SwipeRefreshSpells(
             .fillMaxSize()
     ) {
         if (!pullToRefreshState.isRefreshing) {
-            ListSpellsandRuneslist(modifier, stateList)
+            ListSpellsandRuneslist(modifier, stateList, viewModel)
         }
         if (stateProgress.value){
             PullToRefreshContainer(
@@ -185,7 +187,7 @@ fun SwipeRefreshSpells(
 }
 
 @Composable
-fun ProgressIndicator() {
+fun     ProgressIndicator() {
     LinearProgressIndicator(
         Modifier
             .fillMaxWidth()

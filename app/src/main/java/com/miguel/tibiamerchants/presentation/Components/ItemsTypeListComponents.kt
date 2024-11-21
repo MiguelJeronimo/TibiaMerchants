@@ -32,21 +32,24 @@ import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.models.spells.Runes
 import com.miguel.tibiamerchants.domain.models.spells.Spell
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 
 @Composable
-fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?){
+fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, viewModel: ViewModeltemsType){
     LazyColumn(modifier = modifier) {
         items(body!!.size){item->
             CardItems(
                 modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
-                item = body[item]
+                item = body[item],
+                viewModel = viewModel
             )
         }
     }
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
+fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: ViewModeltemsType) {
     println("WEAPONS ${items.body?.weapons}")
     println("WEAPONS ${items.body?.weaponsChargedReplicas}")
     println("WEAPONS ${items.body?.weaponsEnchantedReplicas}")
@@ -66,7 +69,8 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
             items(weapons!!.size) { item ->
                 CardItems(
                     modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
-                    item = weapons[item]
+                    item = weapons[item],
+                    viewModel = viewModel
                 )
             }
         }
@@ -85,7 +89,8 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
             items(weaponsChargedReplicas!!.size){item->
                 CardItems(
                     modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
-                    item = weaponsChargedReplicas[item]
+                    item = weaponsChargedReplicas[item],
+                    viewModel = viewModel
                 )
             }
         }
@@ -104,7 +109,8 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
             items(weaponsChargedReplicas!!.size){item->
                 CardItems(
                     modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
-                    item = weaponsChargedReplicas[item]
+                    item = weaponsChargedReplicas[item],
+                    viewModel = viewModel
                 )
             }
         }
@@ -112,7 +118,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: HouseHoldModel) {
+fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltemsType) {
     LazyColumn(modifier = modifier) {
         val houseHold = items.body
         item {
@@ -128,7 +134,8 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel) {
         items(houseHold?.items!!.size) { item ->
             CardItems(
                 modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
-                item = houseHold.items[item]
+                item = houseHold.items[item],
+                viewModel = viewModel
             )
         }
 
@@ -136,7 +143,7 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel) {
 }
 //others items list
 @Composable
-fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink) {
+fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewModel: ViewModeltemsType) {
     LazyColumn(modifier = modifier) {
         val others = items.body
         item {
@@ -152,7 +159,8 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink) {
         items(others?.items!!.size) { item ->
             CardItem(
                 modifier = modifier,
-                item = others.items[item]
+                item = others.items[item],
+                viewModel = viewModel
             )
         }
     }
@@ -160,7 +168,7 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink) {
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel) {
+fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel: ViewModeltemsType) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -175,7 +183,8 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel) {
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item]
+                modifier = modifier, item = tools.items[item],
+                viewModel = viewModel
             )
         }
     }
@@ -183,7 +192,7 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel) {
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: OtherItemsModel) {
+fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModeltemsType) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -198,21 +207,25 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel) {
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item]
+                modifier = modifier, item = tools.items[item],
+                viewModel = viewModel
             )
         }
     }
 }
 
+
+/// CARDS
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstype?){
+fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltemsType){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name) }
     ) {
         Column(
             modifier = Modifier
@@ -281,13 +294,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?){
 **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?){
+fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewModeltemsType){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -386,13 +400,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?){
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: HouseHold){
+fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -451,9 +466,10 @@ fun CardItems(modifier: Modifier, item: HouseHold){
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItem(modifier: Modifier, item: ItemOtherPlants){
+fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltemsType){
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -506,13 +522,14 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants){
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?){
+fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: ViewModeltemsType){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -587,13 +604,14 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?){
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: OtherItem?){
+fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { viewModel.setName(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -682,13 +700,14 @@ fun CardItems(modifier: Modifier, item: OtherItem?){
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpells(modifier: Modifier, item:  Spell?){
+fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+       onClick = { viewModel.setNameSpell(item!!.name)}
     ) {
         Column(
             modifier = Modifier
@@ -759,13 +778,14 @@ fun CardSpells(modifier: Modifier, item:  Spell?){
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpellsRunes(modifier: Modifier, item: Runes){
+fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
-        modifier = modifier
+        modifier = modifier,
+        onClick = { /*viewModel.setNameSpell(item.name)*/}
     ) {
         Column(
             modifier = Modifier

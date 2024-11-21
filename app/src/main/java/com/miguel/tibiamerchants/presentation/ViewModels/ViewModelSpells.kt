@@ -17,7 +17,15 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
     private val _isBack = MutableLiveData<Boolean>()
     val isBack: MutableLiveData<Boolean>get() = _isBack
 
+    private val name = MutableLiveData<String>()
+    val nameSpell: MutableLiveData<String> = name
+
+    fun setNameSpell(nameSpell: String?){
+        this.name.value = nameSpell
+    }
+
     init {
+        _progress.value = true
         viewModelScope.launch {
             _spells.value = useCase.spells()
         }
@@ -30,6 +38,7 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
     fun setSpells(){
         viewModelScope.launch { _spells.value = useCase.spells() }
     }
+
 
     fun isProgress(value: Boolean){
         _progress.value = value
