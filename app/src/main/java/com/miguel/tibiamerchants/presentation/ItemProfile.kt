@@ -22,6 +22,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,8 @@ class ItemProfile : ComponentActivity() {
             val progressState = remember { mutableStateOf(false) }
             val nameIntent = remember { mutableStateOf("") }
             var profileState by remember { mutableStateOf(Profile()) }
+            val stateChipBuyFrom = remember { mutableStateOf(false) }
+            val stateChipSellTo = remember { mutableStateOf(false) }
             val factory: ViewModelItemProfileFactory by inject()
             val viewModel = ViewModelProvider(this, factory)[ViewModelItemProfile::class.java]
             val name = intent.getStringExtra("name")
@@ -85,6 +88,8 @@ class ItemProfile : ComponentActivity() {
                         }
                         SwipeRefreshItemProfile(
                             profileState = profileState,
+                            stateChipBuyFrom = stateChipBuyFrom,
+                            stateChipSellTo = stateChipSellTo,
                             name = nameIntent.value,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
@@ -105,6 +110,8 @@ fun SwipeRefreshItemProfile(
     pullToRefreshState: PullToRefreshState? = null,
     modifier: Modifier,
     profileState: Profile,
+    stateChipBuyFrom: MutableState<Boolean>,
+    stateChipSellTo: MutableState<Boolean>,
 ) {
     val stateProgress = remember { mutableStateOf(false) }
     if (pullToRefreshState!!.isRefreshing) {
@@ -129,13 +136,15 @@ fun SwipeRefreshItemProfile(
         if (!pullToRefreshState.isRefreshing) {
             ProfileComposable(
                 modifier = modifier,
-                profileState = profileState
+                profileState = profileState,
+                stateChipBuyFrom = stateChipBuyFrom,
+                stateChipSellTo = stateChipSellTo
             )
         }
         if (stateProgress.value) {
             PullToRefreshContainer(
                 modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState
+                state = pullToRefreshState,
             )
             stateProgress.value = false
         }
@@ -146,48 +155,77 @@ fun SwipeRefreshItemProfile(
 fun ProfileComposable(
     modifier: Modifier = Modifier,
     profileState: Profile,
+    stateChipBuyFrom: MutableState<Boolean>,
+    stateChipSellTo: MutableState<Boolean>,
 ) {
     LazyColumn(modifier = modifier) {
         //val tools = items.body
-        item {
-            Column {
-                CardHeaderItemInfo(profile = profileState)
-                HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                //CardNotes(profile = profileState)
-                Row(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    com.miguel.tibiamerchants.presentation.Components.ChipFilter("Buy for", null)
-                    com.miguel.tibiamerchants.presentation.Components.ChipFilter("Sell to", null)
-                }
-                CardDetails(profile = profileState)
-                profileState.requeriments?.let {
-                    CardRequeriments(profileState.requeriments)
-                }
-                profileState.otherPropierties?.let {
-                    CardOtherPropierties(profileState.otherPropierties)
-                }
+        if (profileState.name != null){
+            item {
+                Column {
+                    CardHeaderItemInfo(profile = profileState)
+                    HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                    //CardNotes(profile = profileState)
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        com.miguel.tibiamerchants.presentation.Components.ChipFilter("Buy for", state = stateChipBuyFrom)
+                        com.miguel.tibiamerchants.presentation.Components.ChipFilter("Sell to", state = stateChipSellTo)
+                    }
+                    CardDetails(profile = profileState)
+                    profileState.requeriments?.let {
+                        CardRequeriments(profileState.requeriments)
+                    }
+                    profileState.otherPropierties?.let {
+                        CardOtherPropierties(profileState.otherPropierties)
+                    }
 
-                profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties)  }
-                profileState.tibiaLengend?.let {
-                    CardTibiaLegends(it)
-                }
-            }
-        }
-        profileState.buyFrom?.let {
-            val buyFrom = profileState.buyFrom
-            if (buyFrom != null) {
-                items(buyFrom.size) { buy ->
-                    CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
+                    profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties)  }
+                    profileState.tibiaLengend?.let {
+                        CardTibiaLegends(it)
+                    }
                 }
             }
         }
 
-        profileState.sellFrom?.let {
-            val sellFrom = profileState.sellFrom
-            if (sellFrom != null) {
-                items(sellFrom.size) { buy ->
-                    CardSellFrom(sellFrom = profileState.sellFrom!![buy])
+        if (stateChipBuyFrom.value){
+            profileState.buyFrom?.let {
+                item {
+                    Column {
+                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                        Text(
+                            text = "Buy from",
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
+                        )
+                    }
+                }
+                val buyFrom = profileState.buyFrom
+                if (buyFrom != null) {
+                    items(buyFrom.size) { buy ->
+                        CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
+                    }
+                }
+            }
+        }
+
+        if (stateChipSellTo.value){
+            profileState.sellFrom?.let {
+                item {
+                    Column {
+                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
+                        Text(
+                            text = "Sell to",
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
+                        )
+                    }
+                }
+                val sellFrom = profileState.sellFrom
+                if (sellFrom != null) {
+                    items(sellFrom.size) { buy ->
+                        CardSellFrom(sellFrom = profileState.sellFrom!![buy])
+                    }
                 }
             }
         }

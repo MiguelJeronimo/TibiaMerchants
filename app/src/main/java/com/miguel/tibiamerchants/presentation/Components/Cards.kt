@@ -696,7 +696,7 @@ fun CardFieldPropierties(fieldPropierties: FieldPropierties? = null){
 
 /// chips
 @Composable
-fun ChipFilter(text: String, state: MutableState<Boolean>?){
+fun ChipFilter(text: String, state: MutableState<Boolean>? = null){
     var selected by rememberSaveable { mutableStateOf(true) }
     state?.value = selected
     FilterChip(
