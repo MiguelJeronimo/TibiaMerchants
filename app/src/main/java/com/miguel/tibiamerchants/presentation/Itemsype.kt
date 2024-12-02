@@ -69,46 +69,83 @@ class Itemsype : ComponentActivity() {
                 val listItemsWapons = remember { mutableStateOf(ItemsModelsTypeWeapons()) }
                 val listItemsHouseHold = remember { mutableStateOf(HouseHoldModel()) }
 
-                val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
+                val spellsDataState = remember { mutableStateOf(ResponseSpells()) }
                 val progressState = remember { mutableStateOf(false) }
 
-                val listPlantsAnimalsProductsFoodDrink = remember { mutableStateOf(
-                    PlantsAnimalsProductsFoodDrink()
-                ) }
-                val listToolsAndOtherEquipment = remember { mutableStateOf(
-                    ToolsAndOtherEquipmentModel()
-                ) }
-                val listOtherItems = remember { mutableStateOf(OtherItemsModel()) }
-                when(titleState.value?.lowercase()){
-                    "body equipment"-> viewModel.setItems(PostItemsType(titleState.value, nameState.value))
-                    "weapons"-> viewModel.setItemsWeapons(PostItemsType(titleState.value, nameState.value))
-                    "household items"-> viewModel.setItemsHouseHold(PostItemsType(titleState.value, nameState.value))
-                    "plants, animal products, food and drink"-> viewModel.setPlantsAnimalsProductsFoodDrink(
-                PostItemsType(titleState.value, nameState.value)
-                )
-                "tools and other equipment"-> viewModel.setItemsToolsAndOthers(PostItemsType(titleState.value, nameState.value))
-                "other items"-> viewModel.setItemsOtherItems(PostItemsType(titleState.value, nameState.value))
-                else->{
-                viewModel.setItems(PostItemsType(titleState.value, nameState.value))
-            }
-            }
-
-            viewModel.name.observe(this){ name ->
-                Intent(this, ItemProfile::class.java).also {
-                    it.putExtra("name", name)
-                    startActivity(it)
+                val listPlantsAnimalsProductsFoodDrink = remember {
+                    mutableStateOf(
+                        PlantsAnimalsProductsFoodDrink()
+                    )
                 }
-            }
+                val listToolsAndOtherEquipment = remember {
+                    mutableStateOf(
+                        ToolsAndOtherEquipmentModel()
+                    )
+                }
+                val listOtherItems = remember { mutableStateOf(OtherItemsModel()) }
+                when (titleState.value?.lowercase()) {
+                    "body equipment" -> viewModel.setItems(
+                        PostItemsType(
+                            titleState.value,
+                            nameState.value
+                        )
+                    )
 
-                viewModel.isVisibleProgressBar.observe(this){
-                    if (it != null){
+                    "weapons" -> viewModel.setItemsWeapons(
+                        PostItemsType(
+                            titleState.value,
+                            nameState.value
+                        )
+                    )
+
+                    "household items" -> viewModel.setItemsHouseHold(
+                        PostItemsType(
+                            titleState.value,
+                            nameState.value
+                        )
+                    )
+
+                    "plants, animal products, food and drink" -> viewModel.setPlantsAnimalsProductsFoodDrink(
+                        PostItemsType(titleState.value, nameState.value)
+                    )
+
+                    "tools and other equipment" -> viewModel.setItemsToolsAndOthers(
+                        PostItemsType(
+                            titleState.value,
+                            nameState.value
+                        )
+                    )
+
+                    "other items" -> viewModel.setItemsOtherItems(
+                        PostItemsType(
+                            titleState.value,
+                            nameState.value
+                        )
+                    )
+
+                    else -> {
+                        viewModel.setItems(PostItemsType(titleState.value, nameState.value))
+                    }
+                }
+
+                viewModel.name.observe(this) { name ->
+                    if (name != null) {
+                        Intent(this, ItemProfile::class.java).also {
+                            it.putExtra("name", name)
+                            startActivity(it)
+                        }
+                    }
+                }
+
+                viewModel.isVisibleProgressBar.observe(this) {
+                    if (it != null) {
                         println("isVisibleProgressBar: $it")
                         progressState.value = it
                     }
                 }
 
                 viewModel.items.observe(this, Observer {
-                    if (it != null){
+                    if (it != null) {
                         listItems.value = it.body!!
                     }
                     viewModel.setProgressBar(false)
@@ -149,8 +186,9 @@ class Itemsype : ComponentActivity() {
                     }
                     viewModel.setProgressBar(false)
                 })
+
                 viewModel.back.observe(this, Observer {
-                    if (it){
+                    if (it) {
                         finish()
                     }
                 })
@@ -158,7 +196,7 @@ class Itemsype : ComponentActivity() {
                 Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Toolbar(nameState.value.toString(), viewModel)
-                        if (progressState.value){
+                        if (progressState.value) {
                             ProgressIndicatorItemsType()
                         }
                         SwipeRefreshItemsType(
@@ -179,7 +217,13 @@ class Itemsype : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setName(null)
+    }
 }
+
 
 @Composable
 fun ProgressIndicatorItemsType() {
@@ -192,7 +236,7 @@ fun ProgressIndicatorItemsType() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun     SwipeRefreshItemsType(
+fun SwipeRefreshItemsType(
     listItems: MutableState<ArrayList<BodyItemstype>>,
     viewModel: ViewModeltemsType,
     pullToRefreshState: PullToRefreshState,
