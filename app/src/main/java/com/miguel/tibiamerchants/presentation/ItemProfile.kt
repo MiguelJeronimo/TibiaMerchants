@@ -26,6 +26,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +59,6 @@ class ItemProfile : ComponentActivity() {
             val progressState = remember { mutableStateOf(false) }
             val nameIntent = remember { mutableStateOf("") }
             var profileState by remember { mutableStateOf(Profile()) }
-            val stateChipBuyFrom = remember { mutableStateOf(false) }
-            val stateChipSellTo = remember { mutableStateOf(false) }
             val factory: ViewModelItemProfileFactory by inject()
             val viewModel = ViewModelProvider(this, factory)[ViewModelItemProfile::class.java]
             val name = intent.getStringExtra("name")
@@ -67,6 +66,7 @@ class ItemProfile : ComponentActivity() {
                 nameIntent.value = name
             }
             viewModel.setItemProfiel(nameIntent.value)
+            viewModel.loading(true)
             viewModel.itemProfile.observe(this) {
                 if (it != null) {
                     profileState = it.body!!
@@ -75,21 +75,25 @@ class ItemProfile : ComponentActivity() {
                 }
                 viewModel.loading(false)
             }
-            viewModel.isLoading.observe(this){
+            viewModel.isLoading.observe(this) {
                 progressState.value = it
+            }
+            viewModel.back.observe(this) {
+                if (it) {
+                    finish()
+                }
             }
 
             TibiaMerchantsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        ToolBarItemsProfile(nameIntent.value)
+                        ToolBarItemsProfile(nameIntent.value, viewmodel = viewModel)
                         if (progressState.value) {
+                            println("progressState.value: ${progressState.value}")
                             ProgressIndicatorItemProfile()
                         }
                         SwipeRefreshItemProfile(
                             profileState = profileState,
-                            stateChipBuyFrom = stateChipBuyFrom,
-                            stateChipSellTo = stateChipSellTo,
                             name = nameIntent.value,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
@@ -110,10 +114,7 @@ fun SwipeRefreshItemProfile(
     pullToRefreshState: PullToRefreshState? = null,
     modifier: Modifier,
     profileState: Profile,
-    stateChipBuyFrom: MutableState<Boolean>,
-    stateChipSellTo: MutableState<Boolean>,
 ) {
-    val stateProgress = remember { mutableStateOf(false) }
     if (pullToRefreshState!!.isRefreshing) {
         viewModel?.loading(true)
         LaunchedEffect(true) {
@@ -125,7 +126,7 @@ fun SwipeRefreshItemProfile(
     }
     //while to SwipeRefresh is executing
     if (pullToRefreshState.progress > 0.0) {
-        stateProgress.value = true
+        viewModel?.loading(true)
     }
 
     Box(
@@ -136,17 +137,15 @@ fun SwipeRefreshItemProfile(
         if (!pullToRefreshState.isRefreshing) {
             ProfileComposable(
                 modifier = modifier,
-                profileState = profileState,
-                stateChipBuyFrom = stateChipBuyFrom,
-                stateChipSellTo = stateChipSellTo
+                profileState = profileState
             )
         }
-        if (stateProgress.value) {
+        if (viewModel?.isLoading?.value == true) {
             PullToRefreshContainer(
                 modifier = Modifier.align(Alignment.TopCenter),
                 state = pullToRefreshState,
             )
-            stateProgress.value = false
+            viewModel.loading(false)
         }
     }
 }
@@ -154,13 +153,13 @@ fun SwipeRefreshItemProfile(
 @Composable
 fun ProfileComposable(
     modifier: Modifier = Modifier,
-    profileState: Profile,
-    stateChipBuyFrom: MutableState<Boolean>,
-    stateChipSellTo: MutableState<Boolean>,
+    profileState: Profile
 ) {
+    val stateChipBuyFrom = rememberSaveable { mutableStateOf(false) }
+    val stateChipSellTo = rememberSaveable { mutableStateOf(false) }
     LazyColumn(modifier = modifier) {
         //val tools = items.body
-        if (profileState.name != null){
+        if (profileState.name != null) {
             item {
                 Column {
                     CardHeaderItemInfo(profile = profileState)
@@ -169,8 +168,19 @@ fun ProfileComposable(
                     Row(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        com.miguel.tibiamerchants.presentation.Components.ChipFilter("Buy for", state = stateChipBuyFrom)
-                        com.miguel.tibiamerchants.presentation.Components.ChipFilter("Sell to", state = stateChipSellTo)
+                        if(profileState.buyFrom != null) {
+                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
+                                "Buy for",
+                                state = stateChipBuyFrom
+                            )
+                        }
+
+                        if (profileState.sellFrom != null) {
+                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
+                                "Sell to",
+                                state = stateChipSellTo
+                            )
+                        }
                     }
                     CardDetails(profile = profileState)
                     profileState.requeriments?.let {
@@ -180,17 +190,16 @@ fun ProfileComposable(
                         CardOtherPropierties(profileState.otherPropierties)
                     }
 
-                    profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties)  }
+                    profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties) }
                     profileState.tibiaLengend?.let {
                         CardTibiaLegends(it)
                     }
                 }
             }
-        }
-
-        if (stateChipBuyFrom.value){
-            profileState.buyFrom?.let {
+            println("deberia aparecer la lista buyFrom: ${stateChipBuyFrom.value}")
+            if (stateChipBuyFrom.value) {
                 item {
+                    println("deberia aparecer la lista buyFrom")
                     Column {
                         HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                         Text(
@@ -201,16 +210,14 @@ fun ProfileComposable(
                     }
                 }
                 val buyFrom = profileState.buyFrom
-                if (buyFrom != null) {
-                    items(buyFrom.size) { buy ->
-                        CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
-                    }
+                items(buyFrom!!.size) { buy ->
+                    CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
                 }
             }
-        }
 
-        if (stateChipSellTo.value){
-            profileState.sellFrom?.let {
+
+            println("deberia aparecer la lista sellTo ${stateChipSellTo.value}")
+            if (stateChipSellTo.value) {
                 item {
                     Column {
                         HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
@@ -222,10 +229,9 @@ fun ProfileComposable(
                     }
                 }
                 val sellFrom = profileState.sellFrom
-                if (sellFrom != null) {
-                    items(sellFrom.size) { buy ->
-                        CardSellFrom(sellFrom = profileState.sellFrom!![buy])
-                    }
+                println("deberia aparecer la lista sellTo ${sellFrom!!.size}")
+                items(sellFrom.size) { buy ->
+                    CardSellFrom(sellFrom = profileState.sellFrom!![buy])
                 }
             }
         }

@@ -358,13 +358,17 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewMod
                     }
                     if (item?.damageType != null) {
                         Row {
-                            GlideImage(
-                                model = item.damageType?.imageIcon,
-                                contentDescription ="itemtibia",
-                                Modifier
-                                    .size(35.dp)
-                                    .padding(0.dp, 10.dp, 10.dp, 10.dp))
-                            Text(text = item.damageType?.damageName!!, Modifier.align(Alignment.CenterVertically))
+                            item.damageType?.imageIcon?.let {
+                                GlideImage(
+                                    model = it,
+                                    contentDescription ="itemtibia",
+                                    Modifier
+                                        .size(35.dp)
+                                        .padding(0.dp, 10.dp, 10.dp, 10.dp))
+                            }
+                            item.damageType?.damageName?.let {
+                                Text(text = it, Modifier.align(Alignment.CenterVertically))
+                            }
                         }
                     }
                     if (!item?.range.isNullOrEmpty()) {

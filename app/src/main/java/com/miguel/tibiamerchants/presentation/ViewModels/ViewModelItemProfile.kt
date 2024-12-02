@@ -15,6 +15,13 @@ class ViewModelItemProfile(private val useCaseItemProfile: UseCaseIItemProfile):
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: MutableLiveData<Boolean> = _isLoading
 
+    private val _back = MutableLiveData<Boolean>()
+    val back: MutableLiveData<Boolean> = _back
+
+    fun back(isBack: Boolean) {
+        _back.value = isBack
+    }
+
     fun setItemProfiel(name:String){
         viewModelScope.launch {
             _itemProfile.value = useCaseItemProfile.item(name)
