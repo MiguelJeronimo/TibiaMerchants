@@ -22,7 +22,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -73,6 +73,7 @@ class ItemProfile : ComponentActivity() {
                 } else {
                     Toast.makeText(this, "Error, profile not found", Toast.LENGTH_SHORT).show()
                 }
+
                 viewModel.loading(false)
             }
             viewModel.isLoading.observe(this) {
@@ -85,11 +86,10 @@ class ItemProfile : ComponentActivity() {
             }
 
             TibiaMerchantsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize().nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         ToolBarItemsProfile(nameIntent.value, viewmodel = viewModel)
                         if (progressState.value) {
-                            println("progressState.value: ${progressState.value}")
                             ProgressIndicatorItemProfile()
                         }
                         SwipeRefreshItemProfile(
@@ -115,6 +115,7 @@ fun SwipeRefreshItemProfile(
     modifier: Modifier,
     profileState: Profile,
 ) {
+    val stateProgress = remember { mutableStateOf(false) }
     if (pullToRefreshState!!.isRefreshing) {
         viewModel?.loading(true)
         LaunchedEffect(true) {
@@ -126,7 +127,7 @@ fun SwipeRefreshItemProfile(
     }
     //while to SwipeRefresh is executing
     if (pullToRefreshState.progress > 0.0) {
-        viewModel?.loading(true)
+        stateProgress.value = true
     }
 
     Box(
@@ -140,12 +141,12 @@ fun SwipeRefreshItemProfile(
                 profileState = profileState
             )
         }
-        if (viewModel?.isLoading?.value == true) {
+        if (stateProgress.value) {
             PullToRefreshContainer(
                 modifier = Modifier.align(Alignment.TopCenter),
                 state = pullToRefreshState,
             )
-            viewModel.loading(false)
+            stateProgress.value = false
         }
     }
 }
@@ -196,7 +197,7 @@ fun ProfileComposable(
                     }
                 }
             }
-            println("deberia aparecer la lista buyFrom: ${stateChipBuyFrom.value}")
+
             if (stateChipBuyFrom.value) {
                 item {
                     println("deberia aparecer la lista buyFrom")
@@ -215,8 +216,6 @@ fun ProfileComposable(
                 }
             }
 
-
-            println("deberia aparecer la lista sellTo ${stateChipSellTo.value}")
             if (stateChipSellTo.value) {
                 item {
                     Column {
@@ -229,8 +228,7 @@ fun ProfileComposable(
                     }
                 }
                 val sellFrom = profileState.sellFrom
-                println("deberia aparecer la lista sellTo ${sellFrom!!.size}")
-                items(sellFrom.size) { buy ->
+                items(sellFrom!!.size) { buy ->
                     CardSellFrom(sellFrom = profileState.sellFrom!![buy])
                 }
             }

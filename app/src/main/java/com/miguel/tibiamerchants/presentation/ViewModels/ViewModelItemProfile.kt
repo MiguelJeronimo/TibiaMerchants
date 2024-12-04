@@ -18,6 +18,9 @@ class ViewModelItemProfile(private val useCaseItemProfile: UseCaseIItemProfile):
     private val _back = MutableLiveData<Boolean>()
     val back: MutableLiveData<Boolean> = _back
 
+    init {
+        _isLoading.value = true
+    }
     fun back(isBack: Boolean) {
         _back.value = isBack
     }
