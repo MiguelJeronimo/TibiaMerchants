@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.presentation.Components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -32,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,8 +60,9 @@ fun CardHeaderItemInfo(profile: Profile? = null) {
         Modifier
             .fillMaxWidth()
             .padding(10.dp)) {
-        Card (
-            modifier = Modifier.padding(start = 35.dp)
+        OutlinedCard(
+            modifier = Modifier.padding(start = 35.dp),
+            border = BorderStroke(0.dp,Color.Transparent)
         ){
             Column(
                 modifier = Modifier
@@ -360,13 +364,11 @@ fun CardGeneralPropierties(generalPropierties: GeneralPropierties? = null) {
                 .align(Alignment.TopCenter)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.github),
+                painter = painterResource(id = R.drawable.general_icon__png_white),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(30.dp)
                     .align(Alignment.CenterVertically)
-                    //.clip(CircleShape)
-                    .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
                 modifier = Modifier
@@ -450,13 +452,11 @@ fun CompatPropierties(combatPropierties: CombatPropierties? = null) {
                 .align(Alignment.TopCenter)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.github),
+                painter = painterResource(id = R.drawable.combat_icon_png_white),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(40.dp)
                     .align(Alignment.CenterVertically)
-                    //.clip(CircleShape)
-                    .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
                 modifier = Modifier
@@ -552,13 +552,11 @@ fun TradePropierties(traderPropierties: TraderPropierties?= null){
                 .align(Alignment.TopCenter)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.github),
+                painter = painterResource(id = R.drawable.trade_icon_png_white),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(40.dp)
                     .align(Alignment.CenterVertically)
-                    //.clip(CircleShape)
-                    .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
                 modifier = Modifier
@@ -643,13 +641,14 @@ fun CardFieldPropierties(fieldPropierties: FieldPropierties? = null){
                 .align(Alignment.TopCenter)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.github),
+                painter = painterResource(id = R.drawable.field_icon__png_white),
                 contentDescription = "github logo",
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(40.dp)
                     .align(Alignment.CenterVertically)
                     //.clip(CircleShape)
-                    .border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+
+                    //.border(5.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
                 modifier = Modifier
