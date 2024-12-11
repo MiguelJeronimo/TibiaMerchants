@@ -58,22 +58,21 @@ class SpellsListActivity : ComponentActivity() {
             val pullToRefreshState = rememberPullToRefreshState()
             val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
             val progressState = remember { mutableStateOf(false) }
+            viewModel.spells.observe(this) {
+                if (it != null) {
+                    spellsDataState.value = it
+                } else {
+                    Toast.makeText(this, "Error, Error conection", Toast.LENGTH_SHORT).show()
+                }
+                viewModel.isProgress(false)
+            }
+
+            viewModel.progress.observe(this){
+                if (it!= null){
+                    progressState.value = it
+                }
+            }
             TibiaMerchantsTheme {
-                viewModel.spells.observe(this) {
-                    if (it != null) {
-                        spellsDataState.value = it
-                    } else {
-                        Toast.makeText(this, "Error, Error conection", Toast.LENGTH_SHORT).show()
-                    }
-                    viewModel.isProgress(false)
-                }
-
-                viewModel.progress.observe(this){
-                    if (it!= null){
-                        progressState.value = it
-                    }
-                }
-
                 Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)){
                         ToolBarSpells("Spells", viewModel)
@@ -84,7 +83,7 @@ class SpellsListActivity : ComponentActivity() {
                             stateList = spellsDataState,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier
                         )
                     }
                 }
@@ -100,7 +99,7 @@ fun ListSpellsandRuneslist(
     spellsDataState: MutableState<ResponseSpells>,
     viewModel: ViewModelSpells,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.fillMaxSize()) {
         //val tools = items.body
         val spells = spellsDataState.value.body?.spells
         val runes = spellsDataState.value.body?.runes
@@ -117,7 +116,7 @@ fun ListSpellsandRuneslist(
             }
             items(spells.size) { item ->
                 CardSpells(
-                    modifier = modifier, item = spells[item],
+                    modifier = modifier.padding(5.dp), item = spells[item],
                     viewModel = viewModel
                 )
             }
@@ -136,7 +135,7 @@ fun ListSpellsandRuneslist(
             }
             items(runes.size) { item ->
                 CardSpellsRunes(
-                    modifier = modifier,
+                    modifier = modifier.padding(5.dp),
                     item = runes[item],
                     viewModel = viewModel
                 )
@@ -187,7 +186,7 @@ fun SwipeRefreshSpells(
 }
 
 @Composable
-fun     ProgressIndicator() {
+fun ProgressIndicator() {
     LinearProgressIndicator(
         Modifier
             .fillMaxWidth()

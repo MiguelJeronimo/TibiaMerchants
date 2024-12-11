@@ -200,7 +200,6 @@ fun ProfileComposable(
 
             if (stateChipBuyFrom.value) {
                 item {
-                    println("deberia aparecer la lista buyFrom")
                     Column {
                         HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                         Text(
