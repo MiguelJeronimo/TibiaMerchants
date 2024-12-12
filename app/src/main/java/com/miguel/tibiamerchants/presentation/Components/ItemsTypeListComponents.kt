@@ -1,5 +1,11 @@
 package com.miguel.tibiamerchants.presentation.Components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +14,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,7 +54,7 @@ fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, viewModel: Vi
     LazyColumn(modifier = modifier) {
         items(body!!.size){item->
             CardItems(
-                modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                modifier = modifier,
                 item = body[item],
                 viewModel = viewModel
             )
@@ -68,7 +82,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
             }
             items(weapons!!.size) { item ->
                 CardItems(
-                    modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                    modifier = modifier,
                     item = weapons[item],
                     viewModel = viewModel
                 )
@@ -88,7 +102,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
             }
             items(weaponsChargedReplicas!!.size){item->
                 CardItems(
-                    modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                    modifier = modifier,
                     item = weaponsChargedReplicas[item],
                     viewModel = viewModel
                 )
@@ -108,7 +122,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
             }
             items(weaponsChargedReplicas!!.size){item->
                 CardItems(
-                    modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                    modifier = modifier,
                     item = weaponsChargedReplicas[item],
                     viewModel = viewModel
                 )
@@ -133,7 +147,7 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
         }
         items(houseHold?.items!!.size) { item ->
             CardItems(
-                modifier = Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp),
+                modifier = modifier,
                 item = houseHold.items[item],
                 viewModel = viewModel
             )
@@ -227,6 +241,7 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltems
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name) }
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -235,55 +250,67 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltems
             Row(Modifier.fillMaxWidth(1f)){
                 GlideImage(model = item?.img, contentDescription ="itemtibia",
                     Modifier
+                        .weight(0.5f)
                         .size(80.dp)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.weight(2.0f).padding(16.dp)) {
                     Text(
                         //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(5.dp))
-            if (!item?.weight.isNullOrEmpty()){
-                OutlinedCard {
-                    Column(Modifier.padding(16.dp)) {
-                        if (!item!!.arm.isNullOrEmpty()){
-                            Text(text = "Arm: ${item.arm!!}")
-                        }
-                        if (!item.defense.isNullOrEmpty()){
-                            Text(text = "Defense: ${item.defense}")
-                        }
-                        if (!item.vol.isNullOrEmpty()) {
-                            Text(text = "Vol: ${item.vol}")
-                        }
-                        if (!item.weight.isNullOrEmpty()) {
-                            Text(text = "Weight: ${item.weight}")
-                        }
-                        if (!item.attributes.isNullOrEmpty()) {
-                            Text(text = "Attributes: ${item.attributes}")
-                        }
-                        if (!item.resist.isNullOrEmpty()) {
-                            Text(text = "Resist: ${item.resist}")
-                        }
-                        if (!item.slots.isNullOrEmpty()) {
-                            Text(text = "Slots: ${item.slots}")
-                        }
-                        if (!item.classs.isNullOrEmpty()) {
-                            Text(text = "Class: ${item.classs}")
-                        }
-                        if (!item.level.isNullOrEmpty()) {
-                            Text(text = "Level: ${item.level}")
-                        }
-                        if (!item.vocation.isNullOrEmpty()) {
-                            Text(text = "Vocation: ${item.vocation}")
-                        }
-                    }
+                IconButton(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
                 }
             }
-            Spacer(modifier = Modifier.height(5.dp))
+
+           AnimatedVisibility(expanded.value){
+               Spacer(modifier = Modifier.height(5.dp))
+               if (!item?.weight.isNullOrEmpty()){
+                   OutlinedCard {
+                       Column(Modifier.padding(16.dp)) {
+                           if (!item!!.arm.isNullOrEmpty()){
+                               Text(text = "Arm: ${item.arm!!}")
+                           }
+                           if (!item.defense.isNullOrEmpty()){
+                               Text(text = "Defense: ${item.defense}")
+                           }
+                           if (!item.vol.isNullOrEmpty()) {
+                               Text(text = "Vol: ${item.vol}")
+                           }
+                           if (!item.weight.isNullOrEmpty()) {
+                               Text(text = "Weight: ${item.weight}")
+                           }
+                           if (!item.attributes.isNullOrEmpty()) {
+                               Text(text = "Attributes: ${item.attributes}")
+                           }
+                           if (!item.resist.isNullOrEmpty()) {
+                               Text(text = "Resist: ${item.resist}")
+                           }
+                           if (!item.slots.isNullOrEmpty()) {
+                               Text(text = "Slots: ${item.slots}")
+                           }
+                           if (!item.classs.isNullOrEmpty()) {
+                               Text(text = "Class: ${item.classs}")
+                           }
+                           if (!item.level.isNullOrEmpty()) {
+                               Text(text = "Level: ${item.level}")
+                           }
+                           if (!item.vocation.isNullOrEmpty()) {
+                               Text(text = "Vocation: ${item.vocation}")
+                           }
+                       }
+                   }
+               }
+               Spacer(modifier = Modifier.height(5.dp))
+           }
         }
     }
 }
@@ -303,101 +330,113 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewMod
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .animateContentSize()
                 .padding(16.dp)
         ) {
             Row(Modifier.fillMaxWidth(1f)){
                 GlideImage(model = item?.image, contentDescription ="itemtibia",
                     Modifier
+                        .weight(0.5f)
                         .size(80.dp)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
-                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(5.dp))
-            OutlinedCard {
-                Column(Modifier.padding(16.dp)) {
-                    if (!item?.level.isNullOrEmpty()){
-                        Text(text = "Level: ${item?.level!!}")
-                    }
-                    if (!item?.attack.isNullOrEmpty()){
-                        Text(text = "Attack: ${item?.attack!!}")
-                    }
-                    if (!item?.defense.isNullOrEmpty()){
-                        Text(text = "Defense: ${item?.defense!!}")
-                    }
-                    if (!item?.defMode.isNullOrEmpty()){
-                        Text(text = "Def. Mode: ${item?.defMode!!}")
-                    }
-                    if (!item?.hands.isNullOrEmpty()){
-                        Text(text = "Hands: ${item?.hands!!}")
-                    }
-                    if (!item?.atkMode.isNullOrEmpty()){
-                        Text(text = "Attack Mode: ${item?.atkMode!!}")
-                    }
-                    if (!item?.hit.isNullOrEmpty()){
-                        Text(text = "Hit: ${item?.hit!!}")
-                    }
-                    if (!item?.embuimentSlots.isNullOrEmpty()){
-                        Text(text = "Slots: ${item?.embuimentSlots!!}")
-                    }
-                    if (!item?.atk.isNullOrEmpty()){
-                        Text(text = "Attack: ${item?.atk!!}")
-                    }
-
-                    if (!item?.damage.isNullOrEmpty()){
-                        Text(text = "Damage: ${item?.damage}")
-                    }
-                    if (item?.damageType != null) {
-                        Row {
-                            item.damageType?.imageIcon?.let {
-                                GlideImage(
-                                    model = it,
-                                    contentDescription ="itemtibia",
-                                    Modifier
-                                        .size(35.dp)
-                                        .padding(0.dp, 10.dp, 10.dp, 10.dp))
-                            }
-                            item.damageType?.damageName?.let {
-                                Text(text = it, Modifier.align(Alignment.CenterVertically))
-                            }
-                        }
-                    }
-                    if (!item?.range.isNullOrEmpty()) {
-                        Text(text = "Range: ${item?.range}")
-                    }
-                    if (!item?.mana.isNullOrEmpty()) {
-                        Text(text = "Mana: ${item?.mana}")
-                    }
-                    if (!item?.resist.isNullOrEmpty()) {
-                        Text(text = "Resist: ${item?.resist}")
-                    }
-                    if (!item?.slots.isNullOrEmpty()) {
-                        Text(text = "Slots: ${item?.slots}")
-                    }
-                    if (!item?.classs.isNullOrEmpty()) {
-                        Text(text = "Class: ${item?.classs}")
-                    }
-                    if (!item?.weight.isNullOrEmpty()) {
-                        Text(text = "Weight: ${item?.weight}")
-                    }
-                    if (!item?.attributes.isNullOrEmpty()) {
-                        Text(text = "Attributes: ${item?.attributes}")
-                    }
-                    if (!item?.npcPrice.isNullOrEmpty()){
-                        Text(text = "Npc Price: ${item?.level!!}")
-                    }
+                IconButton(
+                    modifier = Modifier.weight(0.5f, true),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
                 }
             }
-            Spacer(modifier = Modifier.height(5.dp))
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                OutlinedCard {
+                    Column(Modifier.padding(16.dp)) {
+                        if (!item?.level.isNullOrEmpty()){
+                            Text(text = "Level: ${item?.level!!}")
+                        }
+                        if (!item?.attack.isNullOrEmpty()){
+                            Text(text = "Attack: ${item?.attack!!}")
+                        }
+                        if (!item?.defense.isNullOrEmpty()){
+                            Text(text = "Defense: ${item?.defense!!}")
+                        }
+                        if (!item?.defMode.isNullOrEmpty()){
+                            Text(text = "Def. Mode: ${item?.defMode!!}")
+                        }
+                        if (!item?.hands.isNullOrEmpty()){
+                            Text(text = "Hands: ${item?.hands!!}")
+                        }
+                        if (!item?.atkMode.isNullOrEmpty()){
+                            Text(text = "Attack Mode: ${item?.atkMode!!}")
+                        }
+                        if (!item?.hit.isNullOrEmpty()){
+                            Text(text = "Hit: ${item?.hit!!}")
+                        }
+                        if (!item?.embuimentSlots.isNullOrEmpty()){
+                            Text(text = "Slots: ${item?.embuimentSlots!!}")
+                        }
+                        if (!item?.atk.isNullOrEmpty()){
+                            Text(text = "Attack: ${item?.atk!!}")
+                        }
+
+                        if (!item?.damage.isNullOrEmpty()){
+                            Text(text = "Damage: ${item?.damage}")
+                        }
+                        if (item?.damageType != null) {
+                            Row {
+                                item.damageType?.imageIcon?.let {
+                                    GlideImage(
+                                        model = it,
+                                        contentDescription ="itemtibia",
+                                        Modifier
+                                            .size(35.dp)
+                                            .padding(0.dp, 10.dp, 10.dp, 10.dp))
+                                }
+                                item.damageType?.damageName?.let {
+                                    Text(text = it, Modifier.align(Alignment.CenterVertically))
+                                }
+                            }
+                        }
+                        if (!item?.range.isNullOrEmpty()) {
+                            Text(text = "Range: ${item?.range}")
+                        }
+                        if (!item?.mana.isNullOrEmpty()) {
+                            Text(text = "Mana: ${item?.mana}")
+                        }
+                        if (!item?.resist.isNullOrEmpty()) {
+                            Text(text = "Resist: ${item?.resist}")
+                        }
+                        if (!item?.slots.isNullOrEmpty()) {
+                            Text(text = "Slots: ${item?.slots}")
+                        }
+                        if (!item?.classs.isNullOrEmpty()) {
+                            Text(text = "Class: ${item?.classs}")
+                        }
+                        if (!item?.weight.isNullOrEmpty()) {
+                            Text(text = "Weight: ${item?.weight}")
+                        }
+                        if (!item?.attributes.isNullOrEmpty()) {
+                            Text(text = "Attributes: ${item?.attributes}")
+                        }
+                        if (!item?.npcPrice.isNullOrEmpty()){
+                            Text(text = "Npc Price: ${item?.level!!}")
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+            }
         }
     }
 }
@@ -413,6 +452,7 @@ fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType)
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -422,48 +462,60 @@ fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType)
                 GlideImage(model = item.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
                         //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f, true),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(5.dp))
-            if (!item.weight.isNullOrEmpty()){
-                OutlinedCard {
-                    Column(Modifier.padding(16.dp)) {
-                        if (!item.price.isNullOrEmpty()){
-                            Text(text = "Price: ${item.price}")
-                        }
-                        if (!item.vol.isNullOrEmpty()){
-                            Text(text = "Vol: ${item.vol}")
-                        }
-                        if (!item.weight.isNullOrEmpty()){
-                            Text(text = "Weight: ${item.weight}")
-                        }
-                        if (!item.slots.isNullOrEmpty()){
-                            Text(text = "Slots: ${item.slots}")
-                        }
-                        if (!item.weightPerVol.isNullOrEmpty()){
-                            Text(text = "Weight Per Vol: ${item.weightPerVol}")
-                        }
-                        if (!item.buyFrom.isNullOrEmpty()){
-                            Text(text = "Buy From: ${item.buyFrom}")
-                        }
-                        if (!item.light.isNullOrEmpty()){
-                            Text(text = "Light: ${item.light}")
-                        }
-                        if (!item.writable.isNullOrEmpty()){
-                            Text(text = "Writable: ${item.writable}")
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                if (!item.weight.isNullOrEmpty()){
+                    OutlinedCard {
+                        Column(Modifier.padding(16.dp)) {
+                            if (!item.price.isNullOrEmpty()){
+                                Text(text = "Price: ${item.price}")
+                            }
+                            if (!item.vol.isNullOrEmpty()){
+                                Text(text = "Vol: ${item.vol}")
+                            }
+                            if (!item.weight.isNullOrEmpty()){
+                                Text(text = "Weight: ${item.weight}")
+                            }
+                            if (!item.slots.isNullOrEmpty()){
+                                Text(text = "Slots: ${item.slots}")
+                            }
+                            if (!item.weightPerVol.isNullOrEmpty()){
+                                Text(text = "Weight Per Vol: ${item.weightPerVol}")
+                            }
+                            if (!item.buyFrom.isNullOrEmpty()){
+                                Text(text = "Buy From: ${item.buyFrom}")
+                            }
+                            if (!item.light.isNullOrEmpty()){
+                                Text(text = "Light: ${item.light}")
+                            }
+                            if (!item.writable.isNullOrEmpty()){
+                                Text(text = "Writable: ${item.writable}")
+                            }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
+
         }
     }
 }
@@ -475,6 +527,7 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltems
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -484,42 +537,54 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltems
                 GlideImage(model = item.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
                         //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
-            if (!item.weight.isNullOrEmpty()){
-                OutlinedCard {
-                    Column(Modifier.padding(16.dp)) {
-                        if (!item.price.isNullOrEmpty()){
-                            Text(text = "Price: ${item.price}")
-                        }
-                        if (!item.price.isNullOrEmpty()){
-                            Text(text = "Buy From: ${item.price}")
-                        }
-                        if (!item.attributes.isNullOrEmpty()){
-                            Text(text = "Light: ${item.attributes}")
-                        }
-                        if (!item.weight.isNullOrEmpty()){
-                            Text(text = "Weight: ${item.weight}")
-                        }
-                        if (!item.writable.isNullOrEmpty()){
-                            Text(text = "Writable: ${item.writable}")
-                        }
-                        if (!item.stackable.isNullOrEmpty()){
-                            Text(text = "Weight: ${item.weight}")
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                if (!item.weight.isNullOrEmpty()){
+                    OutlinedCard {
+                        Column(Modifier.padding(16.dp)) {
+                            if (!item.price.isNullOrEmpty()){
+                                Text(text = "Price: ${item.price}")
+                            }
+                            if (!item.price.isNullOrEmpty()){
+                                Text(text = "Buy From: ${item.price}")
+                            }
+                            if (!item.attributes.isNullOrEmpty()){
+                                Text(text = "Light: ${item.attributes}")
+                            }
+                            if (!item.weight.isNullOrEmpty()){
+                                Text(text = "Weight: ${item.weight}")
+                            }
+                            if (!item.writable.isNullOrEmpty()){
+                                Text(text = "Writable: ${item.writable}")
+                            }
+                            if (!item.stackable.isNullOrEmpty()){
+                                Text(text = "Weight: ${item.weight}")
+                            }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
@@ -535,6 +600,7 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: View
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -544,64 +610,75 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: View
                 GlideImage(model = item?.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
-                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
-            if (!item?.weight.isNullOrEmpty()){
-                OutlinedCard {
-                    Column(Modifier.padding(16.dp)) {
-                        if (!item?.level.isNullOrEmpty()){
-                            Text(text = "Level: ${item?.level!!}")
-                        }
-                        if (!item?.arm.isNullOrEmpty()){
-                            Text(text = "Arm: ${item?.arm!!}")
-                        }
-                        if (!item?.resist.isNullOrEmpty()){
-                            Text(text = "Resist: ${item?.resist!!}")
-                        }
-                        if (!item?.duration.isNullOrEmpty()){
-                            Text(text = "Duration: ${item?.duration!!}")
-                        }
-                        if (!item?.charges.isNullOrEmpty()){
-                            Text(text = "Charges: ${item?.charges!!}")
-                        }
-                        if (!item?.attributes.isNullOrEmpty()){
-                            Text(text = "Attributes: ${item?.attributes!!}")
-                        }
-                        if (!item?.weight.isNullOrEmpty()){
-                            Text(text = "Weight: ${item?.weight!!}")
-                        }
-                        if (!item?.vocation.isNullOrEmpty()){
-                            Text(text = "Vocation: ${item?.vocation!!}")
-                        }
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                if (!item?.weight.isNullOrEmpty()){
+                    OutlinedCard {
+                        Column(Modifier.padding(16.dp)) {
+                            if (!item?.level.isNullOrEmpty()){
+                                Text(text = "Level: ${item?.level!!}")
+                            }
+                            if (!item?.arm.isNullOrEmpty()){
+                                Text(text = "Arm: ${item?.arm!!}")
+                            }
+                            if (!item?.resist.isNullOrEmpty()){
+                                Text(text = "Resist: ${item?.resist!!}")
+                            }
+                            if (!item?.duration.isNullOrEmpty()){
+                                Text(text = "Duration: ${item?.duration!!}")
+                            }
+                            if (!item?.charges.isNullOrEmpty()){
+                                Text(text = "Charges: ${item?.charges!!}")
+                            }
+                            if (!item?.attributes.isNullOrEmpty()){
+                                Text(text = "Attributes: ${item?.attributes!!}")
+                            }
+                            if (!item?.weight.isNullOrEmpty()){
+                                Text(text = "Weight: ${item?.weight!!}")
+                            }
+                            if (!item?.vocation.isNullOrEmpty()){
+                                Text(text = "Vocation: ${item?.vocation!!}")
+                            }
 
-                        if (!item?.writable.isNullOrEmpty()){
-                            Text(text = "Writable: ${item?.writable}")
-                        }
-                        if (item?.radius != null) {
-                            Text(text = "Radius: ${item.radius}")
-                        }
-                        if (!item?.sellForNPC.isNullOrEmpty()) {
-                            Text(text = "Sell for NPC: ${item?.sellForNPC}")
-                        }
-                        if (!item?.buyForNPC.isNullOrEmpty()) {
-                            Text(text = "Buy for NPC: ${item?.buyForNPC}")
-                        }
-                        if (!item?.value.isNullOrEmpty()) {
-                            Text(text = "Value: ${item?.value}")
+                            if (!item?.writable.isNullOrEmpty()){
+                                Text(text = "Writable: ${item?.writable}")
+                            }
+                            if (item?.radius != null) {
+                                Text(text = "Radius: ${item.radius}")
+                            }
+                            if (!item?.sellForNPC.isNullOrEmpty()) {
+                                Text(text = "Sell for NPC: ${item?.sellForNPC}")
+                            }
+                            if (!item?.buyForNPC.isNullOrEmpty()) {
+                                Text(text = "Buy for NPC: ${item?.buyForNPC}")
+                            }
+                            if (!item?.value.isNullOrEmpty()) {
+                                Text(text = "Value: ${item?.value}")
+                            }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
@@ -617,82 +694,94 @@ fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType
         modifier = modifier,
         onClick = { viewModel.setName(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .animateContentSize()
                 .padding(16.dp)
         ) {
             Row(Modifier.fillMaxWidth(1f)){
                 GlideImage(model = item?.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
-                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f, true),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                if (!item?.weight.isNullOrEmpty()){
+                    OutlinedCard {
+                        Column(Modifier.padding(16.dp)) {
+                            if (!item?.level.isNullOrEmpty()){
+                                Text(text = "Level: ${item?.level!!}")
+                            }
+                            if (!item?.magicLevel.isNullOrEmpty()){
+                                Text(text = "Magic Level: ${item?.magicLevel!!}")
+                            }
+                            if (!item?.type.isNullOrEmpty()){
+                                Text(text = "Type: ${item?.type!!}")
+                            }
+                            if (!item?.npcPrice.isNullOrEmpty()){
+                                Text(text = "Npc Price: ${item?.npcPrice!!}")
+                            }
+                            if (!item?.arm.isNullOrEmpty()){
+                                Text(text = "Arm: ${item?.arm!!}")
+                            }
+                            if (!item?.resist.isNullOrEmpty()){
+                                Text(text = "Resist: ${item?.resist!!}")
+                            }
+                            if (!item?.duration.isNullOrEmpty()){
+                                Text(text = "Duration: ${item?.duration!!}")
+                            }
+                            if (!item?.charges.isNullOrEmpty()){
+                                Text(text = "Charges: ${item?.charges!!}")
+                            }
+                            if (!item?.attributes.isNullOrEmpty()){
+                                Text(text = "Attributes: ${item?.attributes!!}")
+                            }
+                            if (!item?.weight.isNullOrEmpty()){
+                                Text(text = "Weight: ${item?.weight!!}")
+                            }
+                            if (!item?.vocation.isNullOrEmpty()){
+                                Text(text = "Vocation: ${item?.vocation!!}")
+                            }
 
-            Spacer(modifier = Modifier.height(5.dp))
-            if (!item?.weight.isNullOrEmpty()){
-                OutlinedCard {
-                    Column(Modifier.padding(16.dp)) {
-                        if (!item?.level.isNullOrEmpty()){
-                            Text(text = "Level: ${item?.level!!}")
-                        }
-                        if (!item?.magicLevel.isNullOrEmpty()){
-                            Text(text = "Magic Level: ${item?.magicLevel!!}")
-                        }
-                        if (!item?.type.isNullOrEmpty()){
-                            Text(text = "Type: ${item?.type!!}")
-                        }
-                        if (!item?.npcPrice.isNullOrEmpty()){
-                            Text(text = "Npc Price: ${item?.npcPrice!!}")
-                        }
-                        if (!item?.arm.isNullOrEmpty()){
-                            Text(text = "Arm: ${item?.arm!!}")
-                        }
-                        if (!item?.resist.isNullOrEmpty()){
-                            Text(text = "Resist: ${item?.resist!!}")
-                        }
-                        if (!item?.duration.isNullOrEmpty()){
-                            Text(text = "Duration: ${item?.duration!!}")
-                        }
-                        if (!item?.charges.isNullOrEmpty()){
-                            Text(text = "Charges: ${item?.charges!!}")
-                        }
-                        if (!item?.attributes.isNullOrEmpty()){
-                            Text(text = "Attributes: ${item?.attributes!!}")
-                        }
-                        if (!item?.weight.isNullOrEmpty()){
-                            Text(text = "Weight: ${item?.weight!!}")
-                        }
-                        if (!item?.vocation.isNullOrEmpty()){
-                            Text(text = "Vocation: ${item?.vocation!!}")
-                        }
-
-                        if (!item?.writable.isNullOrEmpty()){
-                            Text(text = "Writable: ${item?.writable}")
-                        }
-                        if (item?.radius != null) {
-                            Text(text = "Radius: ${item.radius}")
-                        }
-                        if (!item?.sellForNPC.isNullOrEmpty()) {
-                            Text(text = "Sell for NPC: ${item?.sellForNPC}")
-                        }
-                        if (!item?.buyForNPC.isNullOrEmpty()) {
-                            Text(text = "Buy for NPC: ${item?.buyForNPC}")
-                        }
-                        if (!item?.value.isNullOrEmpty()) {
-                            Text(text = "Value: ${item?.value}")
+                            if (!item?.writable.isNullOrEmpty()){
+                                Text(text = "Writable: ${item?.writable}")
+                            }
+                            if (item?.radius != null) {
+                                Text(text = "Radius: ${item.radius}")
+                            }
+                            if (!item?.sellForNPC.isNullOrEmpty()) {
+                                Text(text = "Sell for NPC: ${item?.sellForNPC}")
+                            }
+                            if (!item?.buyForNPC.isNullOrEmpty()) {
+                                Text(text = "Buy for NPC: ${item?.buyForNPC}")
+                            }
+                            if (!item?.value.isNullOrEmpty()) {
+                                Text(text = "Value: ${item?.value}")
+                            }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
@@ -713,6 +802,7 @@ fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells){
         modifier = modifier,
        onClick = { viewModel.setNameSpell(item!!.name)}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -722,57 +812,67 @@ fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells){
                 GlideImage(model = item?.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
-                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = { expanded.value = !expanded.value }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(5.dp))
-            OutlinedCard {
-                Column(Modifier.padding(16.dp)) {
-                    if (!item?.formula.isNullOrEmpty()) {
-                        Text(text = "Fomula: ${item?.formula!!}")
-                    }
-                    if (!item?.premium.isNullOrEmpty()) {
-                        Text(text = "Premium: ${item?.premium!!}")
-                    }
-                    if (!item?.level.isNullOrEmpty()) {
-                        Text(text = "Level: ${item?.level!!}")
-                    }
-                    if (!item?.mana.isNullOrEmpty()) {
-                        Text(text = "Mana: ${item?.mana!!}")
-                    }
-                    if (!item?.price.isNullOrEmpty()) {
-                        Text(text = "Price: ${item?.price!!}")
-                    }
-                    if (!item?.group.isNullOrEmpty()) {
-                        Text(text = "Group: ${item?.group!!}")
-                    }
-                    if (item?.effect != null) {
-                        Row {
-                            if (!item.effect!!.img.isNullOrEmpty()) {
-                                GlideImage(
-                                    model = item.effect!!.img,
-                                    contentDescription = "itemtibia",
-                                    Modifier
-                                        .size(35.dp)
-                                        .padding(0.dp, 10.dp, 10.dp, 10.dp)
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                OutlinedCard {
+                    Column(Modifier.padding(16.dp)) {
+                        if (!item?.formula.isNullOrEmpty()) {
+                            Text(text = "Fomula: ${item?.formula!!}")
+                        }
+                        if (!item?.premium.isNullOrEmpty()) {
+                            Text(text = "Premium: ${item?.premium!!}")
+                        }
+                        if (!item?.level.isNullOrEmpty()) {
+                            Text(text = "Level: ${item?.level!!}")
+                        }
+                        if (!item?.mana.isNullOrEmpty()) {
+                            Text(text = "Mana: ${item?.mana!!}")
+                        }
+                        if (!item?.price.isNullOrEmpty()) {
+                            Text(text = "Price: ${item?.price!!}")
+                        }
+                        if (!item?.group.isNullOrEmpty()) {
+                            Text(text = "Group: ${item?.group!!}")
+                        }
+                        if (item?.effect != null) {
+                            Row {
+                                if (!item.effect!!.img.isNullOrEmpty()) {
+                                    GlideImage(
+                                        model = item.effect!!.img,
+                                        contentDescription = "itemtibia",
+                                        Modifier
+                                            .size(35.dp)
+                                            .padding(0.dp, 10.dp, 10.dp, 10.dp)
+                                    )
+                                }
+                                Text(
+                                    text = item.effect!!.description!!,
+                                    Modifier.align(Alignment.CenterVertically)
                                 )
                             }
-                            Text(
-                                text = item.effect!!.description!!,
-                                Modifier.align(Alignment.CenterVertically)
-                            )
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }
@@ -791,6 +891,7 @@ fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells)
         modifier = modifier,
         onClick = { /*viewModel.setNameSpell(item.name)*/}
     ) {
+        val expanded = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -800,60 +901,70 @@ fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells)
                 GlideImage(model = item.img, contentDescription ="itemtibia",
                     Modifier
                         .size(80.dp)
+                        .weight(0.5f)
                         .padding(10.dp))
-                Column(Modifier.padding(16.dp)) {
+                Column(Modifier.padding(16.dp).weight(2.0f)) {
                     Text(
-                        //Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
                         text = item?.name!!,
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
+                IconButton(
+                    modifier = Modifier.weight(0.5f),
+                    onClick = {  }
+                ){
+                    Icon(
+                        imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(5.dp))
-            OutlinedCard {
-                Column(Modifier.padding(16.dp)) {
-                    if (!item.formula.isNullOrEmpty()) {
-                        Text(text = "Fomula: ${item.formula!!}")
-                    }
-                    if (!item.premium.isNullOrEmpty()) {
-                        Text(text = "Premium: ${item.premium!!}")
-                    }
-                    if (!item.level.isNullOrEmpty()) {
-                        Text(text = "Level: ${item.level!!}")
-                    }
-                    if (!item.soul_points.isNullOrEmpty()) {
-                        Text(text = "Soul Point: ${item.soul_points!!}")
-                    }
-                    if (!item.mana.isNullOrEmpty()) {
-                        Text(text = "Mana: ${item.mana!!}")
-                    }
-                    if (!item.price.isNullOrEmpty()) {
-                        Text(text = "Price: ${item.price!!}")
-                    }
-                    if (!item.rune_group.isNullOrEmpty()) {
-                        Text(text = "Group Rune: ${item.rune_group!!}")
-                    }
-                    if (item.effect != null) {
-                        Row {
-                            if (!item.effect!!.img.isNullOrEmpty()) {
-                                GlideImage(
-                                    model = item.effect!!.img,
-                                    contentDescription = "itemtibia",
-                                    Modifier
-                                        .size(35.dp)
-                                        .padding(0.dp, 10.dp, 10.dp, 10.dp)
+            AnimatedVisibility(expanded.value) {
+                Spacer(modifier = Modifier.height(5.dp))
+                OutlinedCard {
+                    Column(Modifier.padding(16.dp)) {
+                        if (!item.formula.isNullOrEmpty()) {
+                            Text(text = "Fomula: ${item.formula!!}")
+                        }
+                        if (!item.premium.isNullOrEmpty()) {
+                            Text(text = "Premium: ${item.premium!!}")
+                        }
+                        if (!item.level.isNullOrEmpty()) {
+                            Text(text = "Level: ${item.level!!}")
+                        }
+                        if (!item.soul_points.isNullOrEmpty()) {
+                            Text(text = "Soul Point: ${item.soul_points!!}")
+                        }
+                        if (!item.mana.isNullOrEmpty()) {
+                            Text(text = "Mana: ${item.mana!!}")
+                        }
+                        if (!item.price.isNullOrEmpty()) {
+                            Text(text = "Price: ${item.price!!}")
+                        }
+                        if (!item.rune_group.isNullOrEmpty()) {
+                            Text(text = "Group Rune: ${item.rune_group!!}")
+                        }
+                        if (item.effect != null) {
+                            Row {
+                                if (!item.effect!!.img.isNullOrEmpty()) {
+                                    GlideImage(
+                                        model = item.effect!!.img,
+                                        contentDescription = "itemtibia",
+                                        Modifier
+                                            .size(35.dp)
+                                            .padding(0.dp, 10.dp, 10.dp, 10.dp)
+                                    )
+                                }
+                                Text(
+                                    text = item.effect!!.description!!,
+                                    Modifier.align(Alignment.CenterVertically)
                                 )
                             }
-                            Text(
-                                text = item.effect!!.description!!,
-                                Modifier.align(Alignment.CenterVertically)
-                            )
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(5.dp))
             }
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }

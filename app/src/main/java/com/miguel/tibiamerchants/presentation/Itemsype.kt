@@ -208,7 +208,7 @@ class Itemsype : ComponentActivity() {
                             listPlantsAnimalsProductsFoodDrink = listPlantsAnimalsProductsFoodDrink,
                             listToolsAndOtherEquipment = listToolsAndOtherEquipment,
                             listOtherItems = listOtherItems,
-                            modifier = Modifier.padding(innerPadding),
+                            modifier = Modifier,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState
                         )
@@ -284,7 +284,7 @@ fun SwipeRefreshItemsType(
         if (!pullToRefreshState.isRefreshing) {
             if (listItems.value.isNotEmpty()){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     body = listItems.value,
                     viewModel = viewModel
                 )
@@ -292,7 +292,7 @@ fun SwipeRefreshItemsType(
 
             if (listItemsWapons.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     items = listItemsWapons.value,
                     viewModel = viewModel
                 )
@@ -300,7 +300,7 @@ fun SwipeRefreshItemsType(
 
             if (listItemsHouseHold.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     items = listItemsHouseHold.value,
                     viewModel = viewModel
                 )
@@ -308,7 +308,7 @@ fun SwipeRefreshItemsType(
 
             if (listPlantsAnimalsProductsFoodDrink.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     items = listPlantsAnimalsProductsFoodDrink.value,
                     viewModel = viewModel
                 )
@@ -316,7 +316,7 @@ fun SwipeRefreshItemsType(
 
             if (listToolsAndOtherEquipment.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     items = listToolsAndOtherEquipment.value,
                     viewModel = viewModel
                 )
@@ -324,7 +324,7 @@ fun SwipeRefreshItemsType(
 
             if (listOtherItems.value.body != null){
                 com.miguel.tibiamerchants.presentation.Components.ListItems(
-                    modifier = Modifier.padding(5.dp, 10.dp, 10.dp, 5.dp),
+                    modifier = modifier.padding(5.dp),
                     items = listOtherItems.value,
                     viewModel = viewModel
                 )
@@ -332,7 +332,7 @@ fun SwipeRefreshItemsType(
         }
         if (stateProgress.value){
             PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = modifier.align(Alignment.TopCenter),
                 state = pullToRefreshState
             )
             stateProgress.value = false
