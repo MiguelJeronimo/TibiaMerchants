@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -44,10 +45,13 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
+import com.miguel.tibiamerchants.domain.models.spells.Effect
 import com.miguel.tibiamerchants.domain.models.spells.Runes
 import com.miguel.tibiamerchants.domain.models.spells.Spell
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
+import org.koin.androidx.compose.koinViewModel
+import kotlin.String
 
 @Composable
 fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, viewModel: ViewModeltemsType){
@@ -793,7 +797,7 @@ fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells){
+fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells = koinViewModel()){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
@@ -832,7 +836,7 @@ fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells){
             }
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
-                OutlinedCard {
+                OutlinedCard(Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(16.dp)) {
                         if (!item?.formula.isNullOrEmpty()) {
                             Text(text = "Fomula: ${item?.formula!!}")
@@ -911,7 +915,7 @@ fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells)
                 }
                 IconButton(
                     modifier = Modifier.weight(0.5f),
-                    onClick = {  }
+                    onClick = { expanded.value = !expanded.value }
                 ){
                     Icon(
                         imageVector = if (expanded.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -967,4 +971,24 @@ fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells)
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun previewCars(){
+    val spells = Spell().apply {
+        name = "Test"
+        img = "https://static.wikia.nocookie.net/tibia/images/4/40/Annihilation.gif/revision/latest?cb=20191218133418&path-prefix=en"
+        formula = "Test"
+        premium = "Test"
+        level = "Test"
+        mana = "Test"
+        price = "Test"
+        group = "Test"
+        effect = Effect(
+           description = "Attempts to execute the selected target with a devastating blow, dealing massive physical damage." ,
+            img= "https://static.wikia.nocookie.net/tibia/images/3/37/Physical_Damage_Icon.gif/revision/latest?cb=20210531030930&path-prefix=en"
+        )
+    }
+    CardSpells(modifier = Modifier, item = spells)
 }
