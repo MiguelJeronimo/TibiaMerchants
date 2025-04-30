@@ -278,7 +278,7 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltems
            AnimatedVisibility(expanded.value){
                Spacer(modifier = Modifier.height(5.dp))
                if (!item?.weight.isNullOrEmpty()){
-                   OutlinedCard {
+                   OutlinedCard (Modifier.fillMaxWidth()){
                        Column(Modifier.padding(16.dp)) {
                            if (!item!!.arm.isNullOrEmpty()){
                                Text(text = "Arm: ${item.arm!!}")
@@ -365,7 +365,7 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewMod
             }
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
-                OutlinedCard {
+                OutlinedCard(Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(16.dp)) {
                         if (!item?.level.isNullOrEmpty()){
                             Text(text = "Level: ${item?.level!!}")
@@ -488,7 +488,7 @@ fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType)
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
                 if (!item.weight.isNullOrEmpty()){
-                    OutlinedCard {
+                    OutlinedCard (Modifier.fillMaxWidth()){
                         Column(Modifier.padding(16.dp)) {
                             if (!item.price.isNullOrEmpty()){
                                 Text(text = "Price: ${item.price}")
@@ -564,7 +564,7 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltems
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
                 if (!item.weight.isNullOrEmpty()){
-                    OutlinedCard {
+                    OutlinedCard(Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(16.dp)) {
                             if (!item.price.isNullOrEmpty()){
                                 Text(text = "Price: ${item.price}")
@@ -636,7 +636,7 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: View
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
                 if (!item?.weight.isNullOrEmpty()){
-                    OutlinedCard {
+                    OutlinedCard (Modifier.fillMaxWidth()){
                         Column(Modifier.padding(16.dp)) {
                             if (!item?.level.isNullOrEmpty()){
                                 Text(text = "Level: ${item?.level!!}")
@@ -730,7 +730,7 @@ fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType
             AnimatedVisibility(expanded.value) {
                 Spacer(modifier = Modifier.height(5.dp))
                 if (!item?.weight.isNullOrEmpty()){
-                    OutlinedCard {
+                    OutlinedCard(Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(16.dp)) {
                             if (!item?.level.isNullOrEmpty()){
                                 Text(text = "Level: ${item?.level!!}")
