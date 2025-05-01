@@ -16,9 +16,13 @@ class ViewModelNPCS: ViewModel() {
     private val _stateSpells = MutableLiveData<Boolean>()
     val stateSpells: MutableLiveData<Boolean> get() = _stateSpells
 
+    private val _vocations = MutableLiveData<Boolean>()
+    val vocations: MutableLiveData<Boolean> get() = _vocations
+
     init{
         _npcName.value = null
         _stateAbout.value = false
+        _stateItems.value = false
     }
     fun setNPCName(name: String?){
         _npcName.value = name
@@ -34,4 +38,7 @@ class ViewModelNPCS: ViewModel() {
         _stateSpells.value = state
     }
 
+    fun setVocationsState(state: Boolean?){
+        _vocations.value = state
+    }
 }

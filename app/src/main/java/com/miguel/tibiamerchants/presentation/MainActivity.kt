@@ -12,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerValue
@@ -39,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -97,6 +94,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
+
+        viewModel.vocations.observe(this) {
+            if (it){
+                Intent(this, Vocations::class.java).also {
+                    startActivity(it)
+                }
+            }
+        }
 
 
         enableEdgeToEdge()
@@ -156,7 +161,7 @@ class MainActivity : ComponentActivity() {
                                 label = { Text(text = "Vocations") },
                                 selected = false,
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.setVocationsState(true) }
                             )
                         }
                     }
@@ -197,6 +202,7 @@ class MainActivity : ComponentActivity() {
         viewModel.setNPCName(null)
         viewModel.setItemsState(false)
         viewModel.setSpellsState(false)
+        viewModel.setVocationsState(false)
     }
 }
 
