@@ -17,6 +17,11 @@
         android:theme="@style/Theme.TibiaMerchants"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.Vocations"
+            android:exported="false"
+            android:label="@string/title_activity_vocations"
+            android:theme="@style/Theme.TibiaMerchants" />
+        <activity
             android:name=".presentation.ItemProfile"
             android:exported="false"
             android:label="@string/title_activity_item_profile"

@@ -95,6 +95,14 @@ class MainActivity : ComponentActivity() {
             }
         })
 
+        viewModel.vocations.observe(this) {
+            if (it){
+                Intent(this, Vocations::class.java).also {
+                    startActivity(it)
+                }
+            }
+        }
+
 
         enableEdgeToEdge()
         setContent {
@@ -153,7 +161,7 @@ class MainActivity : ComponentActivity() {
                                 label = { Text(text = "Vocations") },
                                 selected = false,
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }
+                                onClick = { viewModel.setVocationsState(true) }
                             )
                         }
                     }
@@ -194,6 +202,7 @@ class MainActivity : ComponentActivity() {
         viewModel.setNPCName(null)
         viewModel.setItemsState(false)
         viewModel.setSpellsState(false)
+        viewModel.setVocationsState(false)
     }
 }
 
