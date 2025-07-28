@@ -17,11 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -49,27 +46,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.ActivityNavigator
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationMain
-import com.miguel.tibiamerchants.domain.models.navigation.VocationsRouters
 import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
 import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
-import com.miguel.tibiamerchants.utils.utils
 import kotlinx.coroutines.launch
-import model.Tibia.NPCModel
 
 
 class MainActivity : ComponentActivity() {
@@ -229,76 +217,16 @@ class MainActivity : ComponentActivity() {
                                             label = { Text(destination.label) }
                                         )
                                     }
-//                                    NavigationBarItem(
-//                                        selected = true,
-//                                        onClick = {
-//                                            navController.navigate(NavigationMain.NPCDefaultFragment.name)
-//                                        },
-//                                        icon = {
-//                                            Icon(
-//                                                modifier = Modifier.size(30.dp),
-//                                                painter = painterResource(
-//                                                    id = R.drawable.rashid
-//                                                ),
-//                                                contentDescription = null
-//                                            )
-//                                        },
-//                                        label = { Text("NPCs") }
-//                                    )
-//                                    NavigationBarItem(
-//                                        selected = false,
-//                                        onClick = { navController.navigate(NavigationMain.TCPrices.name) },
-//                                        icon = {
-//                                            Icon(
-//                                                modifier = Modifier.size(30.dp),
-//                                                painter = painterResource(
-//                                                    id = R.drawable.tibia_coins_escapet_150x150
-//                                                ),
-//                                                contentDescription = null
-//                                            )
-//                                        },
-//                                        label = { Text("TC Prices") }
-//                                    )
-//                                    NavigationBarItem(
-//                                        selected = false,
-//                                        onClick = { navController.navigate(NavigationMain.TCPrices.name) },
-//                                        icon = {
-//                                            Icon(
-//                                                modifier = Modifier.size(30.dp),
-//                                                painter = painterResource(
-//                                                    id = R.drawable.trade_icon_png
-//                                                ),
-//                                                contentDescription = null
-//                                            )
-//                                        },
-//                                        label = { Text("Trades") }
-//                                    )
                                 }
                             }
                         }
                     ) {innerPadding ->
-//                        Column(
-//                            modifier = Modifier
-//                                .padding(innerPadding),
-//                            verticalArrangement = Arrangement.spacedBy(5.dp)
-//                        ) {
-                            //navigation
-
-                            // Get current back stack entry
                             val backStackEntry = navController.currentBackStackEntryAsState()
-                            //                val navController = rememberNavController()
-//                var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
                             NavHost(
                                 navController = navController,
                                 startDestination = startDestination.name,
                                 modifier = Modifier.padding(innerPadding)
                             ) {
-//                                composable(NavigationMain.NPCDefaultFragment.name) {
-//                                    NPCDefaultFragment(viewModel = viewModel)
-//                                }
-//                                composable(NavigationMain.TCPrices.name) {
-//                                    TCPriceFragment(navController)
-//                                }
                                 NavigationMain.entries.forEach { destination->
                                     composable(destination.route){
                                         when(destination){
