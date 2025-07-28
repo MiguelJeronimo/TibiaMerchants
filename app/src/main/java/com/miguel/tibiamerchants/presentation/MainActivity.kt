@@ -29,12 +29,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -42,17 +49,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.ActivityNavigator
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.compose.DialogNavigator
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.R
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationMain
+import com.miguel.tibiamerchants.domain.models.navigation.VocationsRouters
 import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
+import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.utils
 import kotlinx.coroutines.launch
 import model.Tibia.NPCModel
-import model.Tibia.Spells
 
 
 class MainActivity : ComponentActivity() {
@@ -109,14 +126,20 @@ class MainActivity : ComponentActivity() {
             TibiaMerchantsTheme {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
+                //state for bottom navigation bar:
+                val navController = rememberNavController()
+                val startDestination = NavigationMain.NPCDefaultFragment
+                var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet {
                             Box(
-                                modifier = Modifier.fillMaxWidth().background(
-                                    MaterialTheme.colorScheme.surface
-                                )
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.surface
+                                    )
                             ) {
                                 Image(
                                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
@@ -180,20 +203,117 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
+                        },
+                        bottomBar = {
+                            NavigationBar {
+                                NavigationBar(
+                                    windowInsets = NavigationBarDefaults.windowInsets ,
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                                ) {
+                                    NavigationMain.entries.forEachIndexed { index, destination->
+                                        NavigationBarItem(
+                                            selected = selectedDestination == index,
+                                            onClick = {
+                                                navController.navigate(route = destination.route)
+                                                selectedDestination = index
+                                            },
+                                            icon = {
+                                                Icon(
+                                                    modifier = Modifier.size(30.dp),
+                                                    painter = painterResource(
+                                                        id = destination.icon
+                                                    ),
+                                                    contentDescription = null
+                                                )
+                                            },
+                                            label = { Text(destination.label) }
+                                        )
+                                    }
+//                                    NavigationBarItem(
+//                                        selected = true,
+//                                        onClick = {
+//                                            navController.navigate(NavigationMain.NPCDefaultFragment.name)
+//                                        },
+//                                        icon = {
+//                                            Icon(
+//                                                modifier = Modifier.size(30.dp),
+//                                                painter = painterResource(
+//                                                    id = R.drawable.rashid
+//                                                ),
+//                                                contentDescription = null
+//                                            )
+//                                        },
+//                                        label = { Text("NPCs") }
+//                                    )
+//                                    NavigationBarItem(
+//                                        selected = false,
+//                                        onClick = { navController.navigate(NavigationMain.TCPrices.name) },
+//                                        icon = {
+//                                            Icon(
+//                                                modifier = Modifier.size(30.dp),
+//                                                painter = painterResource(
+//                                                    id = R.drawable.tibia_coins_escapet_150x150
+//                                                ),
+//                                                contentDescription = null
+//                                            )
+//                                        },
+//                                        label = { Text("TC Prices") }
+//                                    )
+//                                    NavigationBarItem(
+//                                        selected = false,
+//                                        onClick = { navController.navigate(NavigationMain.TCPrices.name) },
+//                                        icon = {
+//                                            Icon(
+//                                                modifier = Modifier.size(30.dp),
+//                                                painter = painterResource(
+//                                                    id = R.drawable.trade_icon_png
+//                                                ),
+//                                                contentDescription = null
+//                                            )
+//                                        },
+//                                        label = { Text("Trades") }
+//                                    )
+                                }
+                            }
                         }
                     ) {innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .padding(innerPadding),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            Toobar(stateAbout =viewModel)
-                            val npcs = utils().listNPC()
-                            GridLayoutNPC(npcs, viewModel)
+//                        Column(
+//                            modifier = Modifier
+//                                .padding(innerPadding),
+//                            verticalArrangement = Arrangement.spacedBy(5.dp)
+//                        ) {
+                            //navigation
+
+                            // Get current back stack entry
+                            val backStackEntry = navController.currentBackStackEntryAsState()
+                            //                val navController = rememberNavController()
+//                var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+                            NavHost(
+                                navController = navController,
+                                startDestination = startDestination.name,
+                                modifier = Modifier.padding(innerPadding)
+                            ) {
+//                                composable(NavigationMain.NPCDefaultFragment.name) {
+//                                    NPCDefaultFragment(viewModel = viewModel)
+//                                }
+//                                composable(NavigationMain.TCPrices.name) {
+//                                    TCPriceFragment(navController)
+//                                }
+                                NavigationMain.entries.forEach { destination->
+                                    composable(destination.route){
+                                        when(destination){
+                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(viewModel = viewModel)
+                                            NavigationMain.TCPrices -> TCPriceFragment(navController)
+                                            NavigationMain.TibiaTrade -> TCPriceFragment(navController)
+
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
+          //  }
         }
     }
 
@@ -203,51 +323,6 @@ class MainActivity : ComponentActivity() {
         viewModel.setItemsState(false)
         viewModel.setSpellsState(false)
         viewModel.setVocationsState(false)
-    }
-}
-
-
-
-@Composable
-fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPCS?) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(150.dp),
-        verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-       items(npcs.size){npc->
-           CardNPC(npcs[npc], viewModel!!)
-       }
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
-    Card(
-        onClick = {
-            viewModel.setNPCName(npc.nameNPC.toString())
-                  },
-        Modifier
-            //.size(width = 80.dp, height = 80.dp)
-            .padding(5.dp)
-    )
-    {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(5.dp)
-        ) {
-            GlideImage(
-                model = npc.imgNPC,
-                failure = placeholder(R.drawable.error_image_icon),
-                modifier = Modifier
-                    .size(width = 100.dp, height = 100.dp)
-                    .align(Alignment.Center)
-                    .padding(10.dp),
-                contentDescription = "gif"
-            )
-        }
     }
 }
 
