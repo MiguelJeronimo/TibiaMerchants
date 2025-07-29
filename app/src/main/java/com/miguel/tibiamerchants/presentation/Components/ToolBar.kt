@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -58,6 +59,24 @@ fun Toobar(stateAbout: ViewModelNPCS?) {
         ) {
             DropDownMenu(null, stateAbout = stateAbout!!)
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Toobar(title: String) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f).height(50.dp)) {
+        Text(
+            modifier = Modifier
+                .padding(15.dp, 10.dp, 0.dp, 0.dp),
+            text = title,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
     }
 }
 

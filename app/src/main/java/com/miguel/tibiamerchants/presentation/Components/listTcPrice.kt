@@ -1,6 +1,5 @@
 package com.miguel.tibiamerchants.presentation.Components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,17 +10,45 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.miguel.tibiamerchants.domain.models.PriceModel
+import com.miguel.tibiamerchants.domain.models.PriceTcModel
+import java.text.NumberFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
-fun ListTcPrice(){
-    LazyColumn() {
-        items(10){
-            ItemListTC(modifier = Modifier
-                .fillMaxWidth())
+fun ListTcPrice(state: State<PriceTcModel?>) {
+    val prices = state.value?.prices
+    LazyColumn {
+        item{
+            Column {
+                Text(
+                    text = "What is this?",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(5.dp)
+                )
+                Text(
+                    text = "You can find below the update prices in gold for Tibia Coins by game world. These are not exact prices, but a daily average. If you find any outdated prices, please contact us on our contact email.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(5.dp)
+                )
+            }
+        }
+        items(prices!!.size){
+            ItemListTC(
+                modifier = Modifier
+                .fillMaxWidth(),
+                prices[it]
+            )
             HorizontalDivider(
                 modifier = Modifier.padding(5.dp)
             )
@@ -30,7 +57,12 @@ fun ListTcPrice(){
 }
 
 @Composable
-fun ItemListTC(modifier: Modifier){
+fun ItemListTC(modifier: Modifier, price: PriceModel){
+    val instant = Instant.parse(price.createdAt)
+    val zonedDateTime = instant.atZone(ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+    val formattedDate = zonedDateTime.format(formatter)
+    val usFormatter = NumberFormat.getCurrencyInstance(Locale.US)
     Surface (modifier = modifier){
         Column() {
             Row {
@@ -40,41 +72,39 @@ fun ItemListTC(modifier: Modifier){
                     style = MaterialTheme.typography.labelSmall
                 )
                 Text(
-                    text = "Created: 2025-07-25T10:52:03.342Z",
+                    text = "Created: $formattedDate",
                     modifier = Modifier.weight(1f).padding(5.dp),
                     style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.End
                 )
             }
             Text(
-                "Wintera",
+                price.worldName,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(start = 5.dp)
             )
             Text(
-                text = "Buy average price: 38860",
+                text = "Buy average price: ${usFormatter.format(price.buyAveragePrice)} gold coins",
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(start = 5.dp)
             )
             Text(
-                text = "Buy highest price: 40700",
+                text = "Buy highest price: ${usFormatter.format(price.buyHighestPrice)} gold coins",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 5.dp)
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(5.dp).border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            )
-            Text(
-                text = "Sell lowest price: 37605",
-                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(start = 5.dp)
             )
             Text(
-                text = "Sell average price: 40419",
+                text = "Sell lowest price: ${usFormatter.format(price.sellLowestPrice)} gold coins",
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(start = 5.dp)
+            )
+            Text(
+                text = "Sell average price: ${usFormatter.format(price.sellAveragePrice)} gold coins",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(start = 5.dp)
             )
         }
@@ -84,7 +114,7 @@ fun ItemListTC(modifier: Modifier){
 @Preview(showBackground = true)
 @Composable
 fun preview(){
-    ListTcPrice()
+    //ListTcPrice(state)
 //    ItemListTC(
 //        modifier = Modifier
 //            .fillMaxWidth()
