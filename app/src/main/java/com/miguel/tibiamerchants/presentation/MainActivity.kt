@@ -56,6 +56,7 @@ import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
 import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
+import com.miguel.tibiamerchants.presentation.fragments.TcPriceFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.launch
 
@@ -231,8 +232,8 @@ class MainActivity : ComponentActivity() {
                                     composable(destination.route){
                                         when(destination){
                                             NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(viewModel = viewModel)
-                                            NavigationMain.TCPrices -> TCPriceFragment(navController)
-                                            NavigationMain.TibiaTrade -> TCPriceFragment(navController)
+                                            NavigationMain.TCPrices -> TcPriceFragment(navController)
+                                            NavigationMain.TibiaTrade -> TcPriceFragment(navController)
 
                                         }
                                     }

@@ -24,8 +24,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun ListTcPrice(state: State<PriceTcModel?>) {
-    val prices = state.value?.prices
+fun ListTcPrice(state: PriceTcModel) {
+    val prices = state.prices
     LazyColumn {
         item{
             Column {
@@ -43,7 +43,7 @@ fun ListTcPrice(state: State<PriceTcModel?>) {
                 )
             }
         }
-        items(prices!!.size){
+        items(prices.size){
             ItemListTC(
                 modifier = Modifier
                 .fillMaxWidth(),
