@@ -57,6 +57,7 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
 import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
 import com.miguel.tibiamerchants.presentation.fragments.TcPriceFragment
+import com.miguel.tibiamerchants.presentation.fragments.TibiaTradeFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.launch
 
@@ -233,8 +234,7 @@ class MainActivity : ComponentActivity() {
                                         when(destination){
                                             NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(viewModel = viewModel)
                                             NavigationMain.TCPrices -> TcPriceFragment(navController)
-                                            NavigationMain.TibiaTrade -> TcPriceFragment(navController)
-
+                                            NavigationMain.TibiaTrade -> TibiaTradeFragment(navController)
                                         }
                                     }
                                 }
@@ -243,6 +243,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
           //  }
+
+
         }
     }
 

@@ -4,16 +4,13 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,14 +22,14 @@ import com.miguel.tibiamerchants.presentation.Components.ErrorComponent
 import com.miguel.tibiamerchants.presentation.Components.ListTcPrice
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toobar
-import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTCPrice
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun TcPriceFragment(
     navController: NavController,
-    viewModel: ViewModelTibiaTrade = koinViewModel()
+    viewModel: ViewModelTCPrice = koinViewModel()
 ) {
     val state by viewModel.tcPrice.collectAsState()
     TCPriceFragment(state)
@@ -40,7 +37,7 @@ fun TcPriceFragment(
 
 @Composable
 fun TCPriceFragment(
-    state: ViewModelTibiaTrade.UIState
+    state: ViewModelTCPrice.UIState
 ){
     var loadingState by rememberSaveable { mutableStateOf(true) }
     Log.d("state", state.toString())
@@ -66,11 +63,9 @@ fun TCPriceFragment(
                 }
             }
             state.data != null -> {
-                loadingState = false
                 ListTcPrice(state = state.data)
             }
             state.error != null -> {
-                loadingState = false
                 Log.d("error", state.error)
                 ErrorComponent(message = state.error)
             }
@@ -81,6 +76,6 @@ fun TCPriceFragment(
 @Preview(showBackground = true)
 @Composable
 fun previewLoading(){
-    val state = ViewModelTibiaTrade.UIState(isLoding = true)
+    val state = ViewModelTCPrice.UIState(isLoding = true)
     TCPriceFragment(state = state)
 }
