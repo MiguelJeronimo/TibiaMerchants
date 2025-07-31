@@ -66,7 +66,8 @@ data class Trade(
     val itemTier: Int,
     @SerializedName("currency_type")
     val currencyType: Int,
-    val price: String,
+    @SerializedName("price")
+    val price: Long,
     @SerializedName("world_id")
     val worldId: Int,
     @SerializedName("is_closed")
@@ -78,7 +79,7 @@ data class Trade(
     @SerializedName("house_id")
     val houseId: Any,
     @SerializedName("highlighted_until")
-    val highlightedUntil: Any,
+    val highlightedUntil: String?,
     @SerializedName("created_at")
     val createdAt: String,
     @SerializedName("item_name")
@@ -97,7 +98,7 @@ data class Trade(
     val isWhatsappVerified: Int,
     val avatar: String,
     @SerializedName("tibia_id")
-    val tibiaId: Any,
+    val tibiaId: Int? = null,
     @SerializedName("house_name")
     val houseName: Any,
     val size: Any,
@@ -106,7 +107,7 @@ data class Trade(
     val floors: Any,
     val rooms: Any,
     val windows: Any,
-    val town: Any,
+    val town: String? = null,
     val coordinates: Any,
     @SerializedName("is_guildhall")
     val isGuildhall: Boolean,

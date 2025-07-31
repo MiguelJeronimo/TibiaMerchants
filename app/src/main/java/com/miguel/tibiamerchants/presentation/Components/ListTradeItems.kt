@@ -2,6 +2,7 @@ package com.miguel.tibiamerchants.presentation.Components
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,12 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.miguel.tibiamerchants.R
@@ -78,11 +77,15 @@ fun ItemTradeList(modifier: Modifier = Modifier, state: LazyPagingItems<Trade>) 
 
                 else -> {
                     items(state.itemCount) {
+                        if(state[it]?.town!= null){
+                            Log.d("Town", "https://tibiatrade.gg/images/house/location/${state[it]?.tibiaId}")
+                        }
                         state[it]?.let {
                             ItemTrade(
                                 modifier = Modifier
                                     .padding(5.dp),
-                                tibia = it
+                                tibia = it,
+                                hightLight = !it.highlightedUntil.isNullOrEmpty()
                             )
                         }
                     }
@@ -122,15 +125,17 @@ fun ItemTrade(
     tibia: Trade,
     onClick: () -> Unit = {},
     onClickButtonUser: () -> Unit = {},
+    hightLight: Boolean = false
 ) {
     val instant = Instant.parse(tibia.createdAt)
     val zonedDateTime = instant.atZone(ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val formattedDate = zonedDateTime.format(formatter)
     val usFormatter = NumberFormat.getCurrencyInstance(Locale.US)
-    Card(
+    OutlinedCard (
         modifier = modifier,
-        onClick = onClick
+        onClick = onClick,
+        border = if (hightLight) BorderStroke(2.dp, Color("#B8A672".toColorInt())) else BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -156,16 +161,23 @@ fun ItemTrade(
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
-            OutlinedCard(
+            ElevatedCard (
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             ) {
                 Row {
                     //https://tibiatrade.gg/images/item/Holy_Scarab.gif
+
                     tibia.itemName?.let {
                         val name = it.replace(" ", "_")
+                        val town = when{
+                            tibia.town != null -> {
+                                "https://tibiatrade.gg/images/house/location/${tibia.tibiaId}"
+                            }
+                            else -> "https://tibiatrade.gg/images/item/$name.gif"
+                        }
                         GlideImage(
-                            model = "https://tibiatrade.gg/images/item/$name.gif",
+                            model = town,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(5.dp)
@@ -197,7 +209,7 @@ fun ItemTrade(
                     .padding(5.dp)
                     .fillMaxWidth()
             )
-            val textPrice = "Price: ${usFormatter.format(tibia.price.toInt())} gold coins; Tcs: ${
+            val textPrice = "Price: ${usFormatter.format(tibia.price)} gold coins; Tcs: ${
                 tibia.convertedPrice?.let { usFormatter.format(it) }
             }"
             Text(

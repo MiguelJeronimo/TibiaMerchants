@@ -22,14 +22,18 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -47,6 +51,7 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class Items : ComponentActivity() {
@@ -95,14 +100,14 @@ class Items : ComponentActivity() {
                 })
 
                 Scaffold(
-                    modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
+                    modifier = Modifier,
                 ) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Toolbar("Items", viewmodel = viewModel)
                         if (stateProgressBar.value){
                             StatusBar()
                         }
-                        SwipeRefresh(stateList, viewModel, pullToRefreshState)
+                        SwipeRefresh(stateList, viewModel)
                     }
                 }
             }
@@ -114,39 +119,35 @@ class Items : ComponentActivity() {
 @Composable
 fun SwipeRefresh(
     stateList: MutableState<ItemsModels>,
-    viewModel: ViewModelItems,
-    pullToRefreshState: PullToRefreshState,
+    viewModel: ViewModelItems
 ) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState.isRefreshing) {
-        viewModel.setProgressBar(true)
-        LaunchedEffect(true) {
-            viewModel.setItems()
-            delay(1500)
-            viewModel.setProgressBar(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress>0.0){
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            GridLayoutItems(stateList, viewModel)
-        }
-        if (stateProgress.value){
-            PullToRefreshContainer(
+    val corrutineScope = rememberCoroutineScope()
+    val state = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        state = state,
+        modifier = Modifier,
+        onRefresh = {
+            isRefreshing = true
+            corrutineScope.launch {
+                viewModel.setItems()
+                delay(1500)
+                isRefreshing = false
+            }
+        },
+        indicator = {
+            Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState
+                isRefreshing = isRefreshing,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                state = state
             )
-            stateProgress.value = false
         }
+
+    ) {
+        GridLayoutItems(stateList, viewModel)
     }
 }
 
