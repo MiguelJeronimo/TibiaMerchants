@@ -33,7 +33,9 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
+import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -209,6 +211,45 @@ fun ToolBarItemsProfile(tittle: String? = null, viewmodel: ViewModelItemProfile?
             horizontalArrangement = Arrangement.End
         ) {
             //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+@Composable
+fun ToolBarVocation(title: String? = null){
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        BackButtonVocations(Modifier)
+        title?.let {
+            Text(
+                modifier = Modifier
+                    .padding(5.dp, 10.dp, 0.dp, 0.dp),
+                text = it,
+                color = MaterialTheme.colorScheme.secondary,
+                style = textStle
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+@Composable
+fun BackButtonVocations(modifier: Modifier, viewModel: ViewModelVocations = koinViewModel()) {
+    Box {
+        IconButton(onClick = {
+            viewModel.setBack(true)
+        }) {
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = modifier.size(30.dp))
         }
     }
 }

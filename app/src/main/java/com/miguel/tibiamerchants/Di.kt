@@ -13,21 +13,26 @@ import com.miguel.tibiamerchants.data.repositories.RepositoryItemsType
 import com.miguel.tibiamerchants.data.repositories.RepositoryItemsTypeImp
 import com.miguel.tibiamerchants.data.repositories.RepositorySpells
 import com.miguel.tibiamerchants.data.repositories.RepositorySpellsImp
+import com.miguel.tibiamerchants.data.repositories.VocationRepository
+import com.miguel.tibiamerchants.data.repositories.VocationRepositoryImp
 import com.miguel.tibiamerchants.domain.usecases.UseCaseIItemProfile
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
 import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
 import com.miguel.tibiamerchants.domain.usecases.UseCaseSpellList
+import com.miguel.tibiamerchants.domain.usecases.UseCaseVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelVocationFactory
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -106,5 +111,21 @@ class Di {
 
         viewModel { ViewModelItemProfile(get()) }
 
+        //Vocations
+        single<VocationRepository>{
+            val url = "https://tibia-merchants-api.onrender.com/"
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            VocationRepositoryImp(retrofit)
+        }
+
+        factory<UseCaseVocations> {
+            UseCaseVocations(get())
+        }
+
+        single {
+            ViewModelVocationFactory(get())
+        }
+
+        viewModel { ViewModelVocations(get()) }
     }
 }

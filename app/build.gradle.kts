@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.miguel.tibiamerchants"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.miguel.tibiamerchants"
