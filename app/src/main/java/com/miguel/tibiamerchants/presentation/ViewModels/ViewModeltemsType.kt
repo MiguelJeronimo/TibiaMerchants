@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.presentation.ViewModels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,28 +12,15 @@ import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType) : ViewModel() {
     //private val repository = RepositoryItems()
 
-    private val _items = MutableLiveData<ItemsModelsType>()
-    val items: MutableLiveData<ItemsModelsType> = _items
-
-    private val _itemsTypeWeapons = MutableLiveData<ItemsModelsTypeWeapons>()
-    val itemsTypeWeapons: MutableLiveData<ItemsModelsTypeWeapons> = _itemsTypeWeapons
-
-    private val _itemsTypeHouseHold = MutableLiveData<HouseHoldModel>()
-    val itemsTypeHouseHold: MutableLiveData<HouseHoldModel> = _itemsTypeHouseHold
-
-    private val _plantsAnimalsProductsFoodDrink = MutableLiveData<PlantsAnimalsProductsFoodDrink>()
-    val plantsAnimalsProductsFoodDrink: MutableLiveData<PlantsAnimalsProductsFoodDrink> get() = _plantsAnimalsProductsFoodDrink
-
-    private val _itemsTypeToolsAndOthers = MutableLiveData<ToolsAndOtherEquipmentModel>()
-    val itemsTypeToolsAndOthers: MutableLiveData<ToolsAndOtherEquipmentModel> get() = _itemsTypeToolsAndOthers
-
-    private val _itemsTypeOtherItems = MutableLiveData<OtherItemsModel>()
-    val itemsTypeOtherItems: MutableLiveData<OtherItemsModel> get() = _itemsTypeOtherItems
+    private val _items = MutableStateFlow(UIState())
+    val items: StateFlow<UIState> = _items
 
     private val _back = MutableLiveData<Boolean>()
     val back: MutableLiveData<Boolean> = _back
@@ -59,35 +47,90 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType) : ViewMo
 
     fun setItems(body: PostItemsType) {
         viewModelScope.launch {
-            _items.value = useCaseItemsType.itemsType(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsType(body)
+            response.onSuccess {
+                Log.d("ITEMS", it.toString())
+                _items.value = UIState(items = it)
+            }
+            response.onFailure {
+                Log.d("ERROR", it.message.toString())
+                _items.value = UIState(error = it.message)
+            }
         }
     }
 
     fun setItemsWeapons(body: PostItemsType) {
         viewModelScope.launch {
-            _itemsTypeWeapons.value = useCaseItemsType.itemsTypeWeapons(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsTypeWeapons(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeWeapons = it)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message)
+            }
         }
     }
     fun setItemsHouseHold(body: PostItemsType) {
         viewModelScope.launch {
-            _itemsTypeHouseHold.value = useCaseItemsType.itemsTypeHouseHold(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsTypeHouseHold(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeHouseHold = it)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message)
+            }
         }
     }
 
     fun setPlantsAnimalsProductsFoodDrink(body: PostItemsType){
         viewModelScope.launch {
-            _plantsAnimalsProductsFoodDrink.value = useCaseItemsType.itemsTypeOthers(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsTypeOthers(body)
+            response.onSuccess {
+                _items.value = UIState(plantsAnimalsProductsFoodDrink = it)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message)
+            }
         }
     }
 
     fun setItemsToolsAndOthers(body: PostItemsType){
         viewModelScope.launch {
-            _itemsTypeToolsAndOthers.value = useCaseItemsType.itemsTypeToolsAndOthers(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsTypeToolsAndOthers(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeToolsAndOthers = it)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message)
+            }
         }
     }
     fun setItemsOtherItems(body: PostItemsType){
         viewModelScope.launch {
-            _itemsTypeOtherItems.value = useCaseItemsType.itemsTypeOtherItems(body)
+            _items.value = UIState(isLoading = true)
+            val response = useCaseItemsType.itemsTypeOtherItems(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeOtherItems = it)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message)
+            }
         }
     }
+
+    data class UIState(
+        val isLoading: Boolean = false,
+        val items: ItemsModelsType? = null,
+        val itemsTypeWeapons: ItemsModelsTypeWeapons? = null,
+        val itemsTypeHouseHold: HouseHoldModel? = null,
+        val plantsAnimalsProductsFoodDrink: PlantsAnimalsProductsFoodDrink? = null,
+        val itemsTypeToolsAndOthers: ToolsAndOtherEquipmentModel? = null,
+        val itemsTypeOtherItems: OtherItemsModel? = null,
+        val error: String? = null
+    )
 }

@@ -2,6 +2,7 @@ package com.miguel.tibiamerchants
 
 import Jsoup.Scrapper
 import com.miguel.tibiamerchants.data.network.retrofit.ApiClient
+import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.network.retrofit.RetrofitClient
 import com.miguel.tibiamerchants.data.repositories.NPCRepository
 import com.miguel.tibiamerchants.data.repositories.NPCRepositoryImp
@@ -13,6 +14,9 @@ import com.miguel.tibiamerchants.data.repositories.RepositoryItemsType
 import com.miguel.tibiamerchants.data.repositories.RepositoryItemsTypeImp
 import com.miguel.tibiamerchants.data.repositories.RepositorySpells
 import com.miguel.tibiamerchants.data.repositories.RepositorySpellsImp
+import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClient
+import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClientImpl
+import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
 import com.miguel.tibiamerchants.data.repositories.VocationRepository
 import com.miguel.tibiamerchants.data.repositories.VocationRepositoryImp
 import com.miguel.tibiamerchants.domain.usecases.UseCaseIItemProfile
@@ -25,6 +29,8 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTCPrice
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
@@ -32,6 +38,8 @@ import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsF
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelTCPriceFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelTibiaTradeFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelVocationFactory
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -111,6 +119,24 @@ class Di {
 
         viewModel { ViewModelItemProfile(get()) }
 
+        //tibiatrade
+        single<RepositoryTibiaClient>{
+            val url = "https://tibiatrade.gg/"
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiTibiaTradeClient::class.java)
+            RepositoryTibiaClientImpl(retrofit)
+        }
+        factory<UseCaseTibiaTrade> {
+            UseCaseTibiaTrade(get())
+        }
+        single {
+            ViewModelTibiaTradeFactory(get())
+        }
+        single{
+            ViewModelTCPriceFactory(get())
+        }
+        viewModel { ViewModelTCPrice(get()) }
+
+        viewModel { ViewModelTibiaTrade(get()) }
         //Vocations
         single<VocationRepository>{
             val url = "https://tibia-merchants-api.onrender.com/"

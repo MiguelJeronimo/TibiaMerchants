@@ -13,15 +13,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -29,12 +29,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -42,61 +53,65 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.placeholder
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.miguel.tibiamerchants.R
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationMain
 import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
+import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
+import com.miguel.tibiamerchants.presentation.fragments.TcPriceFragment
+import com.miguel.tibiamerchants.presentation.fragments.TibiaTradeFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
-import com.miguel.tibiamerchants.utils.utils
 import kotlinx.coroutines.launch
-import model.Tibia.NPCModel
-import model.Tibia.Spells
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var viewModel: ViewModelNPCS
     private lateinit var viewModelProvider: ViewModelProvider
+
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModelProvider = ViewModelProvider(this)
         viewModel = viewModelProvider[ViewModelNPCS::class.java]
-        viewModel.npc.observe(this, Observer {npc->
-            if (npc != null){
-                Intent(this, NPCInformation::class.java).also{
+        viewModel.npc.observe(this, Observer { npc ->
+            if (npc != null) {
+                Intent(this, NPCInformation::class.java).also {
                     it.putExtra("npc", npc)
                     startActivity(it)
                 }
             }
         })
         viewModel.stateAbout.observe(this, Observer {
-            if (it){
-                Intent(this, About::class.java).also{
+            if (it) {
+                Intent(this, About::class.java).also {
                     startActivity(it)
                 }
             }
         })
         //ViewModels to menu drawer
         viewModel.stateItems.observe(this, Observer {
-            if (it){
-                Intent(this, Items::class.java).also{
+            if (it) {
+                Intent(this, Items::class.java).also {
                     startActivity(it)
                 }
             }
         })
 
         viewModel.stateSpells.observe(this, Observer {
-            if(it){
-                Intent(this, SpellsListActivity::class.java).also{
+            if (it) {
+                Intent(this, SpellsListActivity::class.java).also {
                     startActivity(it)
                 }
             }
         })
 
         viewModel.vocations.observe(this) {
-            if (it){
+            if (it) {
                 Intent(this, Vocations::class.java).also {
                     startActivity(it)
                 }
@@ -109,14 +124,27 @@ class MainActivity : ComponentActivity() {
             TibiaMerchantsTheme {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
+                //state for bottom navigation bar:
+                val navController = rememberNavController()
+                val startDestination = NavigationMain.NPCDefaultFragment
+                var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+                val myNavigationSuiteItemColors = NavigationSuiteDefaults.itemColors(
+                    navigationBarItemColors = NavigationBarItemDefaults.colors(
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                )
+
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
                         ModalDrawerSheet {
                             Box(
-                                modifier = Modifier.fillMaxWidth().background(
-                                    MaterialTheme.colorScheme.surface
-                                )
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.surface
+                                    )
                             ) {
                                 Image(
                                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
@@ -126,7 +154,7 @@ class MainActivity : ComponentActivity() {
                                 Spacer(
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
-                                Column (Modifier.align(Alignment.Center)){
+                                Column(Modifier.align(Alignment.Center)) {
                                     Text(
                                         "Tibia Merchants",
                                         //modifier = ,
@@ -166,10 +194,56 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) {
-                    Scaffold(
+                    NavigationSuiteScaffold(
                         modifier = Modifier.fillMaxSize(),
-                        floatingActionButton = {
+                        navigationSuiteItems = {
+                            NavigationMain.entries.forEachIndexed { index, destination ->
+                                item(
+                                    colors = myNavigationSuiteItemColors,
+                                    selected = selectedDestination == index,
+                                    onClick = {
+                                        navController.navigate(route = destination.route)
+                                        selectedDestination = index
+                                    },
+                                    icon = {
+                                        Icon(
+                                            modifier = Modifier.size(30.dp),
+                                            painter = painterResource(
+                                                id = destination.icon
+                                            ),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    label = { Text(destination.label) }
+                                )
+                            }
+                        }
+
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(WindowInsets.systemBars.asPaddingValues())
+                                .fillMaxSize()
+                        ){
+                            NavHost(
+                                navController = navController,
+                                startDestination = startDestination.route,
+
+                                ) {
+                                NavigationMain.entries.forEach { destination ->
+                                    composable(destination.route) {
+                                        when (destination) {
+                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(
+                                                viewModel = viewModel
+                                            )
+                                            NavigationMain.TCPrices -> TcPriceFragment(navController)
+                                            NavigationMain.TibiaTrade -> TibiaTradeFragment(navController)
+                                        }
+                                    }
+                                }
+                            }
                             ExtendedFloatingActionButton(
+                                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                                 text = { Text("Options") },
                                 icon = { Icon(Icons.Filled.Menu, contentDescription = "") },
                                 onClick = {
@@ -180,16 +254,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
-                        }
-                    ) {innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .padding(innerPadding),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            Toobar(stateAbout =viewModel)
-                            val npcs = utils().listNPC()
-                            GridLayoutNPC(npcs, viewModel)
                         }
                     }
                 }
@@ -207,51 +271,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
-@Composable
-fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPCS?) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(150.dp),
-        verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-       items(npcs.size){npc->
-           CardNPC(npcs[npc], viewModel!!)
-       }
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
-    Card(
-        onClick = {
-            viewModel.setNPCName(npc.nameNPC.toString())
-                  },
-        Modifier
-            //.size(width = 80.dp, height = 80.dp)
-            .padding(5.dp)
-    )
-    {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(5.dp)
-        ) {
-            GlideImage(
-                model = npc.imgNPC,
-                failure = placeholder(R.drawable.error_image_icon),
-                modifier = Modifier
-                    .size(width = 100.dp, height = 100.dp)
-                    .align(Alignment.Center)
-                    .padding(10.dp),
-                contentDescription = "gif"
-            )
-        }
-    }
-}
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -259,7 +278,7 @@ fun GreetingPreview() {
     TibiaMerchantsTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize()
-        ) {innerPadding ->
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding),

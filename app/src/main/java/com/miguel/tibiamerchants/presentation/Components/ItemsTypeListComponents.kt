@@ -54,20 +54,22 @@ import org.koin.androidx.compose.koinViewModel
 import kotlin.String
 
 @Composable
-fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, viewModel: ViewModeltemsType){
+fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?){
     LazyColumn(modifier = modifier) {
         items(body!!.size){item->
             CardItems(
                 modifier = modifier,
                 item = body[item],
-                viewModel = viewModel
+                onClick = {
+
+                }
             )
         }
     }
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
     println("WEAPONS ${items.body?.weapons}")
     println("WEAPONS ${items.body?.weaponsChargedReplicas}")
     println("WEAPONS ${items.body?.weaponsEnchantedReplicas}")
@@ -88,7 +90,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weapons[item],
-                    viewModel = viewModel
+                    onClick = {
+
+                    }
                 )
             }
         }
@@ -108,7 +112,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weaponsChargedReplicas[item],
-                    viewModel = viewModel
+                    onClick = {
+
+                    }
                 )
             }
         }
@@ -128,7 +134,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weaponsChargedReplicas[item],
-                    viewModel = viewModel
+                    onClick = {
+
+                    }
                 )
             }
         }
@@ -153,7 +161,9 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
             CardItems(
                 modifier = modifier,
                 item = houseHold.items[item],
-                viewModel = viewModel
+                onClick = {
+
+                }
             )
         }
 
@@ -178,7 +188,9 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewMod
             CardItem(
                 modifier = modifier,
                 item = others.items[item],
-                viewModel = viewModel
+                onClick = {
+
+                }
             )
         }
     }
@@ -201,8 +213,9 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel:
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item],
-                viewModel = viewModel
+                modifier = modifier,
+                item = tools.items[item],
+                onClick = {}
             )
         }
     }
@@ -225,8 +238,9 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModelte
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item],
-                viewModel = viewModel
+                modifier = modifier,
+                item = tools.items[item],
+                onClick = {}
             )
         }
     }
@@ -236,14 +250,14 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModelte
 /// CARDS
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: BodyItemstype?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name) }
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -325,14 +339,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltems
 **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, onClick: ()->Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -447,14 +461,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewMod
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: HouseHold,onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -526,10 +540,10 @@ fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType)
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltemsType){
+fun CardItem(modifier: Modifier, item: ItemOtherPlants, onClick: () -> Unit){
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -595,14 +609,14 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltems
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -689,14 +703,14 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: View
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: OtherItem?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -797,14 +811,14 @@ fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells = koinViewModel()){
+fun CardSpells(modifier: Modifier, item: Spell?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-       onClick = { viewModel.setNameSpell(item!!.name)}
+       onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -886,7 +900,7 @@ fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells = ko
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells){
+fun CardSpellsRunes(modifier: Modifier, item: Runes, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
@@ -990,5 +1004,5 @@ fun previewCars(){
             img= "https://static.wikia.nocookie.net/tibia/images/3/37/Physical_Damage_Icon.gif/revision/latest?cb=20210531030930&path-prefix=en"
         )
     }
-    CardSpells(modifier = Modifier, item = spells)
+    //CardSpells(modifier = Modifier, item = spells)
 }

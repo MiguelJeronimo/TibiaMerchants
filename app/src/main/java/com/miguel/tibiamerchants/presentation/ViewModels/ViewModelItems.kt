@@ -6,11 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : ViewModel() {
-    private val _items = MutableLiveData<ItemsModels>()
-    val items: MutableLiveData<ItemsModels> = _items
+    private val _items = MutableStateFlow<UiState>(UiState())
+    val items: StateFlow<UiState> = _items
     private val _isVisibleProgressBar = MutableLiveData<Boolean>()
     val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
 
@@ -23,14 +25,29 @@ class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : Vie
     init {
         _isVisibleProgressBar.value = true
         viewModelScope.launch {
-            _items.value = useCaseItemsCatalog.items()
+            _items.value = UiState(_isLoading = true)
+            val result = useCaseItemsCatalog.items()
+            result.onSuccess {
+                _items.value = UiState(items = it)
+            }
+            result.onFailure {
+                _items.value = UiState(error = it.message)
+            }
         }
     }
     fun setProgressBar(state: Boolean){
         _isVisibleProgressBar.value = state
     }
     fun setItems() {
-        viewModelScope.launch { _items.value = useCaseItemsCatalog.items() }
+        viewModelScope.launch {
+            val result = useCaseItemsCatalog.items()
+            result.onSuccess {
+                _items.value = UiState(items = it)
+            }
+            result.onFailure {
+                _items.value = UiState(error = it.message)
+            }
+        }
     }
     fun setBack(status:Boolean){
         _isBack.value = status
@@ -39,5 +56,11 @@ class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : Vie
     fun setPost(post: PostItemsType){
         _post.value = post
     }
+
+    data class UiState(
+        val _isLoading: Boolean = false,
+        val items: ItemsModels? = null,
+        val error: String? = null
+    )
 
 }

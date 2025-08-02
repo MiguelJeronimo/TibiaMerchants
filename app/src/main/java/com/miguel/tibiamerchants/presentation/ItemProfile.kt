@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,16 +14,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,7 +47,9 @@ import com.miguel.tibiamerchants.presentation.Components.ToolBarItemsProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class ItemProfile : ComponentActivity() {
@@ -55,7 +58,7 @@ class ItemProfile : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val pullToRefreshState = rememberPullToRefreshState()
+            val pullToRefreshState by remember { mutableStateOf(false) }
             val progressState = remember { mutableStateOf(false) }
             val nameIntent = remember { mutableStateOf("") }
             var profileState by remember { mutableStateOf(Profile()) }
@@ -86,7 +89,7 @@ class ItemProfile : ComponentActivity() {
             }
 
             TibiaMerchantsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize().nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         ToolBarItemsProfile(nameIntent.value, viewmodel = viewModel)
                         if (progressState.value) {
@@ -97,7 +100,7 @@ class ItemProfile : ComponentActivity() {
                             name = nameIntent.value,
                             viewModel = viewModel,
                             pullToRefreshState = pullToRefreshState,
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
@@ -111,43 +114,39 @@ class ItemProfile : ComponentActivity() {
 fun SwipeRefreshItemProfile(
     name: String? = null,
     viewModel: ViewModelItemProfile? = null,
-    pullToRefreshState: PullToRefreshState? = null,
+    pullToRefreshState: Boolean = false,
     modifier: Modifier,
     profileState: Profile,
 ) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState!!.isRefreshing) {
-        viewModel?.loading(true)
-        LaunchedEffect(true) {
-            viewModel?.setItemProfiel(name!!)
-            delay(1500)
-            viewModel?.loading(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress > 0.0) {
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            ProfileComposable(
-                modifier = modifier,
-                profileState = profileState
-            )
-        }
-        if (stateProgress.value) {
-            PullToRefreshContainer(
+    val corrutineScope = rememberCoroutineScope()
+    val state = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        indicator = {
+            Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState,
+                isRefreshing = isRefreshing,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                state = state
             )
-            stateProgress.value = false
-        }
+        },
+        onRefresh = {
+            isRefreshing = true
+            corrutineScope.launch {
+                viewModel?.setItemProfiel(name!!)
+                delay(1500)
+                isRefreshing = false
+            }
+        },
+        modifier = modifier,
+        state = state,
+    ) {
+        ProfileComposable(
+            modifier = modifier,
+            profileState = profileState
+        )
     }
 }
 

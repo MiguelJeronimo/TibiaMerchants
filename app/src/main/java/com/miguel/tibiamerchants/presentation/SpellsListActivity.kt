@@ -18,14 +18,18 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,6 +44,7 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SpellsListActivity : ComponentActivity() {
@@ -73,7 +78,7 @@ class SpellsListActivity : ComponentActivity() {
                 }
             }
             TibiaMerchantsTheme {
-                Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
+                Scaffold(modifier = Modifier) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)){
                         ToolBarSpells("Spells", viewModel)
                         if (progressState.value){
@@ -116,8 +121,9 @@ fun ListSpellsandRuneslist(
             }
             items(spells.size) { item ->
                 CardSpells(
-                    modifier = modifier.padding(5.dp), item = spells[item],
-                    viewModel = viewModel
+                    modifier = modifier.padding(5.dp),
+                    item = spells[item],
+                    onClick = {}
                 )
             }
         }
@@ -137,7 +143,7 @@ fun ListSpellsandRuneslist(
                 CardSpellsRunes(
                     modifier = modifier.padding(5.dp),
                     item = runes[item],
-                    viewModel = viewModel
+                    onClick = {}
                 )
             }
         }
@@ -152,36 +158,32 @@ fun SwipeRefreshSpells(
     pullToRefreshState: PullToRefreshState,
     modifier: Modifier,
 ) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState.isRefreshing) {
-        viewModel.isProgress(true)
-        LaunchedEffect(true) {
-            viewModel.setSpells()
-            delay(1500)
-            viewModel.isProgress(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress>0.0){
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            ListSpellsandRuneslist(modifier, stateList, viewModel)
-        }
-        if (stateProgress.value){
-            PullToRefreshContainer(
+    val corrutineScope = rememberCoroutineScope()
+    val state = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        state = state,
+        modifier = modifier,
+        indicator = {
+            Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState
+                isRefreshing = isRefreshing,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                state = state
             )
-            stateProgress.value = false
+        },
+        onRefresh = {
+            isRefreshing = true
+            corrutineScope.launch {
+                viewModel.setSpells()
+                delay(150)
+                isRefreshing = false
+            }
         }
+    ) {
+        ListSpellsandRuneslist(modifier, stateList, viewModel)
     }
 }
 
