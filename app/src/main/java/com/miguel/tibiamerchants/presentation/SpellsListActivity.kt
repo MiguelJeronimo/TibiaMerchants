@@ -121,8 +121,9 @@ fun ListSpellsandRuneslist(
             }
             items(spells.size) { item ->
                 CardSpells(
-                    modifier = modifier.padding(5.dp), item = spells[item],
-                    viewModel = viewModel
+                    modifier = modifier.padding(5.dp),
+                    item = spells[item],
+                    onClick = {}
                 )
             }
         }
@@ -142,7 +143,7 @@ fun ListSpellsandRuneslist(
                 CardSpellsRunes(
                     modifier = modifier.padding(5.dp),
                     item = runes[item],
-                    viewModel = viewModel
+                    onClick = {}
                 )
             }
         }

@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
@@ -24,6 +26,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,14 +47,10 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
-import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
-import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class Itemsype : ComponentActivity() {
@@ -143,56 +142,6 @@ class Itemsype : ComponentActivity() {
                     }
                 }
 
-                viewModel.isVisibleProgressBar.observe(this) {
-                    if (it != null) {
-                        println("isVisibleProgressBar: $it")
-                        progressState.value = it
-                    }
-                }
-
-                viewModel.items.observe(this, Observer {
-                    if (it != null) {
-                        listItems.value = it.body!!
-                    }
-                    viewModel.setProgressBar(false)
-                })
-
-                viewModel.itemsTypeWeapons.observe(this, Observer {
-                    if (it != null) {
-                        listItemsWapons.value = it
-                    }
-                    viewModel.setProgressBar(false)
-                })
-
-                viewModel.itemsTypeHouseHold.observe(this, Observer {
-                    if (it != null) {
-                        listItemsHouseHold.value = it
-                    }
-                    viewModel.setProgressBar(false)
-                })
-
-                viewModel.plantsAnimalsProductsFoodDrink.observe(this, Observer {
-                    if (it != null) {
-                        listPlantsAnimalsProductsFoodDrink.value = it
-                    }
-                    viewModel.setProgressBar(false)
-                })
-
-                viewModel.itemsTypeToolsAndOthers.observe(this, Observer {
-                    if (it != null) {
-                        listToolsAndOtherEquipment.value = it
-                    }
-                    viewModel.setProgressBar(false)
-
-                })
-
-                viewModel.itemsTypeOtherItems.observe(this, Observer {
-                    if (it != null) {
-                        listOtherItems.value = it
-                    }
-                    viewModel.setProgressBar(false)
-                })
-
                 viewModel.back.observe(this, Observer {
                     if (it) {
                         finish()
@@ -205,18 +154,7 @@ class Itemsype : ComponentActivity() {
                         if (progressState.value) {
                             ProgressIndicatorItemsType()
                         }
-                        SwipeRefreshItemsType(
-                            titleState = titleState,
-                            nameState = nameState,
-                            listItems = listItems,
-                            listItemsWapons = listItemsWapons,
-                            listItemsHouseHold = listItemsHouseHold,
-                            listPlantsAnimalsProductsFoodDrink = listPlantsAnimalsProductsFoodDrink,
-                            listToolsAndOtherEquipment = listToolsAndOtherEquipment,
-                            listOtherItems = listOtherItems,
-                            modifier = Modifier,
-                            viewModel = viewModel,
-                        )
+
                     }
                 }
             }
@@ -239,134 +177,6 @@ fun ProgressIndicatorItemsType() {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SwipeRefreshItemsType(
-    listItems: MutableState<ArrayList<BodyItemstype>>,
-    viewModel: ViewModeltemsType,
-    modifier: Modifier,
-    nameState: MutableState<String?>,
-    listItemsWapons: MutableState<ItemsModelsTypeWeapons>,
-    listItemsHouseHold: MutableState<HouseHoldModel>,
-    listPlantsAnimalsProductsFoodDrink: MutableState<PlantsAnimalsProductsFoodDrink>,
-    listToolsAndOtherEquipment: MutableState<ToolsAndOtherEquipmentModel>,
-    listOtherItems: MutableState<OtherItemsModel>,
-    titleState: MutableState<String?>,
-) {
-    val corrutineScope = rememberCoroutineScope()
-    val state = rememberPullToRefreshState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        state = state,
-        modifier = modifier,
-        indicator = {
-            Indicator(
-                modifier = Modifier.align(Alignment.TopCenter),
-                isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                state = state
-            )
-        },
-        onRefresh = {
-            corrutineScope.launch {
-                isRefreshing = true
-                when (titleState.value?.lowercase()) {
-                    "body equipment" -> viewModel.setItems(
-                        PostItemsType(
-                            titleState.value,
-                            nameState.value
-                        )
-                    )
-
-                    "weapons" -> viewModel.setItemsWeapons(
-                        PostItemsType(
-                            titleState.value,
-                            nameState.value
-                        )
-                    )
-
-                    "household items" -> viewModel.setItemsHouseHold(
-                        PostItemsType(
-                            titleState.value,
-                            nameState.value
-                        )
-                    )
-
-                    "plants, animal products, food and drink" -> viewModel.setPlantsAnimalsProductsFoodDrink(
-                        PostItemsType(titleState.value, nameState.value)
-                    )
-
-                    "tools and other equipment" -> viewModel.setItemsToolsAndOthers(
-                        PostItemsType(titleState.value, nameState.value)
-                    )
-
-                    "other items" -> viewModel.setItemsOtherItems(
-                        PostItemsType(
-                            titleState.value,
-                            nameState.value
-                        )
-                    )
-
-                    else -> {
-                        viewModel.setItems(PostItemsType(titleState.value, nameState.value))
-                    }
-                }
-                delay(1500)
-                isRefreshing = false
-            }
-        }
-    ) {
-        if (listItems.value.isNotEmpty()) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                body = listItems.value,
-                viewModel = viewModel
-            )
-        }
-
-        if (listItemsWapons.value.body != null) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                items = listItemsWapons.value,
-                viewModel = viewModel
-            )
-        }
-
-        if (listItemsHouseHold.value.body != null) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                items = listItemsHouseHold.value,
-                viewModel = viewModel
-            )
-        }
-
-        if (listPlantsAnimalsProductsFoodDrink.value.body != null) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                items = listPlantsAnimalsProductsFoodDrink.value,
-                viewModel = viewModel
-            )
-        }
-
-        if (listToolsAndOtherEquipment.value.body != null) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                items = listToolsAndOtherEquipment.value,
-                viewModel = viewModel
-            )
-        }
-
-        if (listOtherItems.value.body != null) {
-            com.miguel.tibiamerchants.presentation.Components.ListItems(
-                modifier = modifier.padding(5.dp),
-                items = listOtherItems.value,
-                viewModel = viewModel
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

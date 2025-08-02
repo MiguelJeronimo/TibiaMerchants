@@ -3,6 +3,7 @@ package com.miguel.tibiamerchants.presentation.Components
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
@@ -278,11 +281,13 @@ fun Backbutton(viewmodel: ViewModelNPC?) {
 }
 @Composable
 fun Backbutton(viewmodel:  ViewModeltemsType?) {
-    Box {
+    Box(
+        modifier  = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
         IconButton(onClick = {
             viewmodel?.setBack(true)
         }) {
-            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete",modifier = Modifier.size(30.dp))
+            Icon(painter = painterResource(R.drawable.baseline_arrow_back_ios_24), contentDescription = "delete",modifier = Modifier.size(30.dp))
         }
     }
 }
