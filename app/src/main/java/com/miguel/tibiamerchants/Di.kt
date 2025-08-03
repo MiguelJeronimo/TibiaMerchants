@@ -61,7 +61,7 @@ class Di {
 
         //items catalog
         single<RepositoryItemsCatalog>{
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemsCatalogImp(retrofit)
         }
@@ -77,7 +77,7 @@ class Di {
 
         //items type catalog
         single<RepositoryItemsType> {
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemsTypeImp(retrofit)
         }
@@ -91,7 +91,7 @@ class Di {
 
         //spells
         single<RepositorySpells> {
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositorySpellsImp(retrofit)
         }
@@ -104,7 +104,7 @@ class Di {
         viewModel { ViewModelSpells(get()) }
         //ItemProfile
         single<RepositoryItemsProfile>{
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemProfileImp(retrofit)
         }
@@ -121,7 +121,7 @@ class Di {
 
         //tibiatrade
         single<RepositoryTibiaClient>{
-            val url = "https://tibiatrade.gg/"
+            val url = BuildConfig.API_TIBIA_TRADE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiTibiaTradeClient::class.java)
             RepositoryTibiaClientImpl(retrofit)
         }
@@ -139,7 +139,7 @@ class Di {
         viewModel { ViewModelTibiaTrade(get()) }
         //Vocations
         single<VocationRepository>{
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             VocationRepositoryImp(retrofit)
         }

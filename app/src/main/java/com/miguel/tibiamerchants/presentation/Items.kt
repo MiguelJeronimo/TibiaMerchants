@@ -3,7 +3,6 @@ package com.miguel.tibiamerchants.presentation
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,12 +29,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationItemsDetails
+import com.miguel.tibiamerchants.presentation.Components.SwapeRefreshItemsType
 import com.miguel.tibiamerchants.presentation.Components.SwipeRefresh
-import com.miguel.tibiamerchants.presentation.Components.SwipeRefreshItemsType
+import com.miguel.tibiamerchants.presentation.Components.SwipeRefreshItemProfile
+
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import org.koin.android.ext.android.inject
@@ -44,6 +50,7 @@ import org.koin.android.ext.android.inject
 class Items : ComponentActivity() {
 
     lateinit var viewModel: ViewModelItems
+    lateinit var itemsModels: ViewModeltemsType
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,29 +89,53 @@ class Items : ComponentActivity() {
                        navigator = scaffoldNavigator,
                        listPane = {
                            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                               Toolbar("Items", viewmodel = viewModel)
+                               Toolbar("Items", onClick = {
+                                   viewModel.setBack(true)
+                               })
                                SwipeRefresh( scaffoldNavigator = scaffoldNavigator, scope = scope)
                            }
                        },
                        detailPane = {
+                           val scope = rememberCoroutineScope()
                            AnimatedPane {
-                               scaffoldNavigator.currentDestination?.contentKey?.let {
-                                   Log.d("Title", "${it.title}")
-                                   Log.d("Name", "${it.name}")
-                                   Column(modifier = Modifier) {
-                                       //Toolbar(nameState.value.toString(), viewModel)
-                                       val title = remember { mutableStateOf(it.title) }
-                                       val name = remember { mutableStateOf(it.name) }
-                                       SwipeRefreshItemsType(
-                                           titleState = title,
-                                           nameState = title,
-                                           modifier = Modifier
-                                       )
+                               val destination = scaffoldNavigator.currentDestination?.contentKey
+                               val navController = rememberNavController()
+                               if (destination != null) {
+                                   NavHost(
+                                       navController = navController,
+                                       startDestination = NavigationItemsDetails.Items.route,
+                                       modifier = Modifier.fillMaxSize()
+                                   ) {
+                                       NavigationItemsDetails.entries.forEach {dest->
+                                           composable(dest.route){
+                                               when(dest){
+                                                   NavigationItemsDetails.Items -> {
+                                                       SwapeRefreshItemsType(
+                                                           destination = destination,
+                                                           scope = scope,
+                                                           scaffoldNavigator = scaffoldNavigator,
+                                                           navController = navController
+                                                       )
+                                                   }
+                                                   NavigationItemsDetails.ItemDetails -> {
+                                                       println("Data: ${it.arguments?.getString("itemName")}")
+                                                       val itemName =
+                                                           it.arguments?.getString("itemName")
+                                                       itemName?.let {
+                                                           SwipeRefreshItemProfile(
+                                                               name = it,
+                                                               navController = navController
+                                                           )
+                                                       }
+                                                   }
+                                               }
+                                           }
+
+                                       }
                                    }
                                }
                            }
                        },
-
                        extraPane = {
                            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                                Toolbar("Items", viewmodel = viewModel)

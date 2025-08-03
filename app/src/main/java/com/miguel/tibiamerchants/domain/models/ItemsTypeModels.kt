@@ -1,5 +1,8 @@
 package com.miguel.tibiamerchants.domain.models
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 // items type models
 data class ItemsModelsType(
     val statusCode:Int? = null,
@@ -20,15 +23,15 @@ data class BodyItemstype(
     val level: String? = null,
     val vocation: String? = null,
 )
-
+@Parcelize
 //MODEL POST ITEMS TYPE ENDPOINT
 data class PostItemsType(
     var title: String? = null,
     var name: String? = null
-)
+) : Parcelable
 
 //weapons model response
-    data class ItemsModelsTypeWeapons(
+data class ItemsModelsTypeWeapons(
     val statusCode: Int? = null,
     val body: BodyItemstypeWeapons? = null,
 )

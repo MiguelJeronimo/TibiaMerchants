@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.domain.usecases
 
+import android.util.Log
 import com.miguel.tibiamerchants.data.repositories.RepositoryItemsType
 import com.miguel.tibiamerchants.domain.models.HouseHoldModel
 import com.miguel.tibiamerchants.domain.models.ItemsModelsType
@@ -22,6 +23,7 @@ class UseCaseItemsType(private val repository: RepositoryItemsType) {
     suspend fun itemsTypeWeapons( body: PostItemsType): Result<ItemsModelsTypeWeapons?>{
         return try {
             val response = repository.itemsTypeWeapons(body)
+            Log.d("UseCaseItemsType", "itemsTypeWeapons: $response")
             Result.success(response)
         }catch (e: IOException){
             Result.failure(e)

@@ -150,7 +150,7 @@ class Itemsype : ComponentActivity() {
 
                 Scaffold(modifier = Modifier) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        Toolbar(nameState.value.toString(), viewModel)
+                        //Toolbar(nameState.value.toString(), viewModel)
                         if (progressState.value) {
                             ProgressIndicatorItemsType()
                         }

@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
@@ -202,7 +203,7 @@ fun ContentAbout() {
                 .align(Alignment.BottomCenter)
         ) {
             Text(
-                text = "Version: 1.0",
+                text = "Version: ${BuildConfig.VERSION_NAME}",
                 modifier = Modifier
                     .padding(5.dp)
                     .align(Alignment.CenterHorizontally),

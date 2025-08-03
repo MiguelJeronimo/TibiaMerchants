@@ -1,11 +1,8 @@
 package com.miguel.tibiamerchants.presentation.Components
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.domain.models.BodyItemstype
@@ -45,23 +42,21 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationItemsDetails
 import com.miguel.tibiamerchants.domain.models.spells.Effect
 import com.miguel.tibiamerchants.domain.models.spells.Runes
 import com.miguel.tibiamerchants.domain.models.spells.Spell
-import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
-import org.koin.androidx.compose.koinViewModel
-import kotlin.String
 
 @Composable
-fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?){
+fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, navController: NavHostController){
     LazyColumn(modifier = modifier) {
         items(body!!.size){item->
             CardItems(
                 modifier = modifier,
                 item = body[item],
                 onClick = {
-
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(body[item].name.toString()))
                 }
             )
         }
@@ -69,7 +64,7 @@ fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?){
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
+fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, navController: NavHostController) {
     println("WEAPONS ${items.body?.weapons}")
     println("WEAPONS ${items.body?.weaponsChargedReplicas}")
     println("WEAPONS ${items.body?.weaponsEnchantedReplicas}")
@@ -91,7 +86,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
                     modifier = modifier,
                     item = weapons[item],
                     onClick = {
-
+                        navController.navigate( NavigationItemsDetails.itemDetailsRouteWithName(weapons[item].name.toString()))
                     }
                 )
             }
@@ -144,7 +139,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons) {
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val houseHold = items.body
         item {
@@ -162,7 +157,7 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
                 modifier = modifier,
                 item = houseHold.items[item],
                 onClick = {
-
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(houseHold.items[item].name.toString()))
                 }
             )
         }
@@ -171,7 +166,7 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
 }
 //others items list
 @Composable
-fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val others = items.body
         item {
@@ -189,7 +184,7 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewMod
                 modifier = modifier,
                 item = others.items[item],
                 onClick = {
-
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(others.items[item].name.toString()))
                 }
             )
         }
@@ -198,7 +193,7 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewMod
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -215,7 +210,9 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel:
             CardItems(
                 modifier = modifier,
                 item = tools.items[item],
-                onClick = {}
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(tools.items[item].name.toString()))
+                }
             )
         }
     }
@@ -223,7 +220,7 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel:
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -240,7 +237,9 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModelte
             CardItems(
                 modifier = modifier,
                 item = tools.items[item],
-                onClick = {}
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(tools.items[item].name.toString()))
+                }
             )
         }
     }

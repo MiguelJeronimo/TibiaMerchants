@@ -156,17 +156,17 @@ fun Toolbar(tittle: String, viewmodel: ViewModelItems) {
  * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toolbar(tittle: String,  viewModel: ViewModeltemsType) {
+fun Toolbar(title: String, onClick: () -> Unit) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        Backbutton(viewmodel = viewModel)
+        Backbutton(onClickListener = onClick)
         Text(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
-            text = tittle,
+            text = title,
             color = MaterialTheme.colorScheme.secondary,
             style = textStle
         )
@@ -280,7 +280,7 @@ fun BackButtonVocations(modifier: Modifier, viewModel: ViewModelVocations = koin
 fun BackButtonItemProfile(Modifier: Modifier, viewModel: ViewModelItemProfile? = null) {
     Box {
         IconButton(onClick = {
-            viewModel?.back(true)
+
         }) {
             Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
@@ -321,13 +321,11 @@ fun Backbutton(viewmodel: ViewModelNPC?) {
     }
 }
 @Composable
-fun Backbutton(viewmodel:  ViewModeltemsType?) {
+fun Backbutton(onClickListener: () -> Unit ){
     Box(
         modifier  = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
-        IconButton(onClick = {
-            viewmodel?.setBack(true)
-        }) {
+        IconButton(onClick = onClickListener) {
             Icon(painter = painterResource(R.drawable.baseline_arrow_back_ios_24), contentDescription = "delete",modifier = Modifier.size(30.dp))
         }
     }

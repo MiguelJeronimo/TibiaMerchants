@@ -68,25 +68,6 @@ class ItemProfile : ComponentActivity() {
             if (name != null) {
                 nameIntent.value = name
             }
-            viewModel.setItemProfiel(nameIntent.value)
-            viewModel.loading(true)
-            viewModel.itemProfile.observe(this) {
-                if (it != null) {
-                    profileState = it.body!!
-                } else {
-                    Toast.makeText(this, "Error, profile not found", Toast.LENGTH_SHORT).show()
-                }
-
-                viewModel.loading(false)
-            }
-            viewModel.isLoading.observe(this) {
-                progressState.value = it
-            }
-            viewModel.back.observe(this) {
-                if (it) {
-                    finish()
-                }
-            }
 
             TibiaMerchantsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -95,139 +76,14 @@ class ItemProfile : ComponentActivity() {
                         if (progressState.value) {
                             ProgressIndicatorItemProfile()
                         }
-                        SwipeRefreshItemProfile(
-                            profileState = profileState,
-                            name = nameIntent.value,
-                            viewModel = viewModel,
-                            pullToRefreshState = pullToRefreshState,
-                            modifier = Modifier.fillMaxSize()
-                        )
+//                        SwipeRefreshItemProfile(
+//                            profileState = profileState,
+//                            name = nameIntent.value,
+//                            viewModel = viewModel,
+//                            pullToRefreshState = pullToRefreshState,
+//                            modifier = Modifier.fillMaxSize()
+//                        )
                     }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SwipeRefreshItemProfile(
-    name: String? = null,
-    viewModel: ViewModelItemProfile? = null,
-    pullToRefreshState: Boolean = false,
-    modifier: Modifier,
-    profileState: Profile,
-) {
-    val corrutineScope = rememberCoroutineScope()
-    val state = rememberPullToRefreshState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        indicator = {
-            Indicator(
-                modifier = Modifier.align(Alignment.TopCenter),
-                isRefreshing = isRefreshing,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                state = state
-            )
-        },
-        onRefresh = {
-            isRefreshing = true
-            corrutineScope.launch {
-                viewModel?.setItemProfiel(name!!)
-                delay(1500)
-                isRefreshing = false
-            }
-        },
-        modifier = modifier,
-        state = state,
-    ) {
-        ProfileComposable(
-            modifier = modifier,
-            profileState = profileState
-        )
-    }
-}
-
-@Composable
-fun ProfileComposable(
-    modifier: Modifier = Modifier,
-    profileState: Profile
-) {
-    val stateChipBuyFrom = rememberSaveable { mutableStateOf(false) }
-    val stateChipSellTo = rememberSaveable { mutableStateOf(false) }
-    LazyColumn(modifier = modifier) {
-        //val tools = items.body
-        if (profileState.name != null) {
-            item {
-                Column {
-                    CardHeaderItemInfo(profile = profileState)
-                    HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                    //CardNotes(profile = profileState)
-                    Row(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        if(profileState.buyFrom != null) {
-                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
-                                "Buy for",
-                                state = stateChipBuyFrom
-                            )
-                        }
-
-                        if (profileState.sellFrom != null) {
-                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
-                                "Sell to",
-                                state = stateChipSellTo
-                            )
-                        }
-                    }
-                    CardDetails(profile = profileState)
-                    profileState.requeriments?.let {
-                        CardRequeriments(profileState.requeriments)
-                    }
-                    profileState.otherPropierties?.let {
-                        CardOtherPropierties(profileState.otherPropierties)
-                    }
-
-                    profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties) }
-                    profileState.tibiaLengend?.let {
-                        CardTibiaLegends(it)
-                    }
-                }
-            }
-
-            if (stateChipBuyFrom.value) {
-                item {
-                    Column {
-                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                        Text(
-                            text = "Buy from",
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
-                        )
-                    }
-                }
-                val buyFrom = profileState.buyFrom
-                items(buyFrom!!.size) { buy ->
-                    CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
-                }
-            }
-
-            if (stateChipSellTo.value) {
-                item {
-                    Column {
-                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                        Text(
-                            text = "Sell to",
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
-                        )
-                    }
-                }
-                val sellFrom = profileState.sellFrom
-                items(sellFrom!!.size) { buy ->
-                    CardSellFrom(sellFrom = profileState.sellFrom!![buy])
                 }
             }
         }
