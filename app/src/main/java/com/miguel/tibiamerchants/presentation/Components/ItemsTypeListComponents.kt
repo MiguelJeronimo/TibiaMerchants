@@ -1,6 +1,5 @@
 package com.miguel.tibiamerchants.presentation.Components
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column

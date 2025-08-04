@@ -16,12 +16,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,29 +49,32 @@ fun SwapeRefreshItemsType(
         val itemState = viewModel.items.collectAsState()
         Log.d("Title", "${destination.title}")
         Log.d("Name", "${destination.name}")
-        when (destination.title!!.lowercase()) {
-            "body equipment" -> {
-                println("Items body equipment")
-                viewModel.setItems(destination)}
-            "weapons" -> {
-                println("Items weapons")
-                viewModel.setItemsWeapons(destination)
-            }
-            "household items" ->{
-                println("Items household items")
-                viewModel.setItemsHouseHold(destination)}
-            "plants, animal products, food and drink" -> {
-                println("Items plants, animal products, food and drink")
-                viewModel.setPlantsAnimalsProductsFoodDrink(destination)}
-            "tools and other equipment" -> {
-                println("Items tools and other equipment")
-                viewModel.setItemsToolsAndOthers(destination)}
-            "other items" -> {
-                println("Items other items")
-                viewModel.setItemsOtherItems(destination)}
-            else -> {
-                println(" ELSE Items body equipment")
-                viewModel.setItems(destination)
+        LaunchedEffect(destination.title, destination.name) {
+            Log.d("Title", "Se ejecuta el launch effect")
+            when (destination.title!!.lowercase()) {
+                "body equipment" -> {
+                    println("Items body equipment")
+                    viewModel.setItems(destination)}
+                "weapons" -> {
+                    println("Items weapons")
+                    viewModel.setItemsWeapons(destination)
+                }
+                "household items" ->{
+                    println("Items household items")
+                    viewModel.setItemsHouseHold(destination)}
+                "plants, animal products, food and drink" -> {
+                    println("Items plants, animal products, food and drink")
+                    viewModel.setPlantsAnimalsProductsFoodDrink(destination)}
+                "tools and other equipment" -> {
+                    println("Items tools and other equipment")
+                    viewModel.setItemsToolsAndOthers(destination)}
+                "other items" -> {
+                    println("Items other items")
+                    viewModel.setItemsOtherItems(destination)}
+                else -> {
+                    println(" ELSE Items body equipment")
+                    viewModel.setItems(destination)
+                }
             }
         }
         Column(modifier = Modifier) {

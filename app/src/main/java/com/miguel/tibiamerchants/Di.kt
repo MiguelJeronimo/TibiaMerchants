@@ -85,9 +85,9 @@ class Di {
             UseCaseItemsType(get())
         }
         single {
-            ViewModelItemsTypeFactory(get())
+            ViewModelItemsTypeFactory(get(), get())
         }
-        viewModel { ViewModeltemsType(get()) }
+        viewModel { ViewModeltemsType(get(), get()) }
 
         //spells
         single<RepositorySpells> {

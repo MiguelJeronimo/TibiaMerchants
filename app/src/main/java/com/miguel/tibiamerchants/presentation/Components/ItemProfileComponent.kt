@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -99,7 +100,7 @@ fun SwipeRefreshItemProfile(
                     Column (
                         modifier = Modifier.align(Alignment.Center)
                     ){
-                        Loading(modifier = modifier)
+                        Loading(modifier = modifier.size(64.dp))
                         Text(
                             text = "Loading...",
                             modifier = Modifier.align(Alignment.CenterHorizontally)
