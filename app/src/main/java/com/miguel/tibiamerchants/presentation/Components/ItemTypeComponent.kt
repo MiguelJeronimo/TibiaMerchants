@@ -244,13 +244,54 @@ fun SwipeRefreshItemsType(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    Text(
-                        text = itemTypeState.value.error.toString(),
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .align(Alignment.Center)
+                    ErrorMessage(
+                        messageHeader = "Error",
+                        message = "An error occurred while loading data, please try again.",
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth().align(
+                            Alignment.Center
+                        ),
+                        onRetry = {
+                            when (titleState.lowercase()) {
+                                "body equipment" -> viewModel.setItems(
+                                    PostItemsType(
+                                        titleState,
+                                        nameState
+                                    )
+                                )
+
+                                "weapons" -> viewModel.setItemsWeapons(
+                                    PostItemsType(
+                                        titleState,
+                                        nameState
+                                    )
+                                )
+
+                                "household items" -> viewModel.setItemsHouseHold(
+                                    PostItemsType(
+                                        titleState,
+                                        nameState
+                                    )
+                                )
+
+                                "plants, animal products, food and drink" -> viewModel.setPlantsAnimalsProductsFoodDrink(
+                                    PostItemsType(titleState, nameState)
+                                )
+
+                                "tools and other equipment" -> viewModel.setItemsToolsAndOthers(
+                                    PostItemsType(titleState, nameState)
+                                )
+
+                                "other items" -> viewModel.setItemsOtherItems(
+                                    PostItemsType(
+                                        titleState,
+                                        nameState
+                                    )
+                                )
+                                else -> {
+                                    viewModel.setItems(PostItemsType(titleState, nameState))
+                                }
+                            }
+                        }
                     )
                 }
             }

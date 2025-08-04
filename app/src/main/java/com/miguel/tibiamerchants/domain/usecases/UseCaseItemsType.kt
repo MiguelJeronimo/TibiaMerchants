@@ -54,6 +54,7 @@ class UseCaseItemsType(private val repository: RepositoryItemsType) {
             Result.failure(e)
         }
     }
+
     suspend fun itemsTypeOtherItems(body: PostItemsType): Result<OtherItemsModel?>{
         return try {
             val response = repository.itemsTypeOtherItems(body)

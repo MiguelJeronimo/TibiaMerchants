@@ -25,15 +25,17 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
     private val _items = MutableStateFlow(UIState())
     val items: StateFlow<UIState> = _items
 
-//    companion object{
-//        private val LAST_QUERY_KEY = "last_query"
-//    }
-//
-//    init {
-//        savedStateHandle.get<PostItemsType>(LAST_QUERY_KEY)?.let {
-//            setItems(it)
-//        }
-//    }
+    private val resetUIState = UIState()
+    companion object{
+        private val LAST_QUERY_KEY = "last_query"
+        private val DATA_KEY = "data"
+    }
+
+    init {
+        savedStateHandle.get<PostItemsType>(LAST_QUERY_KEY)?.let {
+            _items.value = _items.value.copy(lastQuery = it)
+        }
+    }
 
     private val _back = MutableLiveData<Boolean>()
     val back: MutableLiveData<Boolean> = _back
@@ -45,9 +47,6 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
         this.name.value = name
     }
 
-    fun setBack(state: Boolean){
-        _back.value = state
-    }
 
     fun setItems(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
@@ -56,10 +55,14 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             _items.value = _items.value.copy(isLoading = true, error = null)
             val response = useCaseItemsType.itemsType(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, items = it, lastQuery = body)
+                //_items.value = _items.value.copy(isLoading = false, items = it, lastQuery = body)
+                _items.value = UIState(items = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                //_items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -67,28 +70,33 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
     fun setItemsWeapons(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
             val current = _items.value
-            if (current.items != null  && !force && current.lastQuery == body) return@launch
-            _items.value = _items.value.copy(isLoading = true, error = null, lastQuery = body)
+            if (current.itemsTypeWeapons != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeWeapons(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, itemsTypeWeapons = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
+                _items.value = UIState(itemsTypeWeapons = it, lastQuery = body)
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
+
     fun setItemsHouseHold(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
             val current = _items.value
-            if (current.items != null  && !force && current.lastQuery == body) return@launch
-            _items.value = _items.value.copy(isLoading = true, error = null)
+            if (current.itemsTypeHouseHold != null  && !force && current.lastQuery == body) return@launch
+            _items.value  = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeHouseHold(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, itemsTypeHouseHold = it, lastQuery = body)
+                _items.value = UIState(itemsTypeHouseHold = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -96,14 +104,16 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
     fun setPlantsAnimalsProductsFoodDrink(body: PostItemsType, force: Boolean = false){
         viewModelScope.launch {
             val current = _items.value
-            if (current.items != null  && !force && current.lastQuery == body) return@launch
-            _items.value = _items.value.copy(isLoading = true, error = null)
+            if (current.plantsAnimalsProductsFoodDrink != null  && !force && current.lastQuery == body) return@launch
+            _items.value  = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeOthers(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, plantsAnimalsProductsFoodDrink = it, lastQuery = body)
+                _items.value = UIState(plantsAnimalsProductsFoodDrink = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -111,14 +121,16 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
     fun setItemsToolsAndOthers(body: PostItemsType, force: Boolean = false){
         viewModelScope.launch {
             val current = _items.value
-            if (current.items != null  && !force && current.lastQuery == body) return@launch
-            _items.value = _items.value.copy(isLoading = true, error = null)
+            if (current.itemsTypeToolsAndOthers != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeToolsAndOthers(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, itemsTypeToolsAndOthers = it, lastQuery = body)
+                _items.value = UIState(itemsTypeToolsAndOthers = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -126,14 +138,16 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
     fun setItemsOtherItems(body: PostItemsType, force: Boolean = false){
         viewModelScope.launch {
             val current = _items.value
-            if (current.items != null  && !force && current.lastQuery == body) return@launch
-            _items.value = _items.value.copy(isLoading = true, error = null)
+            if (current.itemsTypeOtherItems != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeOtherItems(body)
             response.onSuccess {
-                _items.value = _items.value.copy(isLoading = false, itemsTypeOtherItems = it, lastQuery = body)
+                _items.value = UIState(itemsTypeOtherItems = it, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                _items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
+                _items.value = UIState(error = it.message, lastQuery = body)
+                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
