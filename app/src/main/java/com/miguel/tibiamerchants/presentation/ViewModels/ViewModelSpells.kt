@@ -39,7 +39,6 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
         viewModelScope.launch { _spells.value = useCase.spells() }
     }
 
-
     fun isProgress(value: Boolean){
         _progress.value = value
     }
