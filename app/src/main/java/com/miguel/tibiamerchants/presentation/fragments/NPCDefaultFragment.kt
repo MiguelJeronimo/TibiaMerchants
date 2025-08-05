@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.R
+import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
@@ -85,16 +87,20 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = 
                         }
                     }
                     npc.value.error != null -> {
-                        ErrorMessage(
-                            messageHeader = "Error",
-                            message = npc.value.error!!,
-                            modifier = Modifier.fillMaxSize(),
-                            onRetry = {
-                                 scaffoldNavigator.currentDestination?.contentKey.let{
-                                     viewModel.setNPCName(it.toString())
-                                 }
-                            }
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ){
+                            ErrorMessage(
+                                messageHeader = "Error",
+                                message = "An error occurred while loading data, please try again.",
+                                modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                                onRetry = {
+                                    scaffoldNavigator.currentDestination?.contentKey.let{
+                                        viewModel.setNPCName(it.toString())
+                                    }
+                                }
+                            )
+                        }
                     }
                     npc.value.npc != null -> {
                         Column (

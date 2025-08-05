@@ -1,6 +1,5 @@
 package com.miguel.tibiamerchants
 
-import Jsoup.Scrapper
 import com.miguel.tibiamerchants.data.network.retrofit.ApiClient
 import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.network.retrofit.RetrofitClient
