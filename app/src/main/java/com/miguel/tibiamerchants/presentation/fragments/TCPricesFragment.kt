@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.miguel.tibiamerchants.presentation.Components.ErrorComponent
+import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.ListTcPrice
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toobar
@@ -32,12 +34,13 @@ fun TcPriceFragment(
     viewModel: ViewModelTCPrice = koinViewModel()
 ) {
     val state by viewModel.tcPrice.collectAsState()
-    TCPriceFragment(state)
+    TCPriceFragment(state, onRetry = { viewModel.getTCPrice() })
 }
 
 @Composable
 fun TCPriceFragment(
-    state: ViewModelTCPrice.UIState
+    state: ViewModelTCPrice.UIState,
+    onRetry: () -> Unit = {},
 ){
     var loadingState by rememberSaveable { mutableStateOf(true) }
     Log.d("state", state.toString())
@@ -66,8 +69,14 @@ fun TCPriceFragment(
                 ListTcPrice(state = state.data)
             }
             state.error != null -> {
-                Log.d("error", state.error)
-                ErrorComponent(message = state.error)
+                Box(modifier = Modifier.fillMaxSize()){
+                    ErrorMessage(
+                        messageHeader = "Ups!",
+                        message = "Something went wrong trying to get the data",
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        onRetry = onRetry
+                    )
+                }
             }
         }
     }
