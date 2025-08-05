@@ -1,6 +1,5 @@
 package com.miguel.tibiamerchants.presentation.fragments
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,10 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -19,28 +17,31 @@ import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.NavigableSupportingPaneScaffold
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.presentation.Components.Toobar
-import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
+import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
+import com.miguel.tibiamerchants.presentation.Components.Loading
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.utils.utils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import model.Tibia.NPCModel
+import model.Tibia.ListNPC
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPCS = koinViewModel()) {
+fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = koinViewModel()) {
     val scaffoldNavigator = rememberSupportingPaneScaffoldNavigator()
     val scope = rememberCoroutineScope()
 
@@ -53,39 +54,104 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPCS =
             ) {
                 val npcs = utils().listNPC()
                 Column {
-                    Toobar(stateAbout = viewModel)
-                    GridLayoutNPC(npcs, viewModel)
+                    GridLayoutNPC(npcs, scaffoldNavigator, scope, viewModel)
                 }
             }
         },
         supportingPane = {
-            AnimatedPane(modifier = Modifier.safeContentPadding()) {
-                Text("Supporting pane")
+            AnimatedPane(modifier = Modifier.fillMaxSize()) {
+                val npc = viewModel.npcInformation.collectAsState()
+                when{
+                    npc.value.isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Column(
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Loading(
+                                    modifier = Modifier
+                                        .width(64.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                        .padding(5.dp)
+                                )
+                                Text(
+                                    text = "Loading...",
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                        .padding(10.dp)
+                                )
+                            }
+                        }
+                    }
+                    npc.value.error != null -> {
+                        ErrorMessage(
+                            messageHeader = "Error",
+                            message = npc.value.error!!,
+                            modifier = Modifier.fillMaxSize(),
+                            onRetry = {
+                                 scaffoldNavigator.currentDestination?.contentKey.let{
+                                     viewModel.setNPCName(it.toString())
+                                 }
+                            }
+                        )
+                    }
+                    npc.value.npc != null -> {
+                        Column (
+                            modifier = Modifier.fillMaxSize()
+                        ){
+                            //not expanded panel main
+                            val isVisbleButton = scaffoldNavigator.
+                            scaffoldValue[SupportingPaneScaffoldRole.Main] != PaneAdaptedValue.Expanded
+                            Toolbar(title = npc.value.npc!!.body.nameNPC.toString(), onClick={
+                                scope.launch {
+                                    scaffoldNavigator.navigateTo(pane = SupportingPaneScaffoldRole.Main)
+                                }
+                            }, buttonVisible = isVisbleButton)
+                            npc.value.npc?.body?.let{
+                                NPCProfile(
+                                    modifier = Modifier.fillMaxSize(),
+                                    data = it
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun GridLayoutNPC(npcs: List<NPCModel>, viewModel: ViewModelNPCS?) {
+fun GridLayoutNPC(
+    npcs: List<ListNPC>,
+    scaffoldNavigator: ThreePaneScaffoldNavigator<Any>,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    viewModel: ViewModelNPC
+) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(150.dp),
         verticalItemSpacing = 4.dp,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(npcs.size) { npc ->
-            CardNPC(npcs[npc], viewModel!!)
+            CardNPC(npcs[npc], onClick = {
+                viewModel.setNPCName(npcs[npc].name)
+                scope.launch {
+                    scaffoldNavigator.navigateTo(pane = SupportingPaneScaffoldRole.Supporting, contentKey = npcs[npc].name)
+                    viewModel.setNPCName(npcs[npc].name)
+                }
+            })
         }
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardNPC(npc: NPCModel, viewModel: ViewModelNPCS) {
+fun CardNPC(npc: ListNPC, onClick: () -> Unit = {}) {
     Card(
-        onClick = {
-            viewModel.setNPCName(npc.nameNPC.toString())
-        },
+        onClick = onClick,
         Modifier
             //.size(width = 80.dp, height = 80.dp)
             .padding(5.dp)

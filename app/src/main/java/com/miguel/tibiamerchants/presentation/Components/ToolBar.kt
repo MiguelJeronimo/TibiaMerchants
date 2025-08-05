@@ -181,6 +181,41 @@ fun Toolbar(title: String, onClick: () -> Unit) {
     }
 }
 
+/**
+ * @param tittle Title for items view type
+ * @param viewmodel Viewmodel for items view type
+ * @param buttonVisible Visibility of the button
+ * Toolbar for items list type
+ * **/
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Toolbar(title: String, onClick: () -> Unit, buttonVisible: Boolean = true) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        if (buttonVisible) {
+            Backbutton(onClickListener = onClick)
+        }
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = title,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
 @Composable
 fun ToolBarSpells(tittle: String? = null, viewmodel: ViewModelSpells?= null){
     val textStle = androidx.compose.ui.text.TextStyle(
@@ -314,7 +349,7 @@ fun Backbutton(viewmodel: ViewModelItems) {
 fun Backbutton(viewmodel: ViewModelNPC?) {
     Box {
         IconButton(onClick = {
-          viewmodel?.setBack(true)
+
         }) {
             Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
@@ -359,7 +394,7 @@ fun DropDownMenu(viewmodel: ViewModelNPC?, stateAbout: ViewModelNPCS) {
                 },
                     onClick = {
                         expanded = false
-                        viewmodel?.setBack(true)
+                        viewmodel?.back(true)
                     }
                 )
             }

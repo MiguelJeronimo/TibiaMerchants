@@ -2,18 +2,24 @@ package model.Tibia
 
 import com.google.gson.annotations.SerializedName
 
+//List npc default
+data class ListNPC(
+    val name: String,
+    val imgNPC: String
+)
+
 data class NPCModel(
     @SerializedName("statusCode")
     val status: String,
     @SerializedName("body")
-    val body: String,
+    val body: NPC,
 )
 
 data class NPC (
     @SerializedName("name")
     var nameNPC: String? = null,
-    @SerializedName("city")
-    val citys: Citys? = null,
+    @SerializedName("citys")
+    val citys: ArrayList<Citys>? = null,
     @SerializedName("description")
     var description: String?= null,
     @SerializedName("gender")

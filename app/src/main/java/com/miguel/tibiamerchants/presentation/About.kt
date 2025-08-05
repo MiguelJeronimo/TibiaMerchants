@@ -45,6 +45,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
@@ -62,7 +63,7 @@ class About : ComponentActivity() {
             TibiaMerchantsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
                     Column(Modifier.padding(padding)) {
-                        ToobarNPC(tittle = "About", viewmodel = viewmodel)
+                        Toolbar(title = "About", onClick = {viewmodel.back(true)})
                         ContentAbout()
                     }
                 }

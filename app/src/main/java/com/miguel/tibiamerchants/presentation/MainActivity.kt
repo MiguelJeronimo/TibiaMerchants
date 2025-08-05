@@ -78,14 +78,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         viewModelProvider = ViewModelProvider(this)
         viewModel = viewModelProvider[ViewModelNPCS::class.java]
-        viewModel.npc.observe(this, Observer { npc ->
-            if (npc != null) {
-                Intent(this, NPCInformation::class.java).also {
-                    it.putExtra("npc", npc)
-                    startActivity(it)
-                }
-            }
-        })
         viewModel.stateAbout.observe(this, Observer {
             if (it) {
                 Intent(this, About::class.java).also {
@@ -233,9 +225,7 @@ class MainActivity : ComponentActivity() {
                                 NavigationMain.entries.forEach { destination ->
                                     composable(destination.route) {
                                         when (destination) {
-                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(
-                                                viewModel = viewModel
-                                            )
+                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment()
                                             NavigationMain.TCPrices -> TcPriceFragment(navController)
                                             NavigationMain.TibiaTrade -> TibiaTradeFragment(navController)
                                         }
