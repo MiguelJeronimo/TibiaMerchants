@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +42,16 @@ fun SwapeRefreshItemsType(
     destination: PostItemsType,
     scope: CoroutineScope = rememberCoroutineScope(),
     scaffoldNavigator: ThreePaneScaffoldNavigator<PostItemsType>,
-    navController: NavHostController
+    navController: NavHostController,
+    destinationState: PostItemsType
 ){
     if (destination != null) {
         val itemState = viewModel.items.collectAsState()
+        val emptyState = ViewModeltemsType.UIState() == itemState.value
         Log.d("Title", "${destination.title}")
         Log.d("Name", "${destination.name}")
-        LaunchedEffect(destination.title, destination.name) {
+        Log.d("ITEMS STATE", "$emptyState")
+        LaunchedEffect(destinationState) {
             Log.d("Title", "Se ejecuta el launch effect")
             when (destination.title!!.lowercase()) {
                 "body equipment" -> {

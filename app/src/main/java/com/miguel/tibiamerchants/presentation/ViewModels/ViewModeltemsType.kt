@@ -20,32 +20,26 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private val savedStateHandle: SavedStateHandle) : ViewModel() {
-    //private val repository = RepositoryItems()
 
     private val _items = MutableStateFlow(UIState())
     val items: StateFlow<UIState> = _items
 
-    private val resetUIState = UIState()
     companion object{
         private val LAST_QUERY_KEY = "last_query"
         private val DATA_KEY = "data"
     }
 
-    init {
-        savedStateHandle.get<PostItemsType>(LAST_QUERY_KEY)?.let {
-            _items.value = _items.value.copy(lastQuery = it)
-        }
-    }
+//    init {
+//        savedStateHandle.get<PostItemsType>(LAST_QUERY_KEY)?.let {
+//            _items.value = _items.value.copy(lastQuery = it)
+//        }
+//    }
 
     private val _back = MutableLiveData<Boolean>()
     val back: MutableLiveData<Boolean> = _back
 
     private val _name = MutableLiveData<String>()
     val name: MutableLiveData<String> = _name
-
-    fun setName(name: String?){
-        this.name.value = name
-    }
 
 
     fun setItems(body: PostItemsType, force: Boolean = false) {
@@ -55,14 +49,10 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             _items.value = _items.value.copy(isLoading = true, error = null)
             val response = useCaseItemsType.itemsType(body)
             response.onSuccess {
-                //_items.value = _items.value.copy(isLoading = false, items = it, lastQuery = body)
                 _items.value = UIState(items = it, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
-                //_items.value = _items.value.copy(isLoading = false, error = it.message, lastQuery = body)
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -74,12 +64,10 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             _items.value = UIState(isLoading = true, error = null)
             val response = useCaseItemsType.itemsTypeWeapons(body)
             response.onSuccess {
-                savedStateHandle[LAST_QUERY_KEY] = body
                 _items.value = UIState(itemsTypeWeapons = it, lastQuery = body)
             }
             response.onFailure {
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -92,11 +80,9 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             val response = useCaseItemsType.itemsTypeHouseHold(body)
             response.onSuccess {
                 _items.value = UIState(itemsTypeHouseHold = it, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -109,11 +95,9 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             val response = useCaseItemsType.itemsTypeOthers(body)
             response.onSuccess {
                 _items.value = UIState(plantsAnimalsProductsFoodDrink = it, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -126,11 +110,9 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             val response = useCaseItemsType.itemsTypeToolsAndOthers(body)
             response.onSuccess {
                 _items.value = UIState(itemsTypeToolsAndOthers = it, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }
@@ -143,11 +125,9 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
             val response = useCaseItemsType.itemsTypeOtherItems(body)
             response.onSuccess {
                 _items.value = UIState(itemsTypeOtherItems = it, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
             response.onFailure {
                 _items.value = UIState(error = it.message, lastQuery = body)
-                savedStateHandle[LAST_QUERY_KEY] = body
             }
         }
     }

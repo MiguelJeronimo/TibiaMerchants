@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
@@ -110,11 +111,14 @@ class Items : ComponentActivity() {
                                            composable(dest.route){
                                                when(dest){
                                                    NavigationItemsDetails.Items -> {
+                                                       var destinationState = rememberSaveable { PostItemsType() }
+                                                       destinationState = destination
                                                        SwapeRefreshItemsType(
                                                            destination = destination,
+                                                           destinationState = destinationState,
                                                            scope = scope,
                                                            scaffoldNavigator = scaffoldNavigator,
-                                                           navController = navController
+                                                           navController = navController,
                                                        )
                                                    }
                                                    NavigationItemsDetails.ItemDetails -> {
