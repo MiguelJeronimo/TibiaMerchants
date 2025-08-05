@@ -13,17 +13,12 @@ import kotlinx.coroutines.launch
 class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : ViewModel() {
     private val _items = MutableStateFlow<UiState>(UiState())
     val items: StateFlow<UiState> = _items
-    private val _isVisibleProgressBar = MutableLiveData<Boolean>()
-    val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
 
     private val _isBack = MutableLiveData<Boolean>()
     val isBack: MutableLiveData<Boolean>get() = _isBack
 
-    private val _post = MutableLiveData<PostItemsType>()
-    val post: MutableLiveData<PostItemsType> = _post
 
     init {
-        _isVisibleProgressBar.value = true
         viewModelScope.launch {
             _items.value = UiState(_isLoading = true)
             val result = useCaseItemsCatalog.items()
@@ -35,9 +30,7 @@ class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : Vie
             }
         }
     }
-    fun setProgressBar(state: Boolean){
-        _isVisibleProgressBar.value = state
-    }
+
     fun setItems() {
         viewModelScope.launch {
             val result = useCaseItemsCatalog.items()
@@ -51,10 +44,6 @@ class ViewModelItems(private val useCaseItemsCatalog: UseCaseItemsCatalog) : Vie
     }
     fun setBack(status:Boolean){
         _isBack.value = status
-    }
-
-    fun setPost(post: PostItemsType){
-        _post.value = post
     }
 
     data class UiState(

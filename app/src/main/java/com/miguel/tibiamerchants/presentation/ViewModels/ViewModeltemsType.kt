@@ -1,6 +1,5 @@
 package com.miguel.tibiamerchants.presentation.ViewModels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,6 @@ import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -35,8 +33,6 @@ class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private v
 //        }
 //    }
 
-    private val _back = MutableLiveData<Boolean>()
-    val back: MutableLiveData<Boolean> = _back
 
     private val _name = MutableLiveData<String>()
     val name: MutableLiveData<String> = _name

@@ -60,19 +60,6 @@ class Items : ComponentActivity() {
         viewModel = ViewModelProvider(this, factory)[ViewModelItems::class.java]
         enableEdgeToEdge()
         setContent {
-            val stateList = remember { mutableStateOf(ItemsModels()) }
-            val stateProgressBar = remember { mutableStateOf(false) }
-            //Refresh
-            val pullToRefreshState = rememberPullToRefreshState()
-            viewModel.post.observe(this, Observer { data->
-                if (data.name != null){
-                    Intent(this, Itemsype::class.java).also{
-                        it.putExtra("name", data.name)
-                        it.putExtra("title", data.title)
-                        startActivity(it)
-                    }
-                }
-            })
             viewModel.isBack.observe(this, Observer {
                 if (it) {
                     finish()
