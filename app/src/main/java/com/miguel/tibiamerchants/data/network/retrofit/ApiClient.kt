@@ -12,7 +12,7 @@ import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
 import com.miguel.tibiamerchants.domain.models.vocations.Vocation
 import com.miguel.tibiamerchants.domain.models.vocations.Vocations
-import retrofit2.Call
+import model.Tibia.NPCModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -60,4 +60,7 @@ interface ApiClient {
 
     @GET("/api/v1/vocations/{name}")
     suspend fun vocation(@Path("name") name: String): Response<Vocation>
+
+    @GET("/api/v1/npc/{name}")
+    suspend fun npc(@Path("name") name: String): Response<NPCModel>
 }

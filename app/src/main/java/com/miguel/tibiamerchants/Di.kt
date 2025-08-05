@@ -48,8 +48,9 @@ class Di {
     val appModule = module {
         //Main NPCs.
         single<NPCRepository> {
-            val scrapper = Scrapper()
-            NPCRepositoryImp(scrapper)
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            NPCRepositoryImp(retrofit)
         }
         factory<UseCaseNPC> {
             UseCaseNPC(get())
