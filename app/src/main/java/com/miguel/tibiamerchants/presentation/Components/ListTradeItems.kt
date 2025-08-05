@@ -42,6 +42,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.Trade
 import java.text.NumberFormat
 import java.time.Instant
@@ -52,7 +53,10 @@ import java.util.Locale
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun ItemTradeList(modifier: Modifier = Modifier, state: LazyPagingItems<Trade>) {
+fun ItemTradeList(
+    modifier: Modifier = Modifier,
+    state: LazyPagingItems<Trade>
+) {
     BoxWithConstraints {
         val colum = when {
             maxWidth < 600.dp -> 1
@@ -66,55 +70,49 @@ fun ItemTradeList(modifier: Modifier = Modifier, state: LazyPagingItems<Trade>) 
             modifier = modifier,
             columns = GridCells.Fixed(count = colum)
         ) {
-            when {
-                state.loadState.refresh is LoadState.Error -> {
-                    item {
-                        Text(
-                            "Ha ocurrido un error al cagar los items"
-                        )
-                    }
+            items(state.itemCount) {
+                if (state[it]?.town != null) {
+                    Log.d(
+                        "Town",
+                        "${BuildConfig.API_TIBIA_TRADE}/images/house/location/${state[it]?.tibiaId}"
+                    )
                 }
+                state[it]?.let {
+                    ItemTrade(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        tibia = it,
+                        hightLight = !it.highlightedUntil.isNullOrEmpty()
+                    )
+                }
+            }
+            if (state.itemCount < 24 && state.loadState.append is LoadState.NotLoading) {
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .height(300.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
 
-                else -> {
-                    items(state.itemCount) {
-                        if(state[it]?.town!= null){
-                            Log.d("Town", "https://tibiatrade.gg/images/house/location/${state[it]?.tibiaId}")
-                        }
-                        state[it]?.let {
-                            ItemTrade(
-                                modifier = Modifier
-                                    .padding(5.dp),
-                                tibia = it,
-                                hightLight = !it.highlightedUntil.isNullOrEmpty()
-                            )
-                        }
-                    }
-                    if (state.itemCount < 24 && state.loadState.append is LoadState.NotLoading) {
-                        item {
-                            Spacer(modifier = Modifier
-                                .height(300.dp)
-                                .fillMaxWidth())
-                        }
-                    }
-                    Log.i("Apeend:", """${state.loadState.append}""")
-                    if (state.loadState.append is LoadState.Loading) {
-                        Log.d("Pagination", "Se encontraron mas info...")
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Box(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                Loading(
-                                    modifier = Modifier
-                                        .width(64.dp)
-                                        .align(Alignment.Center)
-                                        .padding(5.dp)
-                                )
-                            }
-                        }
+            if (state.loadState.append is LoadState.Loading) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Loading(
+                            modifier = Modifier
+                                .width(64.dp)
+                                .align(Alignment.Center)
+                                .padding(5.dp)
+                        )
                     }
                 }
             }
         }
+
+
     }
 }
 
@@ -156,7 +154,7 @@ fun ItemTrade(
                     text = formattedDate,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start= 5.dp, end = 10.dp, top = 10.dp, bottom = 5.dp),
+                        .padding(start = 5.dp, end = 10.dp, top = 10.dp, bottom = 5.dp),
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.labelSmall,
                 )

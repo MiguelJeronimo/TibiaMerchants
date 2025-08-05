@@ -3,6 +3,7 @@ package com.miguel.tibiamerchants.presentation.fragments
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.ItemTradeList
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toobar
@@ -29,13 +31,17 @@ fun TibiaTradeFragment(
 ){
     val state = viewModel.items.collectAsLazyPagingItems()
     TibiaTradeFragment(
-        state = state
+        state = state,
+        onRetry = {
+            state.refresh()
+        }
     )
 }
 
 @Composable
 fun TibiaTradeFragment(
-    state: LazyPagingItems<Trade>
+    state: LazyPagingItems<Trade>,
+    onRetry: () -> Unit = {}
 ){
     Column {
         Toobar(title = "Tibia Trade")
@@ -73,6 +79,16 @@ fun TibiaTradeFragment(
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
+                }
+            }
+            state.loadState.refresh is LoadState.Error -> {
+                Box(modifier = Modifier.fillMaxSize()){
+                    ErrorMessage(
+                        messageHeader = "Ups!",
+                        message = "Something went wrong trying to get the data",
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        onRetry = onRetry
+                    )
                 }
             }
             else-> {
