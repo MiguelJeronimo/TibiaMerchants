@@ -95,7 +95,7 @@ dependencies {
     //injeccion de dependencias
     implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
 //    implementation("io.coil-kt:coil-gif:2.6.0")
-//    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 //    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     //para consumo de apis

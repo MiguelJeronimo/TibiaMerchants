@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -39,6 +40,8 @@ import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import androidx.core.graphics.toColorInt
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -49,13 +52,14 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.text.replace
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ItemTradeList(
     modifier: Modifier = Modifier,
-    state: LazyPagingItems<Trade>
+    state: LazyPagingItems<Trade>,
 ) {
     BoxWithConstraints {
         val colum = when {
@@ -123,17 +127,20 @@ fun ItemTrade(
     tibia: Trade,
     onClick: () -> Unit = {},
     onClickButtonUser: () -> Unit = {},
-    hightLight: Boolean = false
+    hightLight: Boolean = false,
 ) {
     val instant = Instant.parse(tibia.createdAt)
     val zonedDateTime = instant.atZone(ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val formattedDate = zonedDateTime.format(formatter)
     val usFormatter = NumberFormat.getCurrencyInstance(Locale.US)
-    OutlinedCard (
+    OutlinedCard(
         modifier = modifier,
         onClick = onClick,
-        border = if (hightLight) BorderStroke(2.dp, Color("#B8A672".toColorInt())) else BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+        border = if (hightLight) BorderStroke(2.dp, Color(0xFFB8A672)) else BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.surfaceVariant
+        ),
     ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -159,23 +166,20 @@ fun ItemTrade(
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
-            ElevatedCard (
+            ElevatedCard(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
             ) {
                 Row {
-                    //https://tibiatrade.gg/images/item/Holy_Scarab.gif
-
+                   //Validate if is article or house
                     tibia.itemName?.let {
                         val name = it.replace(" ", "_")
-                        val town = when{
-                            tibia.town != null -> {
-                                "https://tibiatrade.gg/images/house/location/${tibia.tibiaId}"
-                            }
-                            else -> "https://tibiatrade.gg/images/item/$name.gif"
+                        tibia.tibiaId?.let {
+                            Log.d("DEBUG", "tibiaId: ${tibia.tibiaId}, town: ${tibia.town}")
                         }
+                        val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
                         GlideImage(
-                            model = town,
+                            model = img,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(5.dp)
@@ -183,106 +187,116 @@ fun ItemTrade(
                             failure = placeholder(R.drawable.error_image_icon),
                         )
                     }
-                    Surface(
-                        modifier = Modifier
-                            .width(20.dp)
-                            .padding(top = 5.dp, end = 5.dp),
-                        color = MaterialTheme.colorScheme.errorContainer,
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Text(
-                            text = tibia.itemTier.toString(),
-                            modifier = Modifier.padding(5.dp),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
                 }
-            }
-            Text(
-                text = tibia.itemName ?: "",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxWidth()
-            )
-            val textPrice = "Price: ${usFormatter.format(tibia.price)} gold coins; Tcs: ${
-                tibia.convertedPrice?.let { usFormatter.format(it) }
-            }"
-            Text(
-                text = if (tibia.price.toInt() == 0) "Talking offerts" else textPrice,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp),
-            )
-            Surface(
-                modifier = Modifier
-                    .padding(5.dp)
-                    .align(Alignment.CenterHorizontally),
-                shape = MaterialTheme.shapes.medium,
-                //#B8A672
-                color = if (tibia.worldBattleyeColor == "green".lowercase()) Color("#8EAC50".toColorInt()) else Color(
-                    "#B8A672".toColorInt()
-                )
-            ) {
-                Text(
-                    text = "${tibia.worldName} (${tibia.worldPvpType})",
-                    modifier = Modifier.padding(5.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(
+                tibia.tibiaId?.let {
+                    val img = "${BuildConfig.API_TIBIA_TRADE}images/house/location/${it}"
+                    Log.d("Tibia Iamge", img)
+                    AsyncImage(
+                        model = img,
+                        modifier = Modifier.size(200.dp),
+                        contentDescription = "image house"
+                    )
+                }
+                Surface(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .weight(1f),
+                        .width(20.dp)
+                        .padding(top = 5.dp, end = 5.dp),
+                    color = MaterialTheme.colorScheme.errorContainer,
                     shape = MaterialTheme.shapes.medium,
-                    onClick = onClickButtonUser,
                 ) {
                     Text(
-                        text = tibia.userName,
+                        text = tibia.itemTier.toString(),
+                        modifier = Modifier.padding(5.dp),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelSmall
                     )
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_verified_user_24),
-                        contentDescription = "null",
-                        //modifier = Modifier.size(15.dp),
-                        alignment = Alignment.Center
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .align(Alignment.Bottom)
-                ) {
-                    Surface(
-                        modifier = Modifier,
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Text(
-                            text = tibia.likes,
-                            modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-
-                    }
-                    Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Filled.FavoriteBorder,
-                        tint = MaterialTheme.colorScheme.error,
-                        contentDescription = "Likes",
-                        modifier = Modifier
-                            .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
-                            .size(25.dp)
-                    )
                 }
             }
-
         }
+        val text: String = (tibia.itemName ?: tibia.houseName.toString())
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth()
+        )
+        val textPrice = "Price: ${usFormatter.format(tibia.price)} gold coins; Tcs: ${
+            tibia.convertedPrice?.let { usFormatter.format(it) }
+        }"
+        Text(
+            text = if (tibia.price.toInt() == 0) "Talking offerts" else textPrice,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 5.dp),
+        )
+        Surface(
+            modifier = Modifier
+                .padding(5.dp)
+                .align(Alignment.CenterHorizontally),
+            shape = MaterialTheme.shapes.medium,
+            //#B8A672
+            color = if (tibia.worldBattleyeColor == "green".lowercase()) Color("#8EAC50".toColorInt()) else Color(
+                "#B8A672".toColorInt()
+            )
+        ) {
+            Text(
+                text = "${tibia.worldName} (${tibia.worldPvpType})",
+                modifier = Modifier.padding(5.dp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .weight(1f),
+                shape = MaterialTheme.shapes.medium,
+                onClick = onClickButtonUser,
+            ) {
+                Text(
+                    text = tibia.userName,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_verified_user_24),
+                    contentDescription = "null",
+                    //modifier = Modifier.size(15.dp),
+                    alignment = Alignment.Center
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.Bottom)
+            ) {
+                Surface(
+                    modifier = Modifier,
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Text(
+                        text = tibia.likes,
+                        modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+                }
+                Icon(
+                    imageVector = Icons.Filled.FavoriteBorder,
+                    tint = MaterialTheme.colorScheme.error,
+                    contentDescription = "Likes",
+                    modifier = Modifier
+                        .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
+                        .size(25.dp)
+                )
+            }
+        }
+
     }
 }
 
