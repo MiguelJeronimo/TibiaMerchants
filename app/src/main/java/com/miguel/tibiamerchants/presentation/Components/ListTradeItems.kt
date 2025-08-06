@@ -174,9 +174,6 @@ fun ItemTrade(
                    //Validate if is article or house
                     tibia.itemName?.let {
                         val name = it.replace(" ", "_")
-                        tibia.tibiaId?.let {
-                            Log.d("DEBUG", "tibiaId: ${tibia.tibiaId}, town: ${tibia.town}")
-                        }
                         val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
                         GlideImage(
                             model = img,
@@ -186,8 +183,23 @@ fun ItemTrade(
                                 .size(100.dp),
                             failure = placeholder(R.drawable.error_image_icon),
                         )
+                        Surface(
+                            modifier = Modifier
+                                .width(20.dp)
+                                .padding(top = 5.dp, end = 5.dp),
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            shape = MaterialTheme.shapes.medium,
+                        ) {
+                            Text(
+                                text = tibia.itemTier.toString(),
+                                modifier = Modifier.padding(5.dp),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
                     }
                 }
+
                 tibia.tibiaId?.let {
                     val img = "${BuildConfig.API_TIBIA_TRADE}images/house/location/${it}"
                     Log.d("Tibia Iamge", img)
@@ -195,20 +207,6 @@ fun ItemTrade(
                         model = img,
                         modifier = Modifier.size(200.dp),
                         contentDescription = "image house"
-                    )
-                }
-                Surface(
-                    modifier = Modifier
-                        .width(20.dp)
-                        .padding(top = 5.dp, end = 5.dp),
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    Text(
-                        text = tibia.itemTier.toString(),
-                        modifier = Modifier.padding(5.dp),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
