@@ -33,8 +33,10 @@ import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.Loading
+import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.utils.utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -43,7 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = koinViewModel()) {
+fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = koinViewModel(), viewModelNPCS: ViewModelNPCS) {
     val scaffoldNavigator = rememberSupportingPaneScaffoldNavigator()
     val scope = rememberCoroutineScope()
 
@@ -51,11 +53,11 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = 
         navigator = scaffoldNavigator,
         mainPane = {
             AnimatedPane(
-                modifier = Modifier
-                    .safeContentPadding()
+                modifier = Modifier.fillMaxSize()
             ) {
                 val npcs = utils().listNPC()
-                Column {
+                Column (modifier = Modifier.fillMaxSize()) {
+                    Toobar(stateAbout = viewModelNPCS)
                     GridLayoutNPC(npcs, scaffoldNavigator, scope, viewModel)
                 }
             }

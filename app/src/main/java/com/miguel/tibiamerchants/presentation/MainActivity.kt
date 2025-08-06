@@ -29,14 +29,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.rememberDrawerState
@@ -55,14 +51,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationMain
 import com.miguel.tibiamerchants.presentation.Components.Toobar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.fragments.NPCDefaultFragment
-import com.miguel.tibiamerchants.presentation.fragments.TCPriceFragment
 import com.miguel.tibiamerchants.presentation.fragments.TcPriceFragment
 import com.miguel.tibiamerchants.presentation.fragments.TibiaTradeFragment
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
@@ -153,7 +148,7 @@ class MainActivity : ComponentActivity() {
                                         style = MaterialTheme.typography.headlineSmall
                                     )
                                     Text(
-                                        "Version: 1.0",
+                                        "Version: ${BuildConfig.VERSION_NAME}",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                     Text(
@@ -225,7 +220,7 @@ class MainActivity : ComponentActivity() {
                                 NavigationMain.entries.forEach { destination ->
                                     composable(destination.route) {
                                         when (destination) {
-                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment()
+                                            NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(viewModelNPCS =  viewModel)
                                             NavigationMain.TCPrices -> TcPriceFragment(navController)
                                             NavigationMain.TibiaTrade -> TibiaTradeFragment(navController)
                                         }

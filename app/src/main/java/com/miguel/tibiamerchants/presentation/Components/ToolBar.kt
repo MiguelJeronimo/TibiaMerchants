@@ -156,7 +156,7 @@ fun Toolbar(tittle: String, viewmodel: ViewModelItems) {
  * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toolbar(title: String, onClick: () -> Unit) {
+fun Toolbar(title: String, onClick: () -> Unit = {}) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
@@ -189,7 +189,7 @@ fun Toolbar(title: String, onClick: () -> Unit) {
  * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toolbar(title: String, onClick: () -> Unit, buttonVisible: Boolean = true) {
+fun Toolbar(title: String, onClick: () -> Unit= {}, buttonVisible: Boolean = true) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold

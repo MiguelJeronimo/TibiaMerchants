@@ -10,5 +10,5 @@ enum class NavigationMain (
 ){
     NPCDefaultFragment(route = "NPCDefaultFragment", label = "NPCs", icon = R.drawable.rashid, contentDescription = "NPCs"),
     TCPrices(route = "TCPrices", label = "TC Prices", icon = R.drawable.tibia_coins_escapet_150x150, contentDescription = "TC Prices"),
-    TibiaTrade(route = "TibiaTrade", label = "Character trade", icon = R.drawable.trade_icon_png, contentDescription = "Character trade")
+    TibiaTrade(route = "TibiaTrade", label = "Tibia Trade", icon = R.drawable.trade_icon_png, contentDescription = "Character trade")
 }

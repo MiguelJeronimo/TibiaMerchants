@@ -220,7 +220,6 @@ fun ListItems(
                 }
             }
         }
-
         if (stateChipSellSpells.value) {
             item {
                 Column {
