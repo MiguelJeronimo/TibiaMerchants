@@ -52,6 +52,7 @@ android {
             //variables de entorno para acceder desde codigo
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+            signingConfig = signingConfigs.getByName("debug")
 //            buildConfigField ("String", "ADMOB_NATIVEADS_ID", "\"${project.findProperty("ADMOB_NATIVEADS_ID_DEV")}\"")
 //            buildConfigField ("String", "ADMOB_BANNER_ID", "\"${project.findProperty("ADMOB_BANNER_ID_DEV")}\"")
         }

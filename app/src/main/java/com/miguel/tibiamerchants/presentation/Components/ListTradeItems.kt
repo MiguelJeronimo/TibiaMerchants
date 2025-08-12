@@ -41,7 +41,6 @@ import androidx.core.graphics.toColorInt
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -197,6 +196,8 @@ fun ItemTrade(
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
+
+
                     }
                 }
 
