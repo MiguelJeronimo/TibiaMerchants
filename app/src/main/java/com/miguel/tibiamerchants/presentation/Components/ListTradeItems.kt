@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import androidx.core.graphics.toColorInt
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
@@ -46,6 +47,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -59,6 +61,8 @@ import kotlin.text.replace
 fun ItemTradeList(
     modifier: Modifier = Modifier,
     state: LazyPagingItems<Trade>,
+    navigate: NavController? = null
+
 ) {
     BoxWithConstraints {
         val colum = when {
@@ -85,7 +89,10 @@ fun ItemTradeList(
                         modifier = Modifier
                             .padding(5.dp),
                         tibia = it,
-                        hightLight = !it.highlightedUntil.isNullOrEmpty()
+                        hightLight = !it.highlightedUntil.isNullOrEmpty(),
+                        onClickButtonUser = {
+                            navigate?.navigate(NavigationTibiaTrade.routeWithName(it.userName))
+                        }
                     )
                 }
             }
@@ -114,8 +121,6 @@ fun ItemTradeList(
                 }
             }
         }
-
-
     }
 }
 

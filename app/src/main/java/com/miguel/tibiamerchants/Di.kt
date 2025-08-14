@@ -129,14 +129,14 @@ class Di {
             UseCaseTibiaTrade(get())
         }
         single {
-            ViewModelTibiaTradeFactory(get())
+            ViewModelTibiaTradeFactory(get(), get())
         }
         single{
             ViewModelTCPriceFactory(get())
         }
         viewModel { ViewModelTCPrice(get()) }
 
-        viewModel { ViewModelTibiaTrade(get()) }
+        viewModel { ViewModelTibiaTrade(get() ,get()) }
         //Vocations
         single<VocationRepository>{
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE

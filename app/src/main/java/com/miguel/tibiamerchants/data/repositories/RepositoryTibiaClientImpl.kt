@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.repositories.pagingresources.PagingTibiaTradeResource
 import com.miguel.tibiamerchants.domain.models.PriceTcModel
+import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
 import kotlinx.coroutines.flow.Flow
@@ -33,5 +34,9 @@ class RepositoryTibiaClientImpl(private val api: ApiTibiaTradeClient): Repositor
             ),
             pagingSourceFactory = { PagingTibiaTradeResource(api) }
         ).flow
+    }
+
+    override suspend fun getUserProfile(user: String): Profile? {
+        return api.userProfile(user).body()
     }
 }

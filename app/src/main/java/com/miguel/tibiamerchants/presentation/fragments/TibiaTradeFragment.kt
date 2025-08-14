@@ -1,12 +1,10 @@
 package com.miguel.tibiamerchants.presentation.fragments
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,16 +13,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.ItemTradeList
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toobar
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import org.koin.androidx.compose.koinViewModel
 
@@ -34,18 +35,40 @@ fun TibiaTradeFragment(
     viewModel: ViewModelTibiaTrade = koinViewModel()
 ){
     val state = viewModel.items.collectAsLazyPagingItems()
-    TibiaTradeFragment(
-        state = state,
-        onRetry = {
-            state.refresh()
+    //val profile = viewModel.profile.collectAsState()
+    val navController = rememberNavController()
+    Box(modifier = Modifier.fillMaxSize()){
+        NavHost(
+            navController = navController,
+            startDestination = NavigationTibiaTrade.TibiaTradeFragment.route
+        ){
+            NavigationTibiaTrade.entries.forEach { destination ->
+                composable(destination.route){
+                    when(destination) {
+                        NavigationTibiaTrade.TibiaTradeFragment -> TibiaTradeFragment(state = state, onRetry = { state.retry() }, navigate = navController)
+                        NavigationTibiaTrade.TibiaTradeProfile -> {
+                            it.arguments?.getString("userName").let { userName ->
+                                Column {
+                                    Toolbar(title = "User", onClick = {navController.popBackStack()})
+                                    TibiaTradeProfile(
+                                        toolBarTitle = userName!!,
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-    )
+    }
 }
 
 @Composable
 fun TibiaTradeFragment(
     state: LazyPagingItems<Trade>,
-    onRetry: () -> Unit = {}
+    onRetry: () -> Unit = {},
+    navigate: NavController? = null
 ){
     Column {
         Toobar(title = "Tibia Trade")
@@ -97,7 +120,8 @@ fun TibiaTradeFragment(
             }
             else-> {
                 ItemTradeList(
-                    state = state
+                    state = state,
+                    navigate = navigate
                 )
             }
         }

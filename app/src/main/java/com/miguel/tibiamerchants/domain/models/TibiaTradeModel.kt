@@ -77,7 +77,7 @@ data class Trade(
     @SerializedName("item_amount")
     val itemAmount: Int,
     @SerializedName("house_id")
-    val houseId: Any,
+    val houseId: Int?=null,
     @SerializedName("highlighted_until")
     val highlightedUntil: String?,
     @SerializedName("created_at")
@@ -100,21 +100,32 @@ data class Trade(
     @SerializedName("tibia_id")
     val tibiaId: Int? = null,
     @SerializedName("house_name")
-    val houseName: Any,
-    val size: Any,
-    val rent: Any,
-    val beds: Any,
-    val floors: Any,
-    val rooms: Any,
-    val windows: Any,
+    val houseName: String? = null,
+    val size: Int?=null,
+    val rent: Long? = null,
+    val beds: Int? = null,
+    val floors: Int? = null,
+    val rooms: Int? = null,
+    val windows: Int? = null,
     val town: String? = null,
-    val coordinates: Any,
+    val coordinates: String? = null,
     @SerializedName("is_guildhall")
     val isGuildhall: Boolean,
-    val furnitures: Any,
+    val furnitures: String? = null,
     val likes: String,
     @SerializedName("is_user_verified")
     val isUserVerified: Boolean,
     @SerializedName("converted_price")
     val convertedPrice: Long? = null
+)
+
+//Tibia trade profile user
+data class Profile(
+    @SerializedName("created_at")
+    val createdAt: String,
+    val avatar: String,
+    @SerializedName("is_verified")
+    val isVerified: Boolean,
+    val ads: ArrayList<Trade>,
+    val presentations: ArrayList<Any>?= null,
 )

@@ -21,13 +21,22 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+    flavorDimensions+= "version"
+    productFlavors {
+        create("dev") {
+            dimension = "version"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            //            //para poderacceder a ellos desde xml
+////            resValue ("string", "admob_app_id", project.findProperty("ADMOB_APP_ID_DEV") as String)
+////            resValue ("string", "admob_banner_id", project.findProperty("ADMOB_BANNER_ID_DEV") as String)
+////            resValue ("string", "admob_native_id", project.findProperty("ADMOB_NATIVEADS_ID_DEV") as String)
+            //variables de entorno para acceder desde codigo
+            buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
+            buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+        }
+        create("prod"){
+            dimension = "version"
             //para poderacceder a ellos desde xml
 //            resValue ("string", "admob_app_id", project.findProperty("ADMOB_APP_ID_PROD") as String)
 //            resValue ("string", "admob_banner_id", project.findProperty("ADMOB_BANNER_ID_PROD") as String)
@@ -35,26 +44,23 @@ android {
             //variables de entorno para acceder desde codigo
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
-//            buildConfigField ("String", "ADMOB_NATIVEADS_ID", "\"${project.findProperty("ADMOB_NATIVEADS_ID_PROD")}\"")
-//            buildConfigField ("String", "ADMOB_BANNER_ID", "\"${project.findProperty("ADMOB_BANNER_ID_PROD")}\"")
         }
-        create("dev") {
-            initWith(getByName("debug"))
+    }
+
+    buildTypes {
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            //para poderacceder a ellos desde xml
-//            resValue ("string", "admob_app_id", project.findProperty("ADMOB_APP_ID_DEV") as String)
-//            resValue ("string", "admob_banner_id", project.findProperty("ADMOB_BANNER_ID_DEV") as String)
-//            resValue ("string", "admob_native_id", project.findProperty("ADMOB_NATIVEADS_ID_DEV") as String)
-            //variables de entorno para acceder desde codigo
-            buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
-            buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
-            signingConfig = signingConfigs.getByName("debug")
-//            buildConfigField ("String", "ADMOB_NATIVEADS_ID", "\"${project.findProperty("ADMOB_NATIVEADS_ID_DEV")}\"")
-//            buildConfigField ("String", "ADMOB_BANNER_ID", "\"${project.findProperty("ADMOB_BANNER_ID_DEV")}\"")
+        }
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
