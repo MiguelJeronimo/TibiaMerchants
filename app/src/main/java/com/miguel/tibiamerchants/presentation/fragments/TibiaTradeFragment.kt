@@ -53,9 +53,22 @@ fun TibiaTradeFragment(
                                     TibiaTradeProfile(
                                         toolBarTitle = userName!!,
                                         modifier = Modifier.fillMaxSize(),
+                                        navigate = navController
                                     )
                                 }
                             }
+                        }
+                        NavigationTibiaTrade.TibiaTradeItem -> {
+                            it.arguments?.getString("id").let { id ->
+                                Column {
+                                    Toolbar(title = "Item", onClick = {navController.popBackStack()})
+                                    TibiaTradeItemDetails(
+                                        id = id,
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                }
+                            }
+
                         }
                     }
                 }

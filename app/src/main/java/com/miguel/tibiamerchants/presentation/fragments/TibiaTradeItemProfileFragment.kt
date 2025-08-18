@@ -2,13 +2,16 @@ package com.miguel.tibiamerchants.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -22,25 +25,39 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.presentation.Components.Toolbar
+import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
+import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
+import com.miguel.tibiamerchants.presentation.Components.Loading
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import com.miguel.tibiamerchants.utils.Dates
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun TibiaTradeItemDetails(){
-    Column {
-        Toolbar(title = "Item Detail")
-        TibiaTradeItemDetails(
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
+fun TibiaTradeItemDetails(
+    modifier: Modifier = Modifier,
+    id: String?,
+    viewModel: ViewModelTibiaTrade = koinViewModel()
+) {
+    val state = viewModel.item.collectAsStateWithLifecycle()
+    Log.d("state", state.value.toString())
+    TibiaTradeItemDetails(
+        modifier = Modifier.fillMaxWidth(),
+        state = state.value,
+        onRetry = { viewModel.item(id?.toInt()) }
+    )
 }
 
 
@@ -52,304 +69,352 @@ fun TibiaTradeItemDetails(){
  * */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun TibiaTradeItemDetails(modifier:Modifier = Modifier){
-    LazyColumn {
-        item{
-            Column (modifier= modifier){
-//        GlideImage(
-//            model = "https://tibiatrade.gg/images/item/Sanguine_Rod.gif",
-//            contentDescription = "Tibia Coins",
-//            modifier = Modifier.align(Alignment.CenterHorizontally).size(100.dp),
-//            alignment = Alignment.Center
-//        )
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
-                    color = MaterialTheme.colorScheme.background,
-                    tonalElevation = 4.dp
+fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTrade.UIStateItem, onRetry: () -> Unit = {}){
+    when{
+        state.isLoding -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center)
                 ) {
-                    Row {
-                        Image(
-                            painter = painterResource(id = R.drawable.rashid),
-                            contentDescription = "Tibia Coins",
-                        )
-                        Row(
+                    Loading(
+                        modifier = Modifier
+                            .width(64.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(5.dp)
+                    )
+                    Text(
+                        text = "Loading...",
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(10.dp)
+                    )
+                }
+            }
+        }
+        state.error != null -> {
+            Box(modifier = Modifier.fillMaxSize()){
+                ErrorMessage(
+                    messageHeader = "Ups!",
+                    message = "Something went wrong trying to get the data",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxWidth(),
+                    onRetry = onRetry
+                )
+            }
+        }
+        state.data != null -> {
+            LazyColumn {
+                item{
+                    Column (modifier= modifier){
+                        Surface(
                             modifier = Modifier
-                                .padding(5.dp)
-                                .align(Alignment.Bottom)
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp),
+                            shape = MaterialTheme.shapes.medium,
+                            border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                            color = MaterialTheme.colorScheme.background,
+                            tonalElevation = 4.dp
                         ) {
-                            Surface(
-                                modifier = Modifier,
-                                shape = MaterialTheme.shapes.medium,
-                            ) {
-                                Text(
-                                    text = "2000",
-                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
+                            Row {
+                                state.data.ad.itemName?.let {
+                                    val name = it.replace(" ", "_")
+                                    val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
+                                    GlideImage(
+                                        model = img,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .padding(5.dp)
+                                            .size(100.dp),
+                                        failure = placeholder(R.drawable.error_image_icon),
+                                    )
+                                }
+                                Row(
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .align(Alignment.Bottom)
+                                ) {
+                                    Surface(
+                                        modifier = Modifier,
+                                        shape = MaterialTheme.shapes.medium,
+                                    ) {
+                                        Text(
+                                            text = state.data.ad.likes,
+                                            modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
 
+                                    }
+                                    Icon(
+                                        imageVector = Icons.Filled.FavoriteBorder,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        contentDescription = "Likes",
+                                        modifier = Modifier
+                                            .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
+                                            .size(25.dp)
+                                    )
+                                }
                             }
-                            Icon(
-                                imageVector = Icons.Filled.FavoriteBorder,
-                                tint = MaterialTheme.colorScheme.error,
-                                contentDescription = "Likes",
+                        }
+                        HorizontalDivider(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp))
+                    }
+                }
+                item{
+                    Column (modifier= modifier){
+                        Text(
+                            text = state.data.ad.itemName.toString(),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = state.data.ad.itemLook,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Justify
+                        )
+                    }}
+                item{
+                    Column (modifier= modifier){
+                        Text(
+                            text = "Attributes",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "World",
                                 modifier = Modifier
-                                    .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
-                                    .size(25.dp)
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                state.data.ad.worldName,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "Server Type",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                state.data.ad.worldPvpType,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "User",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                state.data.ad.userName,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End
                             )
                         }
                     }
                 }
-                HorizontalDivider(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp))
-            }
-        }
-        item{
-            Column (modifier= modifier){
-            Text(
-                text ="Bear Soul Core",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(5.dp),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "You see a bear soul core.\nOffers a soul to the Soulpit. Combine with an exalted core to turn it into a lesser soul core.",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Justify
-            )
-        }}
-        item{
-            Column (modifier= modifier){
-                Text(
-                    text = "Attributes",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                item{
+                    val converter = ConverterPriceModel().convert(
+                        state.data.ad.price,
+                        state.data.ad.convertedPrice?: 0,
+                        state.data.ad.currencyType
+                    ).get()
+                    Column(modifier = modifier) {
+                        Text(
+                            text = "Converter Price",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "Price in Tibia",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                converter.price,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End,
+                                color = if(converter.price.contains("golds")) Color.Yellow else if(converter.price.contains("TC")) Color.Green else Color.Unspecified
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "World",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                state.data.ad.worldName,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        )
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "World",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Wintera",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "Converter Price",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                converter.converter,
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End,
+                                color = if(converter.converter.contains("golds")) Color.Yellow else if(converter.converter.contains("TC")) Color.Green else Color.Unspecified
+                            )
+                        }
+                    }
                 }
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "Server Type",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Retro Open PvP",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
+                item{
+                    Column(modifier = modifier) {
+                        Text(
+                            text = "Additional Attributes",
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)){
+                            Text(
+                                "Create at",
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(0.5f),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = Dates().format(date = state.data.ad.createdAt).get(),
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .fillMaxWidth(1f),
+                                style = MaterialTheme.typography.labelLarge,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    }
                 }
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "User",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Peruano",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
-                }
-            }
-        }
-        item{
-            Column(modifier = modifier) {
-                Text(
-                    text = "Converter Price",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "Price in Tibia",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "350,000,000.00 golds",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
-                }
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "World",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Wintera",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
-                }
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(5.dp)
-                )
+                item{
+                    Column(modifier = modifier) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth()
+                                .padding(5.dp)
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "Converter Price",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "7,845 TC",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
-                }
-            }
-        }
-        item{
-            Column(modifier = modifier) {
-                Text(
-                    text = "Additional Attributes",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(5.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp)){
-                    Text(
-                        "Create at",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(0.5f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "2025-08-14T23:57:09.244Z",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxWidth(1f),
-                        style = MaterialTheme.typography.labelLarge,
-                        textAlign = TextAlign.End
-                    )
-                }
-            }
-        }
-        item{
-            Column(modifier = modifier) {
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally).fillMaxWidth()
-                        .padding(5.dp)
+                        ) {
+                            Text(text= "Shared")
+                        }
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 5.dp, bottom = 10.dp, start = 5.dp, end = 5.dp)
+                                .fillMaxWidth()
 
-                ) {
-                    Text(text= "Shared")
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 5.dp, bottom = 10.dp, start = 5.dp, end = 5.dp).fillMaxWidth()
-
-                ) {
-                    Text(text= "Contact seller")
+                        ) {
+                            Text(text= "Contact seller")
+                        }
+                    }
                 }
             }
         }
     }
-
 }
 
 //preview
@@ -363,7 +428,9 @@ fun PreviewTibiaTradeItemDetails(){
     TibiaMerchantsTheme {
         Scaffold {innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                TibiaTradeItemDetails()
+                TibiaTradeItemDetails(
+                    state = ViewModelTibiaTrade.UIStateItem()
+                )
             }
         }
     }

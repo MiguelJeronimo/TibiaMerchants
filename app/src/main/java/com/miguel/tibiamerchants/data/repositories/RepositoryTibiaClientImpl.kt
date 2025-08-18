@@ -7,6 +7,7 @@ import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.repositories.pagingresources.PagingTibiaTradeResource
 import com.miguel.tibiamerchants.domain.models.PriceTcModel
 import com.miguel.tibiamerchants.domain.models.Profile
+import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,10 @@ class RepositoryTibiaClientImpl(private val api: ApiTibiaTradeClient): Repositor
 
     override suspend fun getTrade(params: Map<String, String>): TibiaTradeModel? {
         return api.trade(params).body()
+    }
+
+    override suspend fun getTradeById(id: Int): TibiaTradeItemModel? {
+        return api.tradeById(id).body()
     }
 
     override fun getItemsType(pageSize: Int): Flow<PagingData<Trade>> {

@@ -21,14 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
 import com.miguel.tibiamerchants.presentation.Components.ItemTrade
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
@@ -111,7 +114,8 @@ fun AdsHeader(modifier: Modifier = Modifier, text:String= "Ads Active") {
 @Composable
 fun UserAdsActive(
     modifier: Modifier = Modifier,
-    tibia: Profile? = null
+    tibia: Profile? = null,
+    navigate: NavHostController = NavHostController(LocalContext.current)
 ) {
     BoxWithConstraints {
         val colum = when {
@@ -152,6 +156,9 @@ fun UserAdsActive(
                                 modifier = Modifier
                                     .padding(5.dp),
                                 tibia = trade[it],
+                                onClick = {
+                                    navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
+                                },
                                 hightLight = !trade[it].highlightedUntil.isNullOrEmpty()
                             )
                         }
@@ -254,7 +261,7 @@ fun PreviewUSerTibiaTrade(){
                 UserAdsActive(
                     modifier = Modifier
                         .padding(paddingValues = innerPadding),
-                    tibia = profile
+                    tibia = profile,
                 )
             }
         }

@@ -7,8 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.miguel.tibiamerchants.domain.models.tibiatrade.UserAdsActive
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.Loading
@@ -17,10 +19,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TibiaTradeProfile(
-    toolBarTitle:String,
+    toolBarTitle: String,
     modifier: Modifier = Modifier,
-    viewModel: ViewModelTibiaTrade = koinViewModel()
-    ){
+    viewModel: ViewModelTibiaTrade = koinViewModel(),
+    navigate: NavHostController
+){
     val state = viewModel.profile.collectAsStateWithLifecycle()
     when{
         state.value.isLoding -> {
@@ -49,7 +52,8 @@ fun TibiaTradeProfile(
             TibiaTradeModel(
                 toolBarTitle = toolBarTitle,
                 modifier = modifier,
-                state = state.value
+                state = state.value,
+                navigate = navigate
             )
         }
     }
@@ -57,12 +61,14 @@ fun TibiaTradeProfile(
 
 @Composable
 fun TibiaTradeModel(
-    toolBarTitle:String,
+    toolBarTitle: String,
     modifier: Modifier = Modifier,
     state: ViewModelTibiaTrade.UIStateProfile = ViewModelTibiaTrade.UIStateProfile(),
+    navigate: NavHostController = NavHostController(LocalContext.current) ,
 ){
     UserAdsActive(
         modifier = modifier,
-        tibia = state.data
+        tibia = state.data,
+        navigate = navigate
     )
 }

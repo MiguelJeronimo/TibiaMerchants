@@ -14,6 +14,12 @@ enum class NavigationTibiaTrade(
         icon = 1,
         contentDescription = "Character trade"
     ),
+    TibiaTradeItem(
+        route = "TibiaTradeItem/{id}",
+        label = "Tibia Trade Item",
+        icon = 1,
+        contentDescription = "Character trade item"
+    ),
     TibiaTradeProfile(
         route = "TibiaTradeProfile/{userName}",
         label = "Tibia Trade Profile",
@@ -24,6 +30,9 @@ enum class NavigationTibiaTrade(
     companion object {
         fun routeWithName(userName: String): String {
             return "TibiaTradeProfile/${Uri.encode(userName)}"
+        }
+        fun routeWithId(id: Int): String {
+            return "TibiaTradeItem/${Uri.encode(id.toString())}"
         }
     }
 }

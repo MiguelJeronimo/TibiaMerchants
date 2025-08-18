@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.domain.models
 
+import android.R
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -128,4 +129,21 @@ data class Profile(
     val isVerified: Boolean,
     val ads: ArrayList<Trade>,
     val presentations: ArrayList<Any>?= null,
+)
+
+data class TibiaTradeItemModel(
+    @SerializedName("is_closed")
+    val isClosed: Boolean,
+    @SerializedName("screenshot_count")
+    val screenshotCount: Int? = null,
+    @SerializedName("has_feed_image")
+    val hasFeedImage: Boolean,
+    @SerializedName("has_story_image")
+    val hasStoryImage: Boolean,
+    @SerializedName("has_feed_pt_br_image")
+    val hasFeedPtBrImage: Boolean,
+    @SerializedName("has_story_pt_br_image")
+    val hasStoryPtBrImage: Boolean,
+    @SerializedName("ad")
+    val ad: Trade,
 )
