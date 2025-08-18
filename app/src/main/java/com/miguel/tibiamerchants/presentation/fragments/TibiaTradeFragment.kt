@@ -64,7 +64,7 @@ fun TibiaTradeFragment(
                                     Toolbar(title = "Item", onClick = {navController.popBackStack()})
                                     TibiaTradeItemDetails(
                                         id = id,
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                 }
                             }

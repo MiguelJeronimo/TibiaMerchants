@@ -54,7 +54,7 @@ fun TibiaTradeItemDetails(
     val state = viewModel.item.collectAsStateWithLifecycle()
     Log.d("state", state.value.toString())
     TibiaTradeItemDetails(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         state = state.value,
         onRetry = { viewModel.item(id?.toInt()) }
     )

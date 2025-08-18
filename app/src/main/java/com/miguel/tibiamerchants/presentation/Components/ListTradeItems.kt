@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.BuildConfig
+import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
 import com.miguel.tibiamerchants.domain.models.Trade
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
 import java.text.NumberFormat
@@ -90,6 +92,9 @@ fun ItemTradeList(
                             .padding(5.dp),
                         tibia = it,
                         hightLight = !it.highlightedUntil.isNullOrEmpty(),
+                        onClick = {
+                            navigate?.navigate(NavigationTibiaTrade.routeWithId(it.id))
+                        },
                         onClickButtonUser = {
                             navigate?.navigate(NavigationTibiaTrade.routeWithName(it.userName))
                         }
@@ -226,16 +231,33 @@ fun ItemTrade(
                 .padding(5.dp)
                 .fillMaxWidth()
         )
-        val textPrice = "Price: ${usFormatter.format(tibia.price)} gold coins; Tcs: ${
-            tibia.convertedPrice?.let { usFormatter.format(it) }
-        }"
-        Text(
-            text = if (tibia.price.toInt() == 0) "Talking offerts" else textPrice,
-            style = MaterialTheme.typography.labelSmall,
+        Card (
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 5.dp),
-        )
+                .padding(5.dp)
+                .align(Alignment.CenterHorizontally)
+        ){
+            val converter = ConverterPriceModel().convert(
+                tibia.price,
+                tibia.convertedPrice?: 0,
+                tibia.currencyType
+            ).get()
+            Column(modifier = Modifier.padding(5.dp)){
+                Text(
+                    text = "Price in Tibia: ${converter.price}",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                    color = if(converter.price.contains("golds")) Color.Yellow else if(converter.price.contains("TC")) Color.Green else Color.Unspecified
+                )
+                Text(
+                    text = "Converter Price: ${converter.converter}",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                    color = if(converter.converter.contains("golds")) Color.Yellow else if(converter.converter.contains("TC")) Color.Green else Color.Unspecified
+                )
+            }
+        }
         Surface(
             modifier = Modifier
                 .padding(5.dp)
