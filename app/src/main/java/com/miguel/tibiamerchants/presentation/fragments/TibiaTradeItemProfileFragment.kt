@@ -397,18 +397,6 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                     Column(modifier = modifier) {
                         Button(
                             onClick = {
-//                                val share = Intent.createChooser(Intent().apply {
-//                                    action = Intent.ACTION_SEND
-//                                    putExtra(Intent.EXTRA_TEXT, "https://developer.android.com/training/sharing/")
-//
-//                                    // (Optional) Here you're setting the title of the content
-//                                    putExtra(Intent.EXTRA_TITLE, "Introducing content previews")
-//
-//                                    // (Optional) Here you're passing a content URI to an image to be displayed
-//                                   // data = contentUri
-//                                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-//                                }, null)
-//                                context.startActivity(share)
                                 val sendIntent: Intent = Intent().apply {
                                     val name = state.data.ad.itemName?.replace(" ", "-")
                                     val item = "${name}-${state.data.ad.id}"
