@@ -1,7 +1,9 @@
 package com.miguel.tibiamerchants.presentation.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -26,10 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -70,6 +74,7 @@ fun TibiaTradeItemDetails(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTrade.UIStateItem, onRetry: () -> Unit = {}){
+    val context = LocalContext.current
     when{
         state.isLoding -> {
             Box(
@@ -391,7 +396,30 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                 item{
                     Column(modifier = modifier) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+//                                val share = Intent.createChooser(Intent().apply {
+//                                    action = Intent.ACTION_SEND
+//                                    putExtra(Intent.EXTRA_TEXT, "https://developer.android.com/training/sharing/")
+//
+//                                    // (Optional) Here you're setting the title of the content
+//                                    putExtra(Intent.EXTRA_TITLE, "Introducing content previews")
+//
+//                                    // (Optional) Here you're passing a content URI to an image to be displayed
+//                                   // data = contentUri
+//                                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                                }, null)
+//                                context.startActivity(share)
+                                val sendIntent: Intent = Intent().apply {
+                                    val name = state.data.ad.itemName?.replace(" ", "-")
+                                    val item = "${name}-${state.data.ad.id}"
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, "${BuildConfig.API_TIBIA_TRADE}trade/$item")
+                                    type = "text/plain"
+                                }
+
+                                val shareIntent = Intent.createChooser(sendIntent, "Hello this is shared item")
+                                context.startActivity(shareIntent)
+                            },
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .fillMaxWidth()
@@ -401,7 +429,13 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                             Text(text= "Shared")
                         }
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                val name = state.data.ad.itemName?.replace(" ", "-")
+                                val item = "${name}-${state.data.ad.id}"
+                                val url = "${BuildConfig.API_TIBIA_TRADE}trade/$item"
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            },
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 5.dp, bottom = 10.dp, start = 5.dp, end = 5.dp)
