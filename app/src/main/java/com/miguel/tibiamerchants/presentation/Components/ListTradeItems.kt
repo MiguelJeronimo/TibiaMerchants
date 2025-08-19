@@ -50,6 +50,8 @@ import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
 import com.miguel.tibiamerchants.domain.models.Trade
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
+import com.miguel.tibiamerchants.utils.Dates
+import com.miguel.tibiamerchants.utils.Money
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -138,11 +140,7 @@ fun ItemTrade(
     onClickButtonUser: () -> Unit = {},
     hightLight: Boolean = false,
 ) {
-    val instant = Instant.parse(tibia.createdAt)
-    val zonedDateTime = instant.atZone(ZoneId.systemDefault())
-    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val formattedDate = zonedDateTime.format(formatter)
-    val usFormatter = NumberFormat.getCurrencyInstance(Locale.US)
+
     OutlinedCard(
         modifier = modifier,
         onClick = onClick,
@@ -167,7 +165,7 @@ fun ItemTrade(
                     )
                 }
                 Text(
-                    text = formattedDate,
+                    text = Dates().format(date = tibia.createdAt).get(),
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 5.dp, end = 10.dp, top = 10.dp, bottom = 5.dp),
