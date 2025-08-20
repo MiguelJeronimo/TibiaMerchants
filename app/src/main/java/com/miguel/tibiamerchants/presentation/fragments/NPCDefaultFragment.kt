@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.presentation.fragments
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -45,10 +47,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = koinViewModel(), viewModelNPCS: ViewModelNPCS) {
+fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = koinViewModel(), viewModelNPCS: ViewModelNPCS = koinViewModel()) {
     val scaffoldNavigator = rememberSupportingPaneScaffoldNavigator()
     val scope = rememberCoroutineScope()
-
     NavigableSupportingPaneScaffold(
         navigator = scaffoldNavigator,
         mainPane = {
@@ -64,7 +65,8 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = 
         },
         supportingPane = {
             AnimatedPane(modifier = Modifier.fillMaxSize()) {
-                val npc = viewModel.npcInformation.collectAsState()
+                val npc = viewModel.npcInformation.collectAsStateWithLifecycle()
+                Log.d("NPCFragment", "npc: ${npc.value}")
                 when{
                     npc.value.isLoading -> {
                         Box(
@@ -148,7 +150,6 @@ fun GridLayoutNPC(
                 viewModel.setNPCName(npcs[npc].name)
                 scope.launch {
                     scaffoldNavigator.navigateTo(pane = SupportingPaneScaffoldRole.Supporting, contentKey = npcs[npc].name)
-                    viewModel.setNPCName(npcs[npc].name)
                 }
             })
         }

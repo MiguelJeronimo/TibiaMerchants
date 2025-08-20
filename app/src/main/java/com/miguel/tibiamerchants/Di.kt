@@ -55,9 +55,9 @@ class Di {
             UseCaseNPC(get())
         }
         single {
-            ViewModelNPCFactory(get())
+            ViewModelNPCFactory(get(), get())
         }
-        viewModel { ViewModelNPC(get()) }
+        viewModel { ViewModelNPC(get(), get()) }
 
         //items catalog
         single<RepositoryItemsCatalog>{
