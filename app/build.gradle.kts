@@ -34,6 +34,7 @@ android {
             //variables de entorno para acceder desde codigo
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+            buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
         }
         create("prod"){
             dimension = "version"
@@ -44,6 +45,7 @@ android {
             //variables de entorno para acceder desde codigo
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+            buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
         }
     }
 

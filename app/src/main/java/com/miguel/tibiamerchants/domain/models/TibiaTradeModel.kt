@@ -62,7 +62,7 @@ data class Trade(
     val userId: Int,
     val type: Int,
     @SerializedName("item_id")
-    val itemId: Int,
+    val itemId: Int? = null,
     @SerializedName("item_tier")
     val itemTier: Int,
     @SerializedName("currency_type")
@@ -86,7 +86,7 @@ data class Trade(
     @SerializedName("item_name")
     val itemName: String? = null,
     @SerializedName("item_look")
-    val itemLook: String,
+    val itemLook: String? = null,
     @SerializedName("world_name")
     val worldName: String,
     @SerializedName("world_pvp_type")
