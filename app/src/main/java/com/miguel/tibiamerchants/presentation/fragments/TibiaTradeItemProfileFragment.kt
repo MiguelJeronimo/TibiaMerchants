@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -46,6 +47,7 @@ import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.HouseProfile
 import com.miguel.tibiamerchants.presentation.Components.Loading
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.Dates
@@ -56,15 +58,20 @@ import org.koin.androidx.compose.koinViewModel
 fun TibiaTradeItemDetails(
     modifier: Modifier = Modifier,
     id: String?,
-    viewModel: ViewModelTibiaTrade = koinViewModel()
+    viewModel: ViewModelTibiaTrade = koinViewModel(),
+    navigate: NavController = NavController(LocalContext.current)
 ) {
     val state = viewModel.item.collectAsStateWithLifecycle()
     Log.d("state", state.value.toString())
-    TibiaTradeItemDetails(
-        modifier = modifier,
-        state = state.value,
-        onRetry = { viewModel.item(id?.toInt()) }
-    )
+    Column {
+        val title = if(state.value.data?.ad?.itemName != null) "Item" else "House"
+        Toolbar(title = title, onClick = {navigate.popBackStack()})
+        TibiaTradeItemDetails(
+            modifier = modifier,
+            state = state.value,
+            onRetry = { viewModel.item(id?.toInt()) }
+        )
+    }
 }
 
 

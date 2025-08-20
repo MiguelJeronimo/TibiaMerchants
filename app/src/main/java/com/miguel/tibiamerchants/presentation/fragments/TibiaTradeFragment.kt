@@ -60,15 +60,12 @@ fun TibiaTradeFragment(
                         }
                         NavigationTibiaTrade.TibiaTradeItem -> {
                             it.arguments?.getString("id").let { id ->
-                                Column {
-                                    Toolbar(title = "Item", onClick = {navController.popBackStack()})
-                                    TibiaTradeItemDetails(
-                                        id = id,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
+                                TibiaTradeItemDetails(
+                                    id = id,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    navigate = navController
+                                )
                             }
-
                         }
                     }
                 }
@@ -96,11 +93,15 @@ fun TibiaTradeFragment(
                     ){
                         Loading(
                             modifier = Modifier
-                                .width(64.dp).align(Alignment.CenterHorizontally).padding(5.dp)
+                                .width(64.dp)
+                                .align(Alignment.CenterHorizontally)
+                                .padding(5.dp)
                         )
                         Text(
                             text = "Loading...",
-                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(10.dp)
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(10.dp)
                         )
                     }
                 }
@@ -115,7 +116,9 @@ fun TibiaTradeFragment(
                     ){
                         Text(
                             text = "No have information",
-                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(10.dp),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(10.dp),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -126,7 +129,9 @@ fun TibiaTradeFragment(
                     ErrorMessage(
                         messageHeader = "Ups!",
                         message = "Something went wrong trying to get the data",
-                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxWidth(),
                         onRetry = onRetry
                     )
                 }
