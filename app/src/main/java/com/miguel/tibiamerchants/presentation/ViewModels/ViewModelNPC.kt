@@ -46,7 +46,7 @@ class ViewModelNPC(private val useCase: UseCaseNPC, private val savableStateHand
         _isBack.value = state
     }
 
-    private fun getNPC(name: String){
+    fun getNPC(name: String){
         if (name.isEmpty()) return
         _npcInformation.value = UIState(isLoading = true)
         viewModelScope.launch {

@@ -100,7 +100,7 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = 
                                 modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
                                 onRetry = {
                                     scaffoldNavigator.currentDestination?.contentKey.let{
-                                        viewModel.setNPCName(it.toString())
+                                        viewModel.getNPC(it.toString())
                                     }
                                 }
                             )
@@ -124,6 +124,22 @@ fun NPCDefaultFragment(modifier: Modifier = Modifier, viewModel: ViewModelNPC = 
                                     data = it
                                 )
                             }
+                        }
+                    }
+                    else->{
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ){
+                            ErrorMessage(
+                                messageHeader = "Error",
+                                message = "An error occurred while loading data, please try again.",
+                                modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                                onRetry = {
+                                    scaffoldNavigator.currentDestination?.contentKey.let{
+                                        viewModel.getNPC(it.toString())
+                                    }
+                                }
+                            )
                         }
                     }
                 }
