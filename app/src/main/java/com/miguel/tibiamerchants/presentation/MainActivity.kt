@@ -172,12 +172,12 @@ class MainActivity : ComponentActivity() {
                                     viewModel.setItemsState(true)
                                 }
                             )
-                            NavigationDrawerItem(
-                                label = { Text(text = "Vocations") },
-                                selected = false,
-                                modifier = Modifier.padding(5.dp),
-                                onClick = { viewModel.setVocationsState(true) }
-                            )
+//                            NavigationDrawerItem(
+//                                label = { Text(text = "Vocations") },
+//                                selected = false,
+//                                modifier = Modifier.padding(5.dp),
+//                                onClick = { viewModel.setVocationsState(true) }
+//                            )
                         }
                     }
                 ) {
@@ -252,6 +252,7 @@ class MainActivity : ComponentActivity() {
         viewModel.setItemsState(false)
         viewModel.setSpellsState(false)
         viewModel.setVocationsState(false)
+        viewModel.setAboutState(false)
     }
 }
 

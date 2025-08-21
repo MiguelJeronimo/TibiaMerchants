@@ -41,35 +41,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.presentation.Components.ToobarNPC
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
-import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class About : ComponentActivity() {
+    private val viewModel: ViewModelNPC by viewModel()
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory: ViewModelNPCFactory by inject()
-        val viewmodel = ViewModelProvider(this, factory)[ViewModelNPC::class.java]
         enableEdgeToEdge()
         setContent {
             TibiaMerchantsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
                     Column(Modifier.padding(padding)) {
-                        Toolbar(title = "About", onClick = {viewmodel.back(true)})
+                        Toolbar(title = "About", onClick = {viewModel.back(true)})
                         ContentAbout()
                     }
                 }
             }
         }
-        viewmodel.isBack.observe(this, Observer {
+        viewModel.isBack.observe(this, Observer {
             if (it) {
                 finish()
             }
