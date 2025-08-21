@@ -33,7 +33,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.miguel.tibiamerchants.domain.models.ItemsModels
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationItemsDetails
 import com.miguel.tibiamerchants.presentation.Components.SwapeRefreshItemsType

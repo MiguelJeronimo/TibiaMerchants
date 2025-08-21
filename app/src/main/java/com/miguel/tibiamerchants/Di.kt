@@ -114,10 +114,10 @@ class Di {
         }
 
         single {
-            ViewModelItemProfileFactory(get())
+            ViewModelItemProfileFactory(get(), get())
         }
 
-        viewModel { ViewModelItemProfile(get()) }
+        viewModel { ViewModelItemProfile(get(), get()) }
 
         //tibiatrade
         single<RepositoryTibiaClient>{
