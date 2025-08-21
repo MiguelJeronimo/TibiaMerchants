@@ -251,7 +251,7 @@ class MainActivity : ComponentActivity() {
         viewModel.setNPCName(null)
         viewModel.setItemsState(false)
         viewModel.setSpellsState(false)
-        viewModel.setVocationsState(false)
+//        viewModel.setVocationsState(false)
         viewModel.setAboutState(false)
     }
 }

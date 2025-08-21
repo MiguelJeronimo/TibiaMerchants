@@ -38,7 +38,7 @@ class ViewModelNPCS: ViewModel() {
         _stateSpells.value = state
     }
 
-    fun setVocationsState(state: Boolean?){
-        _vocations.value = state
-    }
+//    fun setVocationsState(state: Boolean?){
+//        _vocations.value = state
+//    }
 }
