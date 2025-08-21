@@ -5,14 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
 import com.miguel.tibiamerchants.domain.usecases.UseCaseSpellList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
-    private val _spells = MutableLiveData<ResponseSpells>()
-    val spells: MutableLiveData<ResponseSpells> = _spells
-
-    val _progress = MutableLiveData<Boolean>()
-    val progress: MutableLiveData<Boolean> = _progress
+    private val _spells = MutableStateFlow(UIState())
+    val spells: StateFlow<UIState> = _spells
 
     private val _isBack = MutableLiveData<Boolean>()
     val isBack: MutableLiveData<Boolean>get() = _isBack
@@ -25,9 +24,12 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
     }
 
     init {
-        _progress.value = true
+        _spells.value = UIState(isLoading = true)
         viewModelScope.launch {
-            _spells.value = useCase.spells()
+            _spells.value = useCase.spells().fold(
+                onSuccess = { UIState(spells = it) },
+                onFailure = { UIState(error = it.message) }
+            )
         }
     }
 
@@ -35,11 +37,28 @@ class ViewModelSpells(private val useCase: UseCaseSpellList) : ViewModel() {
         _isBack.value = value
     }
 
-    fun setSpells(){
-        viewModelScope.launch { _spells.value = useCase.spells() }
+    fun setSpellsRefresh(){
+        viewModelScope.launch {
+            _spells.value = useCase.spells().fold(
+                onSuccess = { _spells.value.copy(spells = it, isLoading = false) },
+                onFailure = { _spells.value.copy(error = it.message, isLoading = false) }
+            )
+        }
     }
 
-    fun isProgress(value: Boolean){
-        _progress.value = value
+    fun spells(){
+        _spells.value = UIState(isLoading = true)
+        viewModelScope.launch {
+            _spells.value = useCase.spells().fold(
+                onSuccess = { UIState(spells = it) },
+                onFailure = { UIState(error = it.message) }
+            )
+        }
     }
+
+    data class UIState(
+        val isLoading: Boolean = false,
+        val spells: ResponseSpells? = null,
+        val error: String? = null
+    )
 }
