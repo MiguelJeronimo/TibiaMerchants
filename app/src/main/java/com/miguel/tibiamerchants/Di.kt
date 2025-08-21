@@ -1,7 +1,7 @@
 package com.miguel.tibiamerchants
 
-import Jsoup.Scrapper
 import com.miguel.tibiamerchants.data.network.retrofit.ApiClient
+import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.network.retrofit.RetrofitClient
 import com.miguel.tibiamerchants.data.repositories.NPCRepository
 import com.miguel.tibiamerchants.data.repositories.NPCRepositoryImp
@@ -13,21 +13,33 @@ import com.miguel.tibiamerchants.data.repositories.RepositoryItemsType
 import com.miguel.tibiamerchants.data.repositories.RepositoryItemsTypeImp
 import com.miguel.tibiamerchants.data.repositories.RepositorySpells
 import com.miguel.tibiamerchants.data.repositories.RepositorySpellsImp
+import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClient
+import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClientImpl
+import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
+import com.miguel.tibiamerchants.data.repositories.VocationRepository
+import com.miguel.tibiamerchants.data.repositories.VocationRepositoryImp
 import com.miguel.tibiamerchants.domain.usecases.UseCaseIItemProfile
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsCatalog
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
 import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
 import com.miguel.tibiamerchants.domain.usecases.UseCaseSpellList
+import com.miguel.tibiamerchants.domain.usecases.UseCaseVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTCPrice
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemsTypeFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelNPCFactory
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelTCPriceFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelTibiaTradeFactory
+import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelVocationFactory
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -35,20 +47,21 @@ class Di {
     val appModule = module {
         //Main NPCs.
         single<NPCRepository> {
-            val scrapper = Scrapper()
-            NPCRepositoryImp(scrapper)
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            NPCRepositoryImp(retrofit)
         }
         factory<UseCaseNPC> {
             UseCaseNPC(get())
         }
         single {
-            ViewModelNPCFactory(get())
+            ViewModelNPCFactory(get(), get())
         }
-        viewModel { ViewModelNPC(get()) }
+        viewModel { ViewModelNPC(get(), get()) }
 
         //items catalog
         single<RepositoryItemsCatalog>{
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemsCatalogImp(retrofit)
         }
@@ -64,7 +77,7 @@ class Di {
 
         //items type catalog
         single<RepositoryItemsType> {
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemsTypeImp(retrofit)
         }
@@ -72,13 +85,13 @@ class Di {
             UseCaseItemsType(get())
         }
         single {
-            ViewModelItemsTypeFactory(get())
+            ViewModelItemsTypeFactory(get(), get())
         }
-        viewModel { ViewModeltemsType(get()) }
+        viewModel { ViewModeltemsType(get(), get()) }
 
         //spells
         single<RepositorySpells> {
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositorySpellsImp(retrofit)
         }
@@ -91,7 +104,7 @@ class Di {
         viewModel { ViewModelSpells(get()) }
         //ItemProfile
         single<RepositoryItemsProfile>{
-            val url = "https://tibia-merchants-api.onrender.com/"
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
             val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
             RepositoryItemProfileImp(retrofit)
         }
@@ -101,10 +114,44 @@ class Di {
         }
 
         single {
-            ViewModelItemProfileFactory(get())
+            ViewModelItemProfileFactory(get(), get())
         }
 
-        viewModel { ViewModelItemProfile(get()) }
+        viewModel { ViewModelItemProfile(get(), get()) }
 
+        //tibiatrade
+        single<RepositoryTibiaClient>{
+            val url = BuildConfig.API_TIBIA_TRADE
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiTibiaTradeClient::class.java)
+            RepositoryTibiaClientImpl(retrofit)
+        }
+        factory<UseCaseTibiaTrade> {
+            UseCaseTibiaTrade(get())
+        }
+        single {
+            ViewModelTibiaTradeFactory(get(), get())
+        }
+        single{
+            ViewModelTCPriceFactory(get())
+        }
+        viewModel { ViewModelTCPrice(get()) }
+
+        viewModel { ViewModelTibiaTrade(get() ,get()) }
+        //Vocations
+        single<VocationRepository>{
+            val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
+            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            VocationRepositoryImp(retrofit)
+        }
+
+        factory<UseCaseVocations> {
+            UseCaseVocations(get())
+        }
+
+        single {
+            ViewModelVocationFactory(get())
+        }
+
+        viewModel { ViewModelVocations(get()) }
     }
 }

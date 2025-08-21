@@ -2,10 +2,6 @@ package com.miguel.tibiamerchants.presentation.Components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.miguel.tibiamerchants.domain.models.BodyItemstype
@@ -45,29 +41,29 @@ import com.miguel.tibiamerchants.domain.models.OtherItemsModel
 import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipment
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
+import com.miguel.tibiamerchants.domain.models.navigation.NavigationItemsDetails
 import com.miguel.tibiamerchants.domain.models.spells.Effect
 import com.miguel.tibiamerchants.domain.models.spells.Runes
 import com.miguel.tibiamerchants.domain.models.spells.Spell
-import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
-import org.koin.androidx.compose.koinViewModel
-import kotlin.String
 
 @Composable
-fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, viewModel: ViewModeltemsType){
+fun ListItems(modifier: Modifier, body: ArrayList<BodyItemstype>?, navController: NavHostController){
     LazyColumn(modifier = modifier) {
         items(body!!.size){item->
             CardItems(
                 modifier = modifier,
                 item = body[item],
-                viewModel = viewModel
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(body[item].name.toString()))
+                }
             )
         }
     }
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, navController: NavHostController) {
     println("WEAPONS ${items.body?.weapons}")
     println("WEAPONS ${items.body?.weaponsChargedReplicas}")
     println("WEAPONS ${items.body?.weaponsEnchantedReplicas}")
@@ -88,7 +84,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weapons[item],
-                    viewModel = viewModel
+                    onClick = {
+                        navController.navigate( NavigationItemsDetails.itemDetailsRouteWithName(weapons[item].name.toString()))
+                    }
                 )
             }
         }
@@ -108,7 +106,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weaponsChargedReplicas[item],
-                    viewModel = viewModel
+                    onClick = {
+
+                    }
                 )
             }
         }
@@ -128,7 +128,9 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
                 CardItems(
                     modifier = modifier,
                     item = weaponsChargedReplicas[item],
-                    viewModel = viewModel
+                    onClick = {
+
+                    }
                 )
             }
         }
@@ -136,7 +138,7 @@ fun ListItems(modifier: Modifier, items: ItemsModelsTypeWeapons, viewModel: View
 }
 
 @Composable
-fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val houseHold = items.body
         item {
@@ -153,7 +155,9 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
             CardItems(
                 modifier = modifier,
                 item = houseHold.items[item],
-                viewModel = viewModel
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(houseHold.items[item].name.toString()))
+                }
             )
         }
 
@@ -161,7 +165,7 @@ fun ListItems(modifier: Modifier, items: HouseHoldModel, viewModel: ViewModeltem
 }
 //others items list
 @Composable
-fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val others = items.body
         item {
@@ -178,7 +182,9 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewMod
             CardItem(
                 modifier = modifier,
                 item = others.items[item],
-                viewModel = viewModel
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(others.items[item].name.toString()))
+                }
             )
         }
     }
@@ -186,7 +192,7 @@ fun ListItems(modifier: Modifier, items: PlantsAnimalsProductsFoodDrink, viewMod
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -201,8 +207,11 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel:
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item],
-                viewModel = viewModel
+                modifier = modifier,
+                item = tools.items[item],
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(tools.items[item].name.toString()))
+                }
             )
         }
     }
@@ -210,7 +219,7 @@ fun ListItems(modifier: Modifier, items: ToolsAndOtherEquipmentModel, viewModel:
 
 //Tools and other Equipment
 @Composable
-fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModeltemsType) {
+fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModeltemsType, navController: NavHostController) {
     LazyColumn(modifier = modifier) {
         val tools = items.body
         item {
@@ -225,8 +234,11 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModelte
         }
         items(tools?.items!!.size) { item ->
             CardItems(
-                modifier = modifier, item = tools.items[item],
-                viewModel = viewModel
+                modifier = modifier,
+                item = tools.items[item],
+                onClick = {
+                    navController.navigate(NavigationItemsDetails.itemDetailsRouteWithName(tools.items[item].name.toString()))
+                }
             )
         }
     }
@@ -236,14 +248,14 @@ fun ListItems(modifier: Modifier, items: OtherItemsModel, viewModel: ViewModelte
 /// CARDS
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: BodyItemstype?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name) }
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -325,14 +337,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstype?, viewModel: ViewModeltems
 **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, onClick: ()->Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -447,14 +459,14 @@ fun CardItems(modifier: Modifier, item: BodyItemstypeWeapon?, viewModel: ViewMod
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: HouseHold,onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -526,10 +538,10 @@ fun CardItems(modifier: Modifier, item: HouseHold, viewModel: ViewModeltemsType)
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltemsType){
+fun CardItem(modifier: Modifier, item: ItemOtherPlants, onClick: () -> Unit){
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -595,14 +607,14 @@ fun CardItem(modifier: Modifier, item: ItemOtherPlants, viewModel: ViewModeltems
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -689,14 +701,14 @@ fun CardItems(modifier: Modifier, item: ToolsAndOtherEquipment?, viewModel: View
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType){
+fun CardItems(modifier: Modifier, item: OtherItem?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-        onClick = { viewModel.setName(item!!.name)}
+        onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -797,14 +809,14 @@ fun CardItems(modifier: Modifier, item: OtherItem?, viewModel: ViewModeltemsType
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells = koinViewModel()){
+fun CardSpells(modifier: Modifier, item: Spell?, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
      * */
     Card(
         modifier = modifier,
-       onClick = { viewModel.setNameSpell(item!!.name)}
+       onClick = onClick
     ) {
         val expanded = remember { mutableStateOf(false) }
         Column(
@@ -886,7 +898,7 @@ fun CardSpells(modifier: Modifier, item: Spell?, viewModel: ViewModelSpells = ko
  * **/
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardSpellsRunes(modifier: Modifier, item: Runes, viewModel: ViewModelSpells){
+fun CardSpellsRunes(modifier: Modifier, item: Runes, onClick: () -> Unit){
     /**
      *.fillMaxWidth(1f)
      *             .padding(16.dp)
@@ -990,5 +1002,5 @@ fun previewCars(){
             img= "https://static.wikia.nocookie.net/tibia/images/3/37/Physical_Damage_Icon.gif/revision/latest?cb=20210531030930&path-prefix=en"
         )
     }
-    CardSpells(modifier = Modifier, item = spells)
+    //CardSpells(modifier = Modifier, item = spells)
 }

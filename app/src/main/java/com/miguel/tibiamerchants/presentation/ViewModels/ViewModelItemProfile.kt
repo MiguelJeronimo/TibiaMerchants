@@ -1,38 +1,50 @@
 package com.miguel.tibiamerchants.presentation.ViewModels
 
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miguel.tibia_merchants_api.domain.models.ResponseItemProfile
 import com.miguel.tibiamerchants.domain.usecases.UseCaseIItemProfile
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ViewModelItemProfile(private val useCaseItemProfile: UseCaseIItemProfile): ViewModel() {
+class ViewModelItemProfile(private val useCaseItemProfile: UseCaseIItemProfile, savableStateHandle: SavedStateHandle): ViewModel() {
 
-    private val _itemProfile = MutableLiveData<ResponseItemProfile>()
-    val itemProfile: MutableLiveData<ResponseItemProfile> = _itemProfile
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: MutableLiveData<Boolean> = _isLoading
-
-    private val _back = MutableLiveData<Boolean>()
-    val back: MutableLiveData<Boolean> = _back
+    private val _itemProfile = MutableStateFlow(UIState())
+    val itemProfile: StateFlow<UIState> = _itemProfile
 
     init {
-        _isLoading.value = true
-    }
-    fun back(isBack: Boolean) {
-        _back.value = isBack
-    }
-
-    fun setItemProfiel(name:String){
-        viewModelScope.launch {
-            _itemProfile.value = useCaseItemProfile.item(name)
+        val name = savableStateHandle.get<String>("itemName")
+        Log.d("ViewModelItemProfile", "name: $name")
+        if (name != null) {
+            setItemProfiel(name)
+        } else{
+            setItemProfiel("")
         }
     }
 
-    fun loading(state: Boolean){
-        _isLoading.value = state
+    fun setItemProfiel(name:String){
+        if (name.isEmpty())return
+        viewModelScope.launch {
+           _itemProfile.value = UIState(_isLoading = true)
+            val response = useCaseItemProfile.item(name)
+            Log.d("ViewModelItemProfile", "response: $response")
+            response.onSuccess {
+                _itemProfile.value = UIState(itemProfile = it)
+            }
+            response.onFailure {
+                _itemProfile.value = UIState(error = it.message)
+            }
+        }
     }
+
+
+    data class UIState(
+        val _isLoading: Boolean = false,
+        val error: String? = null,
+        val itemProfile: ResponseItemProfile? = null
+    )
 
 }

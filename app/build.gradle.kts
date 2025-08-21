@@ -1,18 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-parcelize")
 }
 
 android {
     namespace = "com.miguel.tibiamerchants"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.miguel.tibiamerchants"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 3
-        versionName = "1.0"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -20,7 +21,42 @@ android {
         }
     }
 
+    flavorDimensions+= "version"
+    productFlavors {
+        create("dev") {
+            dimension = "version"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            //            //para poderacceder a ellos desde xml
+////            resValue ("string", "admob_app_id", project.findProperty("ADMOB_APP_ID_DEV") as String)
+////            resValue ("string", "admob_banner_id", project.findProperty("ADMOB_BANNER_ID_DEV") as String)
+////            resValue ("string", "admob_native_id", project.findProperty("ADMOB_NATIVEADS_ID_DEV") as String)
+            //variables de entorno para acceder desde codigo
+            buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
+            buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+            buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+        }
+        create("prod"){
+            dimension = "version"
+            //para poderacceder a ellos desde xml
+//            resValue ("string", "admob_app_id", project.findProperty("ADMOB_APP_ID_PROD") as String)
+//            resValue ("string", "admob_banner_id", project.findProperty("ADMOB_BANNER_ID_PROD") as String)
+//            resValue ("string", "admob_native_id", project.findProperty("ADMOB_NATIVEADS_ID_PROD") as String)
+            //variables de entorno para acceder desde codigo
+            buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
+            buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
+            buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+        }
+    }
+
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -37,6 +73,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true // enable generate a BuildConfig
         compose = true
     }
     composeOptions {
@@ -67,7 +104,7 @@ dependencies {
     //injeccion de dependencias
     implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
 //    implementation("io.coil-kt:coil-gif:2.6.0")
-//    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 //    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     //para consumo de apis
@@ -77,6 +114,18 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     // LiveData
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    //paging 3
+    implementation ("androidx.paging:paging-runtime:3.3.6")
+    implementation ("androidx.paging:paging-compose:3.3.6")
+    //Adaptative Layout
+    implementation("androidx.window:window:1.4.0")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
+    implementation("androidx.compose.material3.adaptive:adaptive:1.1.0")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.1.0")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
+    //serealizable
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -85,6 +134,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    //implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

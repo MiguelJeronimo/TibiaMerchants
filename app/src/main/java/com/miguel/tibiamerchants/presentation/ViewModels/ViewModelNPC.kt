@@ -1,66 +1,68 @@
 package com.miguel.tibiamerchants.presentation.ViewModels
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.usecases.UseCaseNPC
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import model.Tibia.NPC
+import model.Tibia.NPCModel
 
-class ViewModelNPC(private val useCase: UseCaseNPC): ViewModel() {
-    private val _npcInformation = MutableLiveData<NPC?>()
-    val npcInformation: MutableLiveData<NPC?>get() = _npcInformation
 
-    private val _isBack = MutableLiveData<Boolean>()
-    val isBack: MutableLiveData<Boolean>get() = _isBack
+class ViewModelNPC(private val useCase: UseCaseNPC, private val savableStateHandle: SavedStateHandle): ViewModel() {
+    private val _npcInformation = MutableStateFlow<UIState>(UIState())
+    val npcInformation: StateFlow<UIState> = _npcInformation
+    private val _isBack = MutableLiveData(false)
+    val isBack: LiveData<Boolean> = _isBack
 
-    private val _isVisibleProgressBar = MutableLiveData<Boolean>()
-    val isVisibleProgressBar: MutableLiveData<Boolean>get() = _isVisibleProgressBar
+    private val _npcName = savableStateHandle.getStateFlow(NPC_NAME, "")
 
-    init {
-        _isVisibleProgressBar.value = true
+    private companion object{
+        const val NPC_NAME = "npc_name"
     }
 
-    private val uiScope = CoroutineScope(Dispatchers.Main)
-    fun setNpcInformation(name: String?) {
-        uiScope.launch {
-            withContext(Dispatchers.IO){
-               val response =  when(name){
-                    "Rashid"->{useCase.rashid()}
-                    "Yasir"->{useCase.yasir()}
-                    "Haroun"->{useCase.horoun()}
-                    "Nah'Bob"->{useCase.nashBob()}
-                    "Asnarus"->{useCase.asnarus()}
-                    "Alesar"->{useCase.alesar()}
-                    "Yaman"->{useCase.yalam()}
-                    "Esrik"->{useCase.esrik()}
-                    "Alexander"->{useCase.alexander()}
-                    "Tamoril"->{useCase.tamoril()}
-                    "Grizzly Adams"->{useCase.grizzlyAdams()}
-                    else -> {
-                        println("Se fue al null")
-                        null
-                    }
-                }
-                _npcInformation.postValue(response)
+    init {
+        viewModelScope.launch {
+            _npcName.collect { name ->
+               if (name.isNotEmpty()){
+                   getNPC(name)
+               } else{
+                   getNPC("")
+               }
             }
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        uiScope.cancel()
+    fun setNPCName(name: String){
+        Log.d("ViewModel", "setNPCName: $name")
+        savableStateHandle[NPC_NAME] = name
     }
 
-    fun setBack(status:Boolean){
-        _isBack.value = status
+    fun back(state:Boolean){
+        _isBack.value = state
     }
 
-    fun setProgressBar(status:Boolean){
-        _isVisibleProgressBar.value = status
+    fun getNPC(name: String){
+        if (name.isEmpty()) return
+        _npcInformation.value = UIState(isLoading = true)
+        viewModelScope.launch {
+            val response = useCase.npc(name)
+            response.onSuccess {
+                _npcInformation.value = UIState(isLoading = false, npc = it)
+            }
+            response.onFailure {
+                _npcInformation.value = UIState(isLoading = false, error = it.message)
+            }
+        }
     }
 
+    data class UIState(
+        val isLoading: Boolean = false,
+        val npc: NPCModel? = null,
+        val error: String? = null
+    )
 }

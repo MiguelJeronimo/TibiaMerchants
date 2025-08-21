@@ -3,10 +3,12 @@ package com.miguel.tibiamerchants.presentation.Components
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -25,15 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItems
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPC
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelNPCS
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
+import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelVocations
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModeltemsType
+import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -58,6 +64,24 @@ fun Toobar(stateAbout: ViewModelNPCS?) {
         ) {
             DropDownMenu(null, stateAbout = stateAbout!!)
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Toobar(title: String) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f).height(50.dp)) {
+        Text(
+            modifier = Modifier
+                .padding(15.dp, 10.dp, 0.dp, 0.dp),
+            text = title,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
     }
 }
 
@@ -132,17 +156,52 @@ fun Toolbar(tittle: String, viewmodel: ViewModelItems) {
  * **/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Toolbar(tittle: String,  viewModel: ViewModeltemsType) {
+fun Toolbar(title: String, onClick: () -> Unit = {}) {
     val textStle = androidx.compose.ui.text.TextStyle(
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     Row(Modifier.fillMaxWidth(1f)) {
-        Backbutton(viewmodel = viewModel)
+        Backbutton(onClickListener = onClick)
         Text(
             modifier = Modifier
                 .padding(5.dp, 10.dp, 0.dp, 0.dp),
-            text = tittle,
+            text = title,
+            color = MaterialTheme.colorScheme.secondary,
+            style = textStle
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+/**
+ * @param tittle Title for items view type
+ * @param viewmodel Viewmodel for items view type
+ * @param buttonVisible Visibility of the button
+ * Toolbar for items list type
+ * **/
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Toolbar(title: String, onClick: () -> Unit= {}, buttonVisible: Boolean = true) {
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        if (buttonVisible) {
+            Backbutton(onClickListener = onClick)
+        }
+        Text(
+            modifier = Modifier
+                .padding(5.dp, 10.dp, 0.dp, 0.dp),
+            text = title,
             color = MaterialTheme.colorScheme.secondary,
             style = textStle
         )
@@ -214,10 +273,49 @@ fun ToolBarItemsProfile(tittle: String? = null, viewmodel: ViewModelItemProfile?
 }
 
 @Composable
+fun ToolBarVocation(title: String? = null){
+    val textStle = androidx.compose.ui.text.TextStyle(
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Row(Modifier.fillMaxWidth(1f)) {
+        BackButtonVocations(Modifier)
+        title?.let {
+            Text(
+                modifier = Modifier
+                    .padding(5.dp, 10.dp, 0.dp, 0.dp),
+                text = it,
+                color = MaterialTheme.colorScheme.secondary,
+                style = textStle
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.End
+        ) {
+            //DropDownMenu(viewmodel)
+        }
+    }
+}
+
+@Composable
+fun BackButtonVocations(modifier: Modifier, viewModel: ViewModelVocations = koinViewModel()) {
+    Box {
+        IconButton(onClick = {
+            viewModel.setBack(true)
+        }) {
+            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = modifier.size(30.dp))
+        }
+    }
+}
+
+@Composable
 fun BackButtonItemProfile(Modifier: Modifier, viewModel: ViewModelItemProfile? = null) {
     Box {
         IconButton(onClick = {
-            viewModel?.back(true)
+
         }) {
             Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
@@ -251,19 +349,19 @@ fun Backbutton(viewmodel: ViewModelItems) {
 fun Backbutton(viewmodel: ViewModelNPC?) {
     Box {
         IconButton(onClick = {
-          viewmodel?.setBack(true)
+
         }) {
             Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete", modifier = Modifier.size(30.dp))
         }
     }
 }
 @Composable
-fun Backbutton(viewmodel:  ViewModeltemsType?) {
-    Box {
-        IconButton(onClick = {
-            viewmodel?.setBack(true)
-        }) {
-            Icon(Icons.Default.KeyboardArrowLeft , contentDescription = "delete",modifier = Modifier.size(30.dp))
+fun Backbutton(onClickListener: () -> Unit ){
+    Box(
+        modifier  = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
+        IconButton(onClick = onClickListener) {
+            Icon(painter = painterResource(R.drawable.baseline_arrow_back_ios_24), contentDescription = "delete",modifier = Modifier.size(30.dp))
         }
     }
 }
@@ -296,7 +394,7 @@ fun DropDownMenu(viewmodel: ViewModelNPC?, stateAbout: ViewModelNPCS) {
                 },
                     onClick = {
                         expanded = false
-                        viewmodel?.setBack(true)
+                        viewmodel?.back(true)
                     }
                 )
             }

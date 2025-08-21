@@ -1,6 +1,7 @@
 package com.miguel.tibiamerchants.presentation.ViewModels
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miguel.tibiamerchants.domain.models.HouseHoldModel
@@ -11,83 +12,132 @@ import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.usecases.UseCaseItemsType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
-class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType) : ViewModel() {
-    //private val repository = RepositoryItems()
+class ViewModeltemsType(private val useCaseItemsType: UseCaseItemsType,private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _items = MutableLiveData<ItemsModelsType>()
-    val items: MutableLiveData<ItemsModelsType> = _items
+    private val _items = MutableStateFlow(UIState())
+    val items: StateFlow<UIState> = _items
 
-    private val _itemsTypeWeapons = MutableLiveData<ItemsModelsTypeWeapons>()
-    val itemsTypeWeapons: MutableLiveData<ItemsModelsTypeWeapons> = _itemsTypeWeapons
+    companion object{
+        private val LAST_QUERY_KEY = "last_query"
+        private val DATA_KEY = "data"
+    }
 
-    private val _itemsTypeHouseHold = MutableLiveData<HouseHoldModel>()
-    val itemsTypeHouseHold: MutableLiveData<HouseHoldModel> = _itemsTypeHouseHold
+//    init {
+//        savedStateHandle.get<PostItemsType>(LAST_QUERY_KEY)?.let {
+//            _items.value = _items.value.copy(lastQuery = it)
+//        }
+//    }
 
-    private val _plantsAnimalsProductsFoodDrink = MutableLiveData<PlantsAnimalsProductsFoodDrink>()
-    val plantsAnimalsProductsFoodDrink: MutableLiveData<PlantsAnimalsProductsFoodDrink> get() = _plantsAnimalsProductsFoodDrink
-
-    private val _itemsTypeToolsAndOthers = MutableLiveData<ToolsAndOtherEquipmentModel>()
-    val itemsTypeToolsAndOthers: MutableLiveData<ToolsAndOtherEquipmentModel> get() = _itemsTypeToolsAndOthers
-
-    private val _itemsTypeOtherItems = MutableLiveData<OtherItemsModel>()
-    val itemsTypeOtherItems: MutableLiveData<OtherItemsModel> get() = _itemsTypeOtherItems
-
-    private val _back = MutableLiveData<Boolean>()
-    val back: MutableLiveData<Boolean> = _back
 
     private val _name = MutableLiveData<String>()
     val name: MutableLiveData<String> = _name
 
-    fun setName(name: String?){
-        this.name.value = name
-    }
 
-    fun setBack(state: Boolean){
-        _back.value = state
-    }
-
-    private val _isVisibleProgressBar = MutableLiveData<Boolean>()
-    val isVisibleProgressBar: MutableLiveData<Boolean> = _isVisibleProgressBar
-    init {
-        _isVisibleProgressBar.value = true
-    }
-    fun setProgressBar(state: Boolean){
-        _isVisibleProgressBar.value = state
-    }
-
-    fun setItems(body: PostItemsType) {
+    fun setItems(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
-            _items.value = useCaseItemsType.itemsType(body)
+            val current = _items.value
+            if (current.items != null  && !force && current.lastQuery == body) return@launch
+            _items.value = _items.value.copy(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsType(body)
+            response.onSuccess {
+                _items.value = UIState(items = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
         }
     }
 
-    fun setItemsWeapons(body: PostItemsType) {
+    fun setItemsWeapons(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
-            _itemsTypeWeapons.value = useCaseItemsType.itemsTypeWeapons(body)
-        }
-    }
-    fun setItemsHouseHold(body: PostItemsType) {
-        viewModelScope.launch {
-            _itemsTypeHouseHold.value = useCaseItemsType.itemsTypeHouseHold(body)
+            val current = _items.value
+            if (current.itemsTypeWeapons != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsTypeWeapons(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeWeapons = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
         }
     }
 
-    fun setPlantsAnimalsProductsFoodDrink(body: PostItemsType){
+    fun setItemsHouseHold(body: PostItemsType, force: Boolean = false) {
         viewModelScope.launch {
-            _plantsAnimalsProductsFoodDrink.value = useCaseItemsType.itemsTypeOthers(body)
+            val current = _items.value
+            if (current.itemsTypeHouseHold != null  && !force && current.lastQuery == body) return@launch
+            _items.value  = UIState(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsTypeHouseHold(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeHouseHold = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
         }
     }
 
-    fun setItemsToolsAndOthers(body: PostItemsType){
+    fun setPlantsAnimalsProductsFoodDrink(body: PostItemsType, force: Boolean = false){
         viewModelScope.launch {
-            _itemsTypeToolsAndOthers.value = useCaseItemsType.itemsTypeToolsAndOthers(body)
+            val current = _items.value
+            if (current.plantsAnimalsProductsFoodDrink != null  && !force && current.lastQuery == body) return@launch
+            _items.value  = UIState(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsTypeOthers(body)
+            response.onSuccess {
+                _items.value = UIState(plantsAnimalsProductsFoodDrink = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
         }
     }
-    fun setItemsOtherItems(body: PostItemsType){
+
+    fun setItemsToolsAndOthers(body: PostItemsType, force: Boolean = false){
         viewModelScope.launch {
-            _itemsTypeOtherItems.value = useCaseItemsType.itemsTypeOtherItems(body)
+            val current = _items.value
+            if (current.itemsTypeToolsAndOthers != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsTypeToolsAndOthers(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeToolsAndOthers = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
         }
     }
+
+    fun setItemsOtherItems(body: PostItemsType, force: Boolean = false){
+        viewModelScope.launch {
+            val current = _items.value
+            if (current.itemsTypeOtherItems != null  && !force && current.lastQuery == body) return@launch
+            _items.value = UIState(isLoading = true, error = null)
+            val response = useCaseItemsType.itemsTypeOtherItems(body)
+            response.onSuccess {
+                _items.value = UIState(itemsTypeOtherItems = it, lastQuery = body)
+            }
+            response.onFailure {
+                _items.value = UIState(error = it.message, lastQuery = body)
+            }
+        }
+    }
+
+    @Serializable
+    data class UIState(
+        val isLoading: Boolean = false,
+        val items: ItemsModelsType? = null,
+        val itemsTypeWeapons: ItemsModelsTypeWeapons? = null,
+        val itemsTypeHouseHold: HouseHoldModel? = null,
+        val plantsAnimalsProductsFoodDrink: PlantsAnimalsProductsFoodDrink? = null,
+        val itemsTypeToolsAndOthers: ToolsAndOtherEquipmentModel? = null,
+        val itemsTypeOtherItems: OtherItemsModel? = null,
+        val error: String? = null,
+        val lastQuery: PostItemsType? = null
+    )
 }

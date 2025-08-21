@@ -1,52 +1,52 @@
 package model.Tibia
 
+import com.google.gson.annotations.SerializedName
+
+//List npc default
+data class ListNPC(
+    val name: String,
+    val imgNPC: String
+)
+
 data class NPCModel(
-    var nameNPC: String?,
-    var imgNPC: String?,
-)
-
-data class Rashid(
-    var nameNPC: String?,
-    var description: String?,
-    var nearestCity: String?,
-    var gender: String?,
-    var race: String?,
-    var job: String?,
-    var version: String?,
-    var status: String?,
-    var imgNPC: String?,
-    var map: String?,
-    var items: ArrayList<Item>?
-)
-
-data class Yasir(
-    var nameNPC: String?,
-    var description: String?,
-    var nearestCity: String?,
-    var gender: String?,
-    var race: String?,
-    var job: String?,
-    var version: String?,
-    var status: String?,
-    var imgNPC: String?,
-    var map: String?,
-    var items: ArrayList<Item>?
+    @SerializedName("statusCode")
+    val status: String,
+    @SerializedName("body")
+    val body: NPC,
 )
 
 data class NPC (
+    @SerializedName("name")
     var nameNPC: String? = null,
+    @SerializedName("citys")
+    val citys: ArrayList<Citys>? = null,
+    @SerializedName("description")
     var description: String?= null,
-    var nearestCity: String?= null,
+    @SerializedName("gender")
     var gender: String?= null,
+    @SerializedName("race")
     var race: String?= null,
+    @SerializedName("job")
     var job: String?= null,
+    @SerializedName("version")
     var version: String?= null,
+    @SerializedName("status")
     var status: String?= null,
+    @SerializedName("imgNPC")
     var imgNPC: String?= null,
-    var map: String?= null,
+    @SerializedName("buyingItems")
     var buyingItems: ArrayList<Item>?= null,
+    @SerializedName("sellingItems")
     var sellingItems: ArrayList<Item>?= null,
+    @SerializedName("sellingSpells")
     var sellingSpells: ArrayList<Spells>?= null
+)
+
+data class Citys(
+    @SerializedName("name")
+    var name: String?,
+    @SerializedName("map")
+    var img: String?
 )
 
 data class Spells(
@@ -58,7 +58,10 @@ data class Spells(
 )
 
 data class Item(
+    @SerializedName("name")
     var name:String?,
+    @SerializedName("img")
     var img: String?,
+    @SerializedName("price")
     var price:String?
 )

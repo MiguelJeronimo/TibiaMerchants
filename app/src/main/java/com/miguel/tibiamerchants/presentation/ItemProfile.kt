@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,16 +14,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,7 +47,9 @@ import com.miguel.tibiamerchants.presentation.Components.ToolBarItemsProfile
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelItemProfile
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelItemProfileFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class ItemProfile : ComponentActivity() {
@@ -55,7 +58,7 @@ class ItemProfile : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val pullToRefreshState = rememberPullToRefreshState()
+            val pullToRefreshState by remember { mutableStateOf(false) }
             val progressState = remember { mutableStateOf(false) }
             val nameIntent = remember { mutableStateOf("") }
             var profileState by remember { mutableStateOf(Profile()) }
@@ -65,170 +68,22 @@ class ItemProfile : ComponentActivity() {
             if (name != null) {
                 nameIntent.value = name
             }
-            viewModel.setItemProfiel(nameIntent.value)
-            viewModel.loading(true)
-            viewModel.itemProfile.observe(this) {
-                if (it != null) {
-                    profileState = it.body!!
-                } else {
-                    Toast.makeText(this, "Error, profile not found", Toast.LENGTH_SHORT).show()
-                }
-
-                viewModel.loading(false)
-            }
-            viewModel.isLoading.observe(this) {
-                progressState.value = it
-            }
-            viewModel.back.observe(this) {
-                if (it) {
-                    finish()
-                }
-            }
 
             TibiaMerchantsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize().nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         ToolBarItemsProfile(nameIntent.value, viewmodel = viewModel)
                         if (progressState.value) {
                             ProgressIndicatorItemProfile()
                         }
-                        SwipeRefreshItemProfile(
-                            profileState = profileState,
-                            name = nameIntent.value,
-                            viewModel = viewModel,
-                            pullToRefreshState = pullToRefreshState,
-                            modifier = Modifier.padding(innerPadding)
-                        )
+//                        SwipeRefreshItemProfile(
+//                            profileState = profileState,
+//                            name = nameIntent.value,
+//                            viewModel = viewModel,
+//                            pullToRefreshState = pullToRefreshState,
+//                            modifier = Modifier.fillMaxSize()
+//                        )
                     }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SwipeRefreshItemProfile(
-    name: String? = null,
-    viewModel: ViewModelItemProfile? = null,
-    pullToRefreshState: PullToRefreshState? = null,
-    modifier: Modifier,
-    profileState: Profile,
-) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState!!.isRefreshing) {
-        viewModel?.loading(true)
-        LaunchedEffect(true) {
-            viewModel?.setItemProfiel(name!!)
-            delay(1500)
-            viewModel?.loading(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress > 0.0) {
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            ProfileComposable(
-                modifier = modifier,
-                profileState = profileState
-            )
-        }
-        if (stateProgress.value) {
-            PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState,
-            )
-            stateProgress.value = false
-        }
-    }
-}
-
-@Composable
-fun ProfileComposable(
-    modifier: Modifier = Modifier,
-    profileState: Profile
-) {
-    val stateChipBuyFrom = rememberSaveable { mutableStateOf(false) }
-    val stateChipSellTo = rememberSaveable { mutableStateOf(false) }
-    LazyColumn(modifier = modifier) {
-        //val tools = items.body
-        if (profileState.name != null) {
-            item {
-                Column {
-                    CardHeaderItemInfo(profile = profileState)
-                    HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                    //CardNotes(profile = profileState)
-                    Row(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        if(profileState.buyFrom != null) {
-                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
-                                "Buy for",
-                                state = stateChipBuyFrom
-                            )
-                        }
-
-                        if (profileState.sellFrom != null) {
-                            com.miguel.tibiamerchants.presentation.Components.ChipFilter(
-                                "Sell to",
-                                state = stateChipSellTo
-                            )
-                        }
-                    }
-                    CardDetails(profile = profileState)
-                    profileState.requeriments?.let {
-                        CardRequeriments(profileState.requeriments)
-                    }
-                    profileState.otherPropierties?.let {
-                        CardOtherPropierties(profileState.otherPropierties)
-                    }
-
-                    profileState.magicProperties?.let { CardMagicPropierties(profileState.magicProperties) }
-                    profileState.tibiaLengend?.let {
-                        CardTibiaLegends(it)
-                    }
-                }
-            }
-
-            if (stateChipBuyFrom.value) {
-                item {
-                    Column {
-                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                        Text(
-                            text = "Buy from",
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
-                        )
-                    }
-                }
-                val buyFrom = profileState.buyFrom
-                items(buyFrom!!.size) { buy ->
-                    CardBuyFrom(buyFrom = profileState.buyFrom!![buy])
-                }
-            }
-
-            if (stateChipSellTo.value) {
-                item {
-                    Column {
-                        HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
-                        Text(
-                            text = "Sell to",
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            style = com.miguel.tibiamerchants.ui.theme.Typography.titleLarge
-                        )
-                    }
-                }
-                val sellFrom = profileState.sellFrom
-                items(sellFrom!!.size) { buy ->
-                    CardSellFrom(sellFrom = profileState.sellFrom!![buy])
                 }
             }
         }

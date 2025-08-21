@@ -10,7 +10,9 @@ import com.miguel.tibiamerchants.domain.models.PlantsAnimalsProductsFoodDrink
 import com.miguel.tibiamerchants.domain.models.PostItemsType
 import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
-import retrofit2.Call
+import com.miguel.tibiamerchants.domain.models.vocations.Vocation
+import com.miguel.tibiamerchants.domain.models.vocations.Vocations
+import model.Tibia.NPCModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -52,6 +54,13 @@ interface ApiClient {
     @GET("api/v1/item/{name}")
     suspend fun itemProfile(@Path("name") name: String): Response<ResponseItemProfile>
 
+    //Vocations
+    @GET("/api/v1/vocations")
+    suspend fun vocations(): Response<Vocations>
 
+    @GET("/api/v1/vocations/{name}")
+    suspend fun vocation(@Path("name") name: String): Response<Vocation>
 
+    @GET("/api/v1/npc/{name}")
+    suspend fun npc(@Path("name") name: String): Response<NPCModel>
 }

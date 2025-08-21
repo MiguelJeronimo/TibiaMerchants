@@ -1,8 +1,6 @@
 package com.miguel.tibiamerchants.presentation
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -18,28 +17,32 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.miguel.tibiamerchants.presentation.Components.CardSpells
 import com.miguel.tibiamerchants.presentation.Components.CardSpellsRunes
+import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
+import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.ToolBarSpells
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelSpells
 import com.miguel.tibiamerchants.presentation.viewmodelproviders.ViewModelSpellsFactory
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SpellsListActivity : ComponentActivity() {
@@ -55,34 +58,12 @@ class SpellsListActivity : ComponentActivity() {
         }
         enableEdgeToEdge()
         setContent {
-            val pullToRefreshState = rememberPullToRefreshState()
-            val spellsDataState = remember { mutableStateOf( ResponseSpells()) }
-            val progressState = remember { mutableStateOf(false) }
-            viewModel.spells.observe(this) {
-                if (it != null) {
-                    spellsDataState.value = it
-                } else {
-                    Toast.makeText(this, "Error, Error conection", Toast.LENGTH_SHORT).show()
-                }
-                viewModel.isProgress(false)
-            }
-
-            viewModel.progress.observe(this){
-                if (it!= null){
-                    progressState.value = it
-                }
-            }
             TibiaMerchantsTheme {
-                Scaffold(modifier = Modifier.nestedScroll(pullToRefreshState.nestedScrollConnection)) { innerPadding ->
+                Scaffold(modifier = Modifier) { innerPadding ->
                     Column (modifier = Modifier.padding(innerPadding)){
                         ToolBarSpells("Spells", viewModel)
-                        if (progressState.value){
-                            ProgressIndicator()
-                        }
                         SwipeRefreshSpells(
-                            stateList = spellsDataState,
                             viewModel = viewModel,
-                            pullToRefreshState = pullToRefreshState,
                             modifier = Modifier
                         )
                     }
@@ -96,14 +77,14 @@ class SpellsListActivity : ComponentActivity() {
 @Composable
 fun ListSpellsandRuneslist(
     modifier: Modifier = Modifier,
-    spellsDataState: MutableState<ResponseSpells>,
+    spellsDataState: ViewModelSpells.UIState,
     viewModel: ViewModelSpells,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         //val tools = items.body
-        val spells = spellsDataState.value.body?.spells
-        val runes = spellsDataState.value.body?.runes
-        if (spells != null) {
+        val spells = spellsDataState.spells?.body?.spells
+        val runes = spellsDataState.spells?.body?.runes
+        spells?.let {
             item {
                 Column {
                     Text(
@@ -114,15 +95,15 @@ fun ListSpellsandRuneslist(
                     HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                 }
             }
-            items(spells.size) { item ->
+            items(it.size) { item ->
                 CardSpells(
-                    modifier = modifier.padding(5.dp), item = spells[item],
-                    viewModel = viewModel
+                    modifier = modifier.padding(5.dp),
+                    item = it[item],
+                    onClick = {}
                 )
             }
         }
-
-        if (runes != null){
+        runes?.let {
             item {
                 Column {
                     Text(
@@ -133,11 +114,11 @@ fun ListSpellsandRuneslist(
                     HorizontalDivider(Modifier.padding(16.dp, 5.dp, 16.dp, 5.dp))
                 }
             }
-            items(runes.size) { item ->
+            items(it.size) { item ->
                 CardSpellsRunes(
                     modifier = modifier.padding(5.dp),
-                    item = runes[item],
-                    viewModel = viewModel
+                    item = it[item],
+                    onClick = {}
                 )
             }
         }
@@ -147,53 +128,89 @@ fun ListSpellsandRuneslist(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeRefreshSpells(
-    stateList: MutableState<ResponseSpells>,
     viewModel: ViewModelSpells,
-    pullToRefreshState: PullToRefreshState,
     modifier: Modifier,
 ) {
-    val stateProgress = remember { mutableStateOf(false) }
-    if (pullToRefreshState.isRefreshing) {
-        viewModel.isProgress(true)
-        LaunchedEffect(true) {
-            viewModel.setSpells()
-            delay(1500)
-            viewModel.isProgress(false)
-            pullToRefreshState.endRefresh()
-        }
-    }
-    //while to SwipeRefresh is executing
-    if (pullToRefreshState.progress>0.0){
-        stateProgress.value = true
-    }
-
-    Box(
-        Modifier
-            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-            .fillMaxSize()
-    ) {
-        if (!pullToRefreshState.isRefreshing) {
-            ListSpellsandRuneslist(modifier, stateList, viewModel)
-        }
-        if (stateProgress.value){
-            PullToRefreshContainer(
+    val spells = viewModel.spells.collectAsStateWithLifecycle()
+    val corrutineScope = rememberCoroutineScope()
+    val state = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        state = state,
+        modifier = modifier,
+        indicator = {
+            Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
-                state = pullToRefreshState
+                isRefreshing = isRefreshing,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                state = state
             )
-            stateProgress.value = false
+        },
+        onRefresh = {
+            isRefreshing = true
+            corrutineScope.launch {
+                viewModel.setSpellsRefresh()
+                delay(150)
+                isRefreshing = false
+            }
+        }
+    ) {
+        when{
+            spells.value.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    Column(
+                        modifier = Modifier.align(Alignment.Center)
+                    ){
+                        Loading(
+                            modifier = Modifier
+                                .width(64.dp).align(Alignment.CenterHorizontally).padding(5.dp)
+                        )
+                        Text(
+                            text = "Loading...",
+                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(10.dp)
+                        )
+                    }
+                }
+            }
+            spells.value.error != null->{
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    ErrorMessage(
+                        messageHeader = "Error",
+                        message = "An error occurred while loading data, please try again.",
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        onRetry = {
+                          viewModel.spells()
+                        }
+                    )
+                }
+            }
+            spells.value.spells != null->{
+                ListSpellsandRuneslist(modifier, spells.value, viewModel)
+            }
+
+            else->{
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    ErrorMessage(
+                        messageHeader = "Error",
+                        message = "An error occurred while loading data, please try again.",
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        onRetry = {
+                            viewModel.spells()
+                        }
+                    )
+                }
+            }
         }
     }
 }
-
-@Composable
-fun ProgressIndicator() {
-    LinearProgressIndicator(
-        Modifier
-            .fillMaxWidth()
-            .padding(0.dp, 10.dp, 0.dp, 10.dp)
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable
