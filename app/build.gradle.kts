@@ -12,7 +12,7 @@ android {
         applicationId = "com.miguel.tibiamerchants"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
+        versionCode = 6
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -35,6 +35,7 @@ android {
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+            buildConfigField ("String", "TOKEN_TIBIA_MERCHANTS", "\"${project.findProperty("TOKEN_TIBIA_MERCHANTS")}\"")
         }
         create("prod"){
             dimension = "version"
@@ -46,6 +47,7 @@ android {
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+            buildConfigField ("String", "TOKEN_TIBIA_MERCHANTS", "\"${project.findProperty("TOKEN_TIBIA_MERCHANTS")}\"")
         }
     }
 
