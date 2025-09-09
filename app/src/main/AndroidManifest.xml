@@ -32,11 +32,6 @@
             android:label="@string/title_activity_spells_list"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
-            android:name=".presentation.Itemsype"
-            android:exported="false"
-            android:label="@string/title_activity_itemsype"
-            android:theme="@style/Theme.TibiaMerchants" />
-        <activity
             android:name=".presentation.Items"
             android:exported="false"
             android:label="@string/title_activity_items"
@@ -45,11 +40,6 @@
             android:name=".presentation.About"
             android:exported="false"
             android:label="@string/title_activity_about"
-            android:theme="@style/Theme.TibiaMerchants" />
-        <activity
-            android:name=".presentation.NPCInformation"
-            android:exported="false"
-            android:label="@string/title_activity_npcinformation"
             android:theme="@style/Theme.TibiaMerchants" />
         <activity
             android:name=".presentation.MainActivity"

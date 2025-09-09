@@ -48,7 +48,8 @@ class Di {
         //Main NPCs.
         single<NPCRepository> {
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             NPCRepositoryImp(retrofit)
         }
         factory<UseCaseNPC> {
@@ -62,7 +63,8 @@ class Di {
         //items catalog
         single<RepositoryItemsCatalog>{
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             RepositoryItemsCatalogImp(retrofit)
         }
 
@@ -78,7 +80,8 @@ class Di {
         //items type catalog
         single<RepositoryItemsType> {
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             RepositoryItemsTypeImp(retrofit)
         }
         factory<UseCaseItemsType> {
@@ -92,7 +95,8 @@ class Di {
         //spells
         single<RepositorySpells> {
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             RepositorySpellsImp(retrofit)
         }
         factory<UseCaseSpellList> {
@@ -105,7 +109,8 @@ class Di {
         //ItemProfile
         single<RepositoryItemsProfile>{
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             RepositoryItemProfileImp(retrofit)
         }
 
@@ -140,7 +145,8 @@ class Di {
         //Vocations
         single<VocationRepository>{
             val url = BuildConfig.API_TIBIA_MERCHANTS_URL_BASE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url, token).create(ApiClient::class.java)
             VocationRepositoryImp(retrofit)
         }
 
