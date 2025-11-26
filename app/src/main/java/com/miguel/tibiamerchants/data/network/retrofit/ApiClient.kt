@@ -48,19 +48,19 @@ interface ApiClient {
     suspend fun itemsTypeOtherItems(@Body postItemsType: PostItemsType): Response<OtherItemsModel>
 
     //Spells list
-    @GET("/api/v1/spells")
+    @GET("api/v1/spells")
     suspend fun spellsList(): Response<ResponseSpells>
 
     @GET("api/v1/item/{name}")
     suspend fun itemProfile(@Path("name") name: String): Response<ResponseItemProfile>
 
     //Vocations
-    @GET("/api/v1/vocations")
+    @GET("api/v1/vocations")
     suspend fun vocations(): Response<Vocations>
 
-    @GET("/api/v1/vocations/{name}")
+    @GET("api/v1/vocations/{name}")
     suspend fun vocation(@Path("name") name: String): Response<Vocation>
 
-    @GET("/api/v1/npc/{name}")
+    @GET("api/v1/npc/{name}")
     suspend fun npc(@Path("name") name: String): Response<NPCModel>
 }

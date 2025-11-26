@@ -10,7 +10,7 @@ data class ListNPC(
 
 data class NPCModel(
     @SerializedName("statusCode")
-    val status: String,
+    val status: Int,
     @SerializedName("body")
     val body: NPC,
 )

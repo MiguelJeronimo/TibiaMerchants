@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants
 
+import android.util.Log
 import com.miguel.tibiamerchants.data.network.retrofit.ApiClient
 import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.network.retrofit.RetrofitClient

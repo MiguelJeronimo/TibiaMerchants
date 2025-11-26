@@ -6,8 +6,8 @@ import com.miguel.tibiamerchants.domain.models.spells.ResponseSpells
 
 class RepositorySpellsImp(private val retrofit: ApiClient): RepositorySpells {
     override suspend fun spellsList(): ResponseSpells? {
-        val response = retrofit.spellsList().body()
-        Log.d("spells", response.toString())
-        return response
+        val response = retrofit.spellsList()
+        Log.d("SpellList", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 }

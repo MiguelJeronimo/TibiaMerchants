@@ -1,5 +1,6 @@
 package com.miguel.tibiamerchants.data.repositories
 
+import android.util.Log
 import com.miguel.tibiamerchants.data.network.retrofit.ApiClient
 import com.miguel.tibiamerchants.domain.models.HouseHoldModel
 import com.miguel.tibiamerchants.domain.models.ItemsModelsType
@@ -11,26 +12,38 @@ import com.miguel.tibiamerchants.domain.models.ToolsAndOtherEquipmentModel
 
 class RepositoryItemsTypeImp(private val retrofit: ApiClient): RepositoryItemsType {
     override suspend fun itemsType(body: PostItemsType): ItemsModelsType? {
-        return retrofit.itemsType(body).body()
+        val response = retrofit.itemsType(body)
+        Log.d("itemsType", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 
     override suspend fun itemsTypeWeapons(body: PostItemsType): ItemsModelsTypeWeapons? {
-        return retrofit.itemsTypeWeapons(body).body()
+        val response = retrofit.itemsTypeWeapons(body)
+        Log.d("itemsType", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 
     override suspend fun itemsTypeHouseHold(body: PostItemsType): HouseHoldModel? {
-        return retrofit.itemsTypeHouseHold(body).body()
+        val response = retrofit.itemsTypeHouseHold(body)
+        Log.d("itemsType", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 
     override suspend fun itemsTypeOthers(body: PostItemsType): PlantsAnimalsProductsFoodDrink? {
-        return retrofit.itemsTypeOthers(body).body()
+        val response = retrofit.itemsTypeOthers(body)
+        Log.d("itemsType", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 
     override suspend fun itemsTypeToolsAndOthers(body: PostItemsType): ToolsAndOtherEquipmentModel? {
-        return retrofit.itemsTypeToolsAndOthers(body).body()
+        val response = retrofit.itemsTypeToolsAndOthers(body)
+        Log.d("itemsType", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 
     override suspend fun itemsTypeOtherItems(body: PostItemsType): OtherItemsModel? {
-        return retrofit.itemsTypeOtherItems(body).body()
+        val response = retrofit.itemsTypeOtherItems(body)
+        Log.d("items", "code=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
+        return response.body()
     }
 }
