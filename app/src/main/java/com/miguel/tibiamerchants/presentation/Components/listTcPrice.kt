@@ -10,27 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miguel.tibiamerchants.domain.models.PriceModel
-import com.miguel.tibiamerchants.domain.models.PriceTcModel
+import com.miguel.tibiamerchants.domain.models.TradePriceDto
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -38,8 +32,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun ListTcPrice(state: PriceTcModel) {
-    val prices = state.prices
+fun ListTcPrice(state:  List<TradePriceDto>? ) {
+    val prices = state ?: emptyList()
     LazyColumn {
         item{
             Column {
@@ -74,7 +68,7 @@ fun percentageChange(buy: Int, sell: Int): Double {
 }
 
 @Composable
-fun PriceCard(price: PriceModel, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+fun PriceCard(price: TradePriceDto, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     val instant = Instant.parse(price.createdAt)
     val zonedDateTime = instant.atZone(ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
@@ -142,7 +136,7 @@ fun PriceCard(price: PriceModel, modifier: Modifier = Modifier, onClick: () -> U
 @Preview(showBackground = true)
 @Composable
 fun PreviewCardPrices() {
-    val priceModel = PriceModel(
+    val priceModel = TradePriceDto(
         worldName = "Elvenwood",
         buyAveragePrice = 32638,
         buyHighestPrice = 32638,

@@ -3,7 +3,7 @@ package com.miguel.tibiamerchants.presentation.ViewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.miguel.tibiamerchants.domain.models.PriceTcModel
+import com.miguel.tibiamerchants.domain.models.TradePriceDto
 import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,8 +20,8 @@ class ViewModelTCPrice(private val useCaseTibiaTrade: UseCaseTibiaTrade) : ViewM
         if (query.isEmpty()) {
             state
         } else {
-            val filter = state.data?.prices?.filter { it.worldName.contains(query, ignoreCase = true) }
-            state.copy(data = state.data?.copy(prices = filter ?: emptyList()))
+            val filter = state.data?.filter { it.worldName.contains(query, ignoreCase = true) }
+            state.copy(data = filter)
         }
     }.stateIn(
         scope = viewModelScope,
@@ -54,13 +54,13 @@ class ViewModelTCPrice(private val useCaseTibiaTrade: UseCaseTibiaTrade) : ViewM
         }
     }
 
-    fun searchWorld(worldName: String) {
+    fun  searchWorld(worldName: String) {
         _query.value = worldName
     }
 
     data class UIState(
         val isLoding: Boolean = false,
-        val data: PriceTcModel? = null,
+        val data: List<TradePriceDto>? = null,
         val error: String? = null,
     )
 }

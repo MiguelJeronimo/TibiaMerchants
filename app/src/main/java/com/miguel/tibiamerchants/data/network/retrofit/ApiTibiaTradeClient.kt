@@ -1,6 +1,7 @@
 package com.miguel.tibiamerchants.data.network.retrofit
 
-import com.miguel.tibiamerchants.domain.models.PriceTcModel
+import com.miguel.tibiamerchants.data.network.retrofit.responses.ApiResponse
+import com.miguel.tibiamerchants.data.network.retrofit.responses.PriceModel
 import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
@@ -11,8 +12,8 @@ import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface ApiTibiaTradeClient {
-    @GET("api/tibiaCoinPrices")
-    suspend fun tcPrices(): Response<PriceTcModel>
+    @GET("api/v1/tibiaCoin/price")
+    suspend fun tcPrices(): Response<ApiResponse<List<PriceModel>>>
 
     @GET("api/trade")
     suspend fun trade(

@@ -1,10 +1,6 @@
-package com.miguel.tibiamerchants.domain.models
+package com.miguel.tibiamerchants.data.network.retrofit.responses
 
 import com.google.gson.annotations.SerializedName
-
-data class PriceTcModel(
-    val prices: List<PriceModel>
-)
 
 /***
  *             "world_name": "Astera",
@@ -15,16 +11,16 @@ data class PriceTcModel(
  *             "created_at": "2025-07-25T10:52:03.342Z"
  * */
 data class PriceModel(
-    @SerializedName("world_name")
+    @SerializedName("worldName")
     val worldName:String,
-    @SerializedName("buy_average_price")
+    @SerializedName("buyAveragePrice")
     val buyAveragePrice:Int,
-    @SerializedName("buy_highest_price")
+    @SerializedName("buyHighestPrice")
     val buyHighestPrice:Int,
-    @SerializedName("sell_lowest_price")
+    @SerializedName("sellLowestPrice")
     val sellLowestPrice:Int,
-    @SerializedName("sell_average_price")
+    @SerializedName("sellAveragePrice")
     val sellAveragePrice:Int,
-    @SerializedName("created_at")
+    @SerializedName("createdAt")
     val createdAt:String
 )

@@ -26,8 +26,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.miguel.tibiamerchants.domain.models.PriceTcModel
-import com.miguel.tibiamerchants.presentation.Components.ErrorComponent
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.ListTcPrice
 import com.miguel.tibiamerchants.presentation.Components.Loading

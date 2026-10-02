@@ -3,19 +3,22 @@ package com.miguel.tibiamerchants.domain.usecases
 import android.util.Log
 import androidx.paging.PagingData
 import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClient
-import com.miguel.tibiamerchants.domain.models.PriceTcModel
 import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.TradePriceDto
+import com.miguel.tibiamerchants.domain.models.toTradePriceDto
 import kotlinx.coroutines.flow.Flow
 
 class UseCaseTibiaTrade(private val repository: RepositoryTibiaClient) {
-    suspend fun getTcPrice(): Result<PriceTcModel?>{
+    suspend fun getTcPrice(): Result<List<TradePriceDto>?>{
         return try {
             val response = repository.getTcPrices()
-            Result.success(response)
+            Log.d("UseCase", "getTcPrice: $response")
+            Result.success(response?.toTradePriceDto())
         }catch (e: Exception){
+            Log.d("UseCase", "getTcPrice: $e")
             Result.failure(e)
         }
     }
