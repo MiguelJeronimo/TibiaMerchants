@@ -127,7 +127,8 @@ class Di {
         //tibiatrade
         single<RepositoryTibiaClient>{
             val url = BuildConfig.API_TIBIA_TRADE
-            val retrofit = RetrofitClient().getRetrofit(url).create(ApiTibiaTradeClient::class.java)
+            val token = BuildConfig.TOKEN_TIBIA_MERCHANTS
+            val retrofit = RetrofitClient().getRetrofit(url,token).create(ApiTibiaTradeClient::class.java)
             RepositoryTibiaClientImpl(retrofit)
         }
         factory<UseCaseTibiaTrade> {
