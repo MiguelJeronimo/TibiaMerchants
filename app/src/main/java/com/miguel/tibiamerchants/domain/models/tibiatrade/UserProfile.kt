@@ -51,7 +51,7 @@ fun UserGeneralData(
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
                 Text(
-                    text = tibia.userName,
+                    text = tibia.userName ?: "",
                     modifier = Modifier.align(Alignment.CenterVertically),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
@@ -139,9 +139,9 @@ fun UserAdsActive(
                                     .padding(5.dp)
                                     .fillMaxWidth(),
                                 tibia = tibia!!.ads[0],
-                                user = tibia.ads[0].userName,
+                                user = tibia.ads[0].userName ?: "",
                                 varified = tibia.isVerified,
-                                createdAt = tibia.createdAt
+                                createdAt = tibia.createdAt ?: ""
                             )
                             AdsHeader(
                                 modifier = Modifier
@@ -171,9 +171,9 @@ fun UserAdsActive(
                         modifier = Modifier
                             .padding(5.dp).weight(0.30f),
                         tibia = tibia!!.ads[0],
-                        user = tibia.ads[0].userName,
+                        user = tibia.ads[0].userName ?: "",
                         varified = tibia.isVerified,
-                        createdAt = tibia.createdAt
+                        createdAt = tibia.createdAt ?: ""
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         AdsHeader(

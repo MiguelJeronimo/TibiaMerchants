@@ -28,11 +28,11 @@ class PagingTibiaTradeResource(private val api: ApiTibiaTradeClient): PagingSour
         return try {
             val page = params.key ?: 1
             val pagSize = params.loadSize
-            val response = api.trade(page = page, sortType = 0)
+            val response = api.trade(page = page, sortType = 3)
             Log.d("PagingTibiaTradeResource", "Response: $response")
-            val items = response.body()?.ads ?: emptyList()
-            val count = response.body()?.count ?: 0
-            val highlights = response.body()?.highlightedAds ?: emptyList()
+            val items = response.body()?.body?.ads ?: emptyList()
+            val count = response.body()?.body?.count ?: 0
+            val highlights = response.body()?.body?.highlightedAds ?: emptyList()
             val combinedList = if (page == 1 && highlights.isNotEmpty()) highlights + items else items
             //total paginations.
             Log.d("PagingTibiaTradeResource", "PagSice: $pagSize")

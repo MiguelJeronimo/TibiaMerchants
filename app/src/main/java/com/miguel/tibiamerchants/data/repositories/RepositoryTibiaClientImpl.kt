@@ -18,7 +18,7 @@ class RepositoryTibiaClientImpl(private val api: ApiTibiaTradeClient): Repositor
     }
 
     override suspend fun getTrade(page: Int, sortType: Int): TibiaTradeModel? {
-        return api.trade(page = page, sortType=sortType).body()
+        return api.trade(page = page, sortType=sortType).body()?.body
     }
 
     override suspend fun getTrade(params: Map<String, String>): TibiaTradeModel? {

@@ -68,6 +68,7 @@ fun ItemTradeList(
     navigate: NavController? = null
 
 ) {
+    Log.d("ItemTradeList", "ItemTradeList: ${state.itemSnapshotList}")
     BoxWithConstraints {
         val colum = when {
             maxWidth < 600.dp -> 1
@@ -98,7 +99,7 @@ fun ItemTradeList(
                             navigate?.navigate(NavigationTibiaTrade.routeWithId(it.id))
                         },
                         onClickButtonUser = {
-                            navigate?.navigate(NavigationTibiaTrade.routeWithName(it.userName))
+                            navigate?.navigate(NavigationTibiaTrade.routeWithName(it.userName ?: ""))
                         }
                     )
                 }
@@ -165,7 +166,13 @@ fun ItemTrade(
                     )
                 }
                 Text(
-                    text = Dates().format(date = tibia.createdAt).get(),
+                    text = if (!tibia.createdAt.isNullOrEmpty()) {
+                        try {
+                            Dates().format(date = tibia.createdAt).get()
+                        } catch (_: Exception) {
+                            ""
+                        }
+                    } else "",
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 5.dp, end = 10.dp, top = 10.dp, bottom = 5.dp),
@@ -179,9 +186,9 @@ fun ItemTrade(
             ) {
                 Row {
                    //Validate if is article or house
-                    tibia.itemName?.let {
-                        val name = it.replace(" ", "_")
-                        val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
+                    tibia.imageUrl?.let {
+                        //val name = it.replace(" ", "_")
+                        val img = it
                         GlideImage(
                             model = img,
                             contentDescription = null,
@@ -220,7 +227,7 @@ fun ItemTrade(
                 }
             }
         }
-        val text: String = (tibia.itemName ?: tibia.houseName.toString())
+        val text: String = (tibia.itemName ?: tibia.houseName ?: "")
         Text(
             text = text,
             style = MaterialTheme.typography.titleLarge,
@@ -235,8 +242,8 @@ fun ItemTrade(
                 .align(Alignment.CenterHorizontally)
         ){
             val converter = ConverterPriceModel().convert(
-                tibia.price,
-                tibia.convertedPrice?: 0,
+                tibia.price ?: 0L,
+                tibia.convertedPrice ?: 0L,
                 tibia.currencyType
             ).get()
             Column(modifier = Modifier.padding(5.dp)){
@@ -282,7 +289,7 @@ fun ItemTrade(
                 onClick = onClickButtonUser,
             ) {
                 Text(
-                    text = tibia.userName,
+                    text = tibia.userName ?: "",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -303,7 +310,7 @@ fun ItemTrade(
                     shape = MaterialTheme.shapes.medium,
                 ) {
                     Text(
-                        text = tibia.likes,
+                        text = tibia.likes ?: "0",
                         modifier = Modifier.padding(start = 5.dp, end = 5.dp),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelSmall

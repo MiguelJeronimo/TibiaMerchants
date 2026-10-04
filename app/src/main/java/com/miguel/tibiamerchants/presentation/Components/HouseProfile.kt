@@ -83,7 +83,7 @@ fun HouseProfile(
                                 shape = MaterialTheme.shapes.medium,
                             ) {
                                 Text(
-                                    text = state.data?.ad?.likes!!,
+                                    text = state.data?.ad?.likes ?: "0",
                                     modifier = Modifier.padding(start = 5.dp, end = 5.dp),
                                     textAlign = TextAlign.Center,
                                     style = MaterialTheme.typography.labelSmall
@@ -111,7 +111,7 @@ fun HouseProfile(
         item {
             Column(modifier = modifier) {
                 Text(
-                    text = state.data?.ad?.houseName.toString(),
+                    text = state.data?.ad?.houseName ?: "",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(5.dp),
@@ -293,7 +293,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldName!!,
+                        state.data?.ad?.worldName ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -320,7 +320,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldPvpType!!,
+                        state.data?.ad?.worldPvpType ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -347,7 +347,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.userName!!,
+                        state.data?.ad?.userName ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -463,7 +463,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.furnitures!!,
+                        state.data?.ad?.furnitures ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -475,9 +475,9 @@ fun HouseProfile(
         }
         item {
             val converter = ConverterPriceModel().convert(
-                state.data?.ad?.price!!,
-                state.data?.ad?.convertedPrice ?: 0,
-                state.data?.ad?.currencyType!!
+                state.data?.ad?.price ?: 0L,
+                state.data?.ad?.convertedPrice ?: 0L,
+                state.data?.ad?.currencyType ?: 0
             ).get()
             Column(modifier = modifier) {
                 Text(
@@ -533,7 +533,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldName!!,
+                        state.data?.ad?.worldName ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -599,7 +599,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = Dates().format(date = state.data?.ad?.createdAt!!).get(),
+                        text = state.data?.ad?.createdAt?.takeIf { it.isNotEmpty() }?.let { Dates().format(date = it).get() } ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),

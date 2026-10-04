@@ -15,11 +15,12 @@ interface ApiTibiaTradeClient {
     @GET("api/v1/tibiaCoin/price")
     suspend fun tcPrices(): Response<ApiResponse<List<PriceModel>>>
 
-    @GET("api/trade")
+    @GET("api/v1/trade/items")
     suspend fun trade(
         @Query("sortType") sortType: Int,
-        @Query("page") page: Int
-    ): Response<TibiaTradeModel>
+        @Query("page") page: Int,
+        @Query("productType") productType: String? = null
+    ): Response<ApiResponse<TibiaTradeModel>>
 
     suspend fun trade(
         @QueryMap params: Map<String, String>
