@@ -156,9 +156,9 @@ fun UserAdsActive(
                                 modifier = Modifier
                                     .padding(5.dp),
                                 tibia = trade[it],
-                                onClick = {
-                                    navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
-                                },
+//                                onClick = {
+//                                    navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
+//                                },
                                 hightLight = !trade[it].highlightedUntil.isNullOrEmpty()
                             )
                         }
@@ -191,9 +191,9 @@ fun UserAdsActive(
                                         modifier = Modifier
                                             .padding(5.dp),
                                         tibia = trade[it],
-                                        onClick = {
-                                            navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
-                                        },
+//                                        onClick = {
+//                                            navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
+//                                        },
                                         hightLight = !trade[it].highlightedUntil.isNullOrEmpty()
                                     )
                                 }

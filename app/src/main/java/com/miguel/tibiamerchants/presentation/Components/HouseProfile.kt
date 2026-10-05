@@ -4,18 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,17 +29,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
-import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
-import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.TibiaTradeItemProfileModelDto
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.utils.Dates
 import com.miguel.tibiamerchants.utils.Money
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun HouseProfile(
     modifier: Modifier = Modifier,
@@ -64,39 +57,13 @@ fun HouseProfile(
                     tonalElevation = 4.dp
                 ) {
                     Box(modifier = Modifier.wrapContentSize()) {
-                        state.data?.ad?.tibiaId?.let {
-                            val img = "${BuildConfig.API_TIBIA_TRADE}images/house/location/${it}"
-                            Log.d("Tibia Iamge", img)
+                        state.data?.tibiaId?.let {
+                            val img = state.data.imageUrl
+                            Log.d("Tibia Iamge", img?: "")
                             AsyncImage(
                                 model = img,
                                 modifier = Modifier.size(200.dp),
                                 contentDescription = "image house"
-                            )
-                        }
-                        Row(
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .align(Alignment.BottomEnd)
-                        ) {
-                            Surface(
-                                modifier = Modifier,
-                                shape = MaterialTheme.shapes.medium,
-                            ) {
-                                Text(
-                                    text = state.data?.ad?.likes ?: "0",
-                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-
-                            }
-                            Icon(
-                                imageVector = Icons.Filled.FavoriteBorder,
-                                tint = MaterialTheme.colorScheme.error,
-                                contentDescription = "Likes",
-                                modifier = Modifier
-                                    .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
-                                    .size(25.dp)
                             )
                         }
                     }
@@ -111,14 +78,14 @@ fun HouseProfile(
         item {
             Column(modifier = modifier) {
                 Text(
-                    text = state.data?.ad?.houseName ?: "",
+                    text = state.data?.houseName ?: "",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(5.dp),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                state.data?.ad?.rent?.let {
+                state.data?.rent?.let {
                     Text(
                         text = "Rent: ${Money().format(it.toDouble()).get()} golds",
                         modifier = Modifier
@@ -147,7 +114,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text ="${state.data?.ad?.size.toString()} sqm's",
+                                text ="${state.data?.size.toString()} sqm's",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.bodyLarge,
@@ -162,7 +129,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text ="${state.data?.ad?.rooms}",
+                                text ="${state.data?.rooms}",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.labelLarge,
@@ -183,7 +150,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text ="${state.data?.ad?.beds}",
+                                text ="${state.data?.beds}",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.labelLarge,
@@ -198,7 +165,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text ="${state.data?.ad?.windows}",
+                                text ="${state.data?.windows}",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.labelLarge,
@@ -219,7 +186,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text ="${state.data?.ad?.town}",
+                                text ="${state.data?.town}",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.labelLarge,
@@ -234,7 +201,7 @@ fun HouseProfile(
                                 contentDescription = "Likes"
                             )
                             Text(
-                                text = """Is Guildhall: ${if (state.data?.ad?.isGuildhall == true) "Yes" else "No"}""",
+                                text = """Is Guildhall: ${if (state.data?.guildhall == true) "Yes" else "No"}""",
                                 modifier = Modifier
                                     .padding(5.dp),
                                 style = MaterialTheme.typography.labelLarge,
@@ -245,7 +212,7 @@ fun HouseProfile(
                 }
                 if (state.data?.screenshotCount != null && state.data.screenshotCount > 0) {
                     CarroucelHouse(
-                        data = state.data,
+                        data = state.data.roomsImages,
                         modifier = Modifier
                             .fillMaxWidth()
                             //.wrapContentHeight()
@@ -293,7 +260,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldName ?: "",
+                        state.data?.worldName ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -320,7 +287,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldPvpType ?: "",
+                        state.data?.worldPvpType ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -347,7 +314,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.userName ?: "",
+                        state.data?.username ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -382,7 +349,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.beds.toString(),
+                        state.data?.beds.toString(),
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -409,7 +376,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.floors.toString(),
+                        state.data?.floors.toString(),
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -436,7 +403,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.windows.toString(),
+                        state.data?.windows.toString(),
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -463,7 +430,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.furnitures ?: "",
+                        state.data?.furnitures ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -475,9 +442,9 @@ fun HouseProfile(
         }
         item {
             val converter = ConverterPriceModel().convert(
-                state.data?.ad?.price ?: 0L,
-                state.data?.ad?.convertedPrice ?: 0L,
-                state.data?.ad?.currencyType ?: 0
+                state.data?.price ?: 0L,
+                state.data?.convertedPrice ?: 0L,
+                state.data?.currencyType ?: 0
             ).get()
             Column(modifier = modifier) {
                 Text(
@@ -533,7 +500,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        state.data?.ad?.worldName ?: "",
+                        state.data?.worldName ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -599,7 +566,7 @@ fun HouseProfile(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = state.data?.ad?.createdAt?.takeIf { it.isNotEmpty() }?.let { Dates().format(date = it).get() } ?: "",
+                        text = state.data?.createdAt?.takeIf { it.isNotEmpty() }?.let { Dates().format(date = it).get() } ?: "",
                         modifier = Modifier
                             .padding(5.dp)
                             .fillMaxWidth(1f),
@@ -614,8 +581,8 @@ fun HouseProfile(
                 Button(
                     onClick = {
                         val sendIntent: Intent = Intent().apply {
-                            val name = state.data?.ad?.itemName?.replace(" ", "-")
-                            val item = "${name}-${state.data?.ad?.id}"
+                            val name = state.data?.itemName?.replace(" ", "-")
+                            val item = "${name}-${state.data?.id}"
                             action = Intent.ACTION_SEND
                             putExtra(Intent.EXTRA_TEXT, "${BuildConfig.API_TIBIA_TRADE}trade/$item")
                             type = "text/plain"
@@ -635,8 +602,8 @@ fun HouseProfile(
                 }
                 Button(
                     onClick = {
-                        val name = state.data?.ad?.itemName?.replace(" ", "-")
-                        val item = "${name}-${state.data?.ad?.id}"
+                        val name = state.data?.itemName?.replace(" ", "-")
+                        val item = "${name}-${state.data?.id}"
                         val url = "${BuildConfig.API_TIBIA_TRADE}trade/$item"
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                         context.startActivity(intent)
@@ -657,52 +624,26 @@ fun HouseProfile(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewHouseProfile() {
-    val tradeItem = TibiaTradeItemModel(
-        isClosed = false,
-        screenshotCount = 4,
-        hasFeedImage = false,
-        hasStoryImage = false,
-        hasFeedPtBrImage = false,
-        hasStoryPtBrImage = false,
-        ad = Trade(
-            id = 101108,
-            userId = 8271,
-            type = 0,
-            itemId = 0, // null en JSON, lo adapto a 0
-            itemTier = 0,
-            currencyType = 0,
-            price = 0,
-            worldId = 30,
-            isClosed = 0,
-            isRookgaard = false,
-            itemAmount = 1,
-            houseId = 901,
-            highlightedUntil = null,
-            createdAt = "2025-08-14T23:01:24.664Z",
-            itemName = null,
-            itemLook = null, // no venía en JSON
-            worldName = "Havera",
-            worldPvpType = "Open PvP",
-            worldBattleyeColor = "yellow",
-            userName = "petus",
-            isWhatsappVerified = 0, // no venía en JSON
-            avatar = "rashid",
-            tibiaId = 37010,
-            houseName = "Luminous Arc 2",
-            size = 154,
-            rent = 600000,
-            beds = 4,
-            floors = 4,
-            rooms = 6,
-            windows = 14,
-            town = "Yalahar",
-            coordinates = "32843,31212,7:5",
-            isGuildhall = false,
-            furnitures = "6 Walls Lamps.",
-            likes = "0", // en JSON era número
-            isUserVerified = true,
-            convertedPrice = 0
-        )
+    val sampleItem = TibiaTradeItemProfileModelDto(
+        id = 171692,
+        houseName = "Cliffside",
+        tibiaId = 53001,
+        imageUrl = "https://tibiatrade.gg/images/house/location/53001",
+        size = 160,
+        rent = 600000,
+        beds = 6,
+        floors = 4,
+        rooms = 5,
+        windows = 0,
+        town = "Moonfall",
+        coordinates = "0,0,0:0",
+        furnitures = "Nenhuma.",
+        worldName = "Ourobra",
+        worldPvpType = "Open PvP",
+        username = "emidechefe",
+        price = 0,
+        currencyType = 0,
+        createdAt = "2026-10-01T19:10:37.748Z"
     )
-    HouseProfile(state = ViewModelTibiaTrade.UIStateItem(data = tradeItem))
+    HouseProfile(state = ViewModelTibiaTrade.UIStateItem(data = sampleItem))
 }

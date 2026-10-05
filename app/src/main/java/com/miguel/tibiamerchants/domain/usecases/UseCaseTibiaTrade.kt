@@ -4,10 +4,11 @@ import android.util.Log
 import androidx.paging.PagingData
 import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClient
 import com.miguel.tibiamerchants.domain.models.Profile
-import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
+import com.miguel.tibiamerchants.domain.models.TibiaTradeItemProfileModelDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
 import com.miguel.tibiamerchants.domain.models.TradePriceDto
+import com.miguel.tibiamerchants.domain.models.toDomain
 import com.miguel.tibiamerchants.domain.models.toTradePriceDto
 import kotlinx.coroutines.flow.Flow
 
@@ -23,12 +24,20 @@ class UseCaseTibiaTrade(private val repository: RepositoryTibiaClient) {
         }
     }
 
-    suspend fun getTradeById(id: Int): Result<TibiaTradeItemModel?>{
-        return try {
-            val response = repository.getTradeById(id)
-            Log.d("UseCase", "getTradeById: $response")
+    suspend fun getTradeById(id: Int, itemId: Int? = null, itemTier : Int? = null, currencyType: Int? = null, type: Int? = null): Result<TibiaTradeItemProfileModelDto?> {
+        return  try {
+            Log.d("DEBUG", "getTradeById: $id, $itemId, $itemTier, $currencyType, $type")
+            val response = repository.getTradeById(
+                id = id,
+                itemId = itemId,
+                itemTier = itemTier,
+                currencyType = currencyType,
+                type = type
+            )?.toDomain()
+            Log.d("DEBUG", "getTradeById: $response")
             Result.success(response)
         }catch (e: Exception){
+            Log.e("DEBUG", "getTradeById: $e")
             Result.failure(e)
         }
     }

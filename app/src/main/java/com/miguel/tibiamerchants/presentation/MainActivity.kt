@@ -222,7 +222,7 @@ class MainActivity : ComponentActivity() {
                                         when (destination) {
                                             NavigationMain.NPCDefaultFragment -> NPCDefaultFragment(viewModelNPCS =  viewModel)
                                             NavigationMain.TCPrices -> TcPriceFragment(navController)
-                                            NavigationMain.TibiaTrade -> TibiaTradeFragment(navController)
+                                            NavigationMain.TibiaTrade -> TibiaTradeFragment()
                                         }
                                     }
                                 }

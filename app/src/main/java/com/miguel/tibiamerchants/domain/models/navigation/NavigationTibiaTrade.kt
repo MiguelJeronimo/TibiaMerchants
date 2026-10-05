@@ -15,7 +15,7 @@ enum class NavigationTibiaTrade(
         contentDescription = "Character trade"
     ),
     TibiaTradeItem(
-        route = "TibiaTradeItem/{id}",
+        route = "TibiaTradeItem/{id}/{itemId}/{itemTier}/{currencyType}/{type}",
         label = "Tibia Trade Item",
         icon = 1,
         contentDescription = "Character trade item"
@@ -31,8 +31,14 @@ enum class NavigationTibiaTrade(
         fun routeWithName(userName: String): String {
             return "TibiaTradeProfile/${Uri.encode(userName)}"
         }
-        fun routeWithId(id: Int): String {
-            return "TibiaTradeItem/${Uri.encode(id.toString())}"
+        fun routeWithId(
+            id: Int,
+            itemId: Int,
+            itemTier: Int,
+            currencyType: Int,
+            type: Int
+        ): String {
+            return "TibiaTradeItem/${Uri.encode(id.toString())}/${Uri.encode(itemId.toString())}/${Uri.encode(itemTier.toString())}/${Uri.encode(currencyType.toString())}/${Uri.encode(type.toString())}"
         }
     }
 }

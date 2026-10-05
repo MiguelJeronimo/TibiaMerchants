@@ -2,6 +2,7 @@ package com.miguel.tibiamerchants.data.network.retrofit
 
 import com.miguel.tibiamerchants.data.network.retrofit.responses.ApiResponse
 import com.miguel.tibiamerchants.data.network.retrofit.responses.PriceModel
+import com.miguel.tibiamerchants.data.network.retrofit.responses.TibiaTradeItemProfileModel
 import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
@@ -26,8 +27,14 @@ interface ApiTibiaTradeClient {
         @QueryMap params: Map<String, String>
     ): Response<TibiaTradeModel>
 
-    @GET("api/trade/{id}")
-    suspend fun tradeById(@Path("id") id: Int): Response<TibiaTradeItemModel>
+    @GET("api/v1/trade/item-profiles")
+    suspend fun tradeById(
+        @Query("id") id: Int,
+        @Query("itemId") itemId: Int? = null,
+        @Query("itemTear") itemTier: Int? = null,
+        @Query("currencyType") currencyType: Int? = null,
+        @Query("type") type: Int? = null,
+    ): Response<ApiResponse<TibiaTradeItemProfileModel>>
 
 
     @GET("api/user/profile/{user}")

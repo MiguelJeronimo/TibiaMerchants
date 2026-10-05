@@ -44,6 +44,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
+import com.miguel.tibiamerchants.domain.models.TradeItem
 import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.HouseProfile
 import com.miguel.tibiamerchants.presentation.Components.Loading
@@ -52,24 +53,35 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.Dates
 import org.koin.androidx.compose.koinViewModel
+import kotlin.Int
 
 
 @Composable
 fun TibiaTradeItemDetails(
     modifier: Modifier = Modifier,
-    id: String?,
+    data: TradeItem,
     viewModel: ViewModelTibiaTrade = koinViewModel(),
-    navigate: NavController = NavController(LocalContext.current)
+    onBack: () -> Unit = {}
 ) {
     val state = viewModel.item.collectAsStateWithLifecycle()
     Log.d("state", state.value.toString())
     Column {
-        val title = if(state.value.data?.ad?.itemName != null) "Item" else "House"
-        Toolbar(title = title, onClick = {navigate.popBackStack()})
+        val title = if(state.value.data?.itemName != null) "Item" else "House"
+        Toolbar(title = title,
+            onClick = onBack
+        )
         TibiaTradeItemDetails(
             modifier = modifier,
             state = state.value,
-            onRetry = { viewModel.item(id?.toInt()) }
+            onRetry = {
+                viewModel.item(
+                    id = data.id,
+                    itemId = data.itemId,
+                    itemTier = data.itemTier,
+                    currencyType = data.currencyType,
+                    type = data.type
+                )
+            }
         )
     }
 }
@@ -121,7 +133,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
             }
         }
         state.data != null -> {
-            state.data.ad.itemId?.let{
+            state.data.itemId?.let{
                     LazyColumn {
                         item{
                             Column (modifier= modifier){
@@ -135,7 +147,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                     tonalElevation = 4.dp
                                 ) {
                                     Box(modifier = Modifier.wrapContentSize()) {
-                                        state.data.ad.itemName?.let {
+                                        state.data.itemName?.let {
                                             val name = it.replace(" ", "_")
                                             val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
                                             GlideImage(
@@ -148,32 +160,32 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                                 failure = placeholder(R.drawable.error_image_icon),
                                             )
                                         }
-                                        Row(
-                                            modifier = Modifier
-                                                .padding(5.dp)
-                                                .align(Alignment.BottomEnd)
-                                        ) {
-                                            Surface(
-                                                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                                                shape = MaterialTheme.shapes.medium,
-                                            ) {
-                                                Text(
-                                                    text = state.data.ad.likes ?: "0",
-                                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-                                                    textAlign = TextAlign.Center,
-                                                    style = MaterialTheme.typography.labelSmall
-                                                )
-
-                                            }
-                                            Icon(
-                                                imageVector = Icons.Filled.FavoriteBorder,
-                                                tint = MaterialTheme.colorScheme.error,
-                                                contentDescription = "Likes",
-                                                modifier = Modifier
-                                                    .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
-                                                    .size(25.dp)
-                                            )
-                                        }
+//                                        Row(
+//                                            modifier = Modifier
+//                                                .padding(5.dp)
+//                                                .align(Alignment.BottomEnd)
+//                                        ) {
+//                                            Surface(
+//                                                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+//                                                shape = MaterialTheme.shapes.medium,
+//                                            ) {
+//                                                Text(
+//                                                    text = state.data.likes ?: "0",
+//                                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
+//                                                    textAlign = TextAlign.Center,
+//                                                    style = MaterialTheme.typography.labelSmall
+//                                                )
+//
+//                                            }
+//                                            Icon(
+//                                                imageVector = Icons.Filled.FavoriteBorder,
+//                                                tint = MaterialTheme.colorScheme.error,
+//                                                contentDescription = "Likes",
+//                                                modifier = Modifier
+//                                                    .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
+//                                                    .size(25.dp)
+//                                            )
+//                                        }
                                     }
                                 }
                                 HorizontalDivider(modifier = Modifier
@@ -184,7 +196,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                         item{
                             Column (modifier= modifier){
                                 Text(
-                                    text = state.data.ad.itemName.toString(),
+                                    text = state.data.itemName.toString(),
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally)
                                         .padding(5.dp),
@@ -192,7 +204,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = state.data.ad.itemLook ?: "",
+                                    text = state.data.itemLook ?: "",
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally)
                                         .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
@@ -223,7 +235,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        state.data.ad.worldName ?: "",
+                                        state.data.worldName ?: "",
                                         modifier = Modifier
                                             .padding(5.dp)
                                             .fillMaxWidth(1f),
@@ -248,7 +260,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        state.data.ad.worldPvpType ?: "",
+                                        state.data.worldPvpType ?: "",
                                         modifier = Modifier
                                             .padding(5.dp)
                                             .fillMaxWidth(1f),
@@ -273,7 +285,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        state.data.ad.userName ?: "",
+                                        state.data.username ?: "",
                                         modifier = Modifier
                                             .padding(5.dp)
                                             .fillMaxWidth(1f),
@@ -285,9 +297,9 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                         }
                         item{
                             val converter = ConverterPriceModel().convert(
-                                state.data.ad.price ?: 0L,
-                                state.data.ad.convertedPrice?: 0,
-                                state.data.ad.currencyType
+                                state.data.price ?: 0L,
+                                state.data.convertedPrice?: 0,
+                                state.data.currencyType?:0
                             ).get()
                             Column(modifier = modifier) {
                                 Text(
@@ -336,7 +348,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        state.data.ad.worldName ?: "",
+                                        state.data.worldName ?: "",
                                         modifier = Modifier
                                             .padding(5.dp)
                                             .fillMaxWidth(1f),
@@ -395,7 +407,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = if (!state.data.ad.createdAt.isNullOrEmpty()) Dates().format(date = state.data.ad.createdAt!!).get() else "",
+                                        text = if (!state.data.createdAt.isNullOrEmpty()) Dates().format(date = state.data.createdAt!!).get() else "",
                                         modifier = Modifier
                                             .padding(5.dp)
                                             .fillMaxWidth(1f),
@@ -410,8 +422,8 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                 Button(
                                     onClick = {
                                         val sendIntent: Intent = Intent().apply {
-                                            val name = state.data.ad.itemName?.replace(" ", "-")
-                                            val item = "${name}-${state.data.ad.id}"
+                                            val name = state.data.itemName?.replace(" ", "-")
+                                            val item = "${name}-${state.data.id}"
                                             action = Intent.ACTION_SEND
                                             putExtra(Intent.EXTRA_TEXT, "${BuildConfig.API_TIBIA_TRADE}trade/$item")
                                             type = "text/plain"
@@ -430,8 +442,8 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                 }
                                 Button(
                                     onClick = {
-                                        val name = state.data.ad.itemName?.replace(" ", "-")
-                                        val item = "${name}-${state.data.ad.id}"
+                                        val name = state.data.itemName?.replace(" ", "-")
+                                        val item = "${name}-${state.data.id}"
                                         val url = "${BuildConfig.API_TIBIA_TRADE}trade/$item"
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                                         context.startActivity(intent)
@@ -448,8 +460,8 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                         }
                     }
                 }
-            state.data.ad.houseId?.let{
-                    Log.d("House State", "${state.data.ad}")
+            state.data.houseId?.let{
+                    Log.d("House State", "${state.data}")
                     HouseProfile(
                         state = state,
                         modifier = modifier

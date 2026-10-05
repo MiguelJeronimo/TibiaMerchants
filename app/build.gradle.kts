@@ -102,6 +102,7 @@ dependencies {
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     // LiveData
     implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("org.jsoup:jsoup:1.16.1")
     //injeccion de dependencias
     implementation ("io.insert-koin:koin-androidx-compose:3.4.0")

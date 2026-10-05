@@ -7,10 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.miguel.tibiamerchants.domain.models.Profile
-import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
-import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
+import com.miguel.tibiamerchants.domain.models.TibiaTradeItemProfileModelDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.TradeItem
+import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,13 +35,24 @@ class ViewModelTibiaTrade(private val useCaseTibiaTrade: UseCaseTibiaTrade, sava
             profile("")
         }
 
-        val itemId = savableStateHandle.get<String>("id")
-        Log.d("ViewModel", "SavedStateHandle: $itemId")
-        if (itemId != null) {
-            item(itemId.toInt())
-        } else {
-            item(null)
-        }
+        val id = savableStateHandle.get<String>("id")
+        val itemId = savableStateHandle.get<String>("itemId")
+        val itemTier = savableStateHandle.get<String>("itemTier")
+        val currencyType = savableStateHandle.get<String>("currencyType")
+        val type = savableStateHandle.get<String>("type")
+
+            if (id != null) {
+                Log.d("DEBUG", "ViewModelTibiaTrade init: $savableStateHandle")
+                item(
+                    id = id.toInt(),
+                    itemId = itemId?.toInt(),
+                    itemTier = itemTier?.toInt(),
+                    currencyType = currencyType?.toInt(),
+                    type = type?.toInt()
+                )
+            } else {
+                item(null)
+            }
     }
 
     fun profile(userName: String){
@@ -62,7 +74,8 @@ class ViewModelTibiaTrade(private val useCaseTibiaTrade: UseCaseTibiaTrade, sava
         }
     }
 
-    fun item(id: Int?){
+    fun item(id: Int?, itemId: Int? = null, itemTier : Int? = null, currencyType: Int? = null, type: Int? = null){
+        Log.d("DEBUG", "item: $id, $itemId, $itemTier, $currencyType, $type")
         if (id == null) {
             _item.update { it.copy(error = "Item id is blank", isLoding = false) }
             return
@@ -70,7 +83,7 @@ class ViewModelTibiaTrade(private val useCaseTibiaTrade: UseCaseTibiaTrade, sava
         viewModelScope.launch {
             Log.d("ViewModel Item", "item: $id")
             _item.update { it.copy(isLoding = true, error = null) }
-            val result = useCaseTibiaTrade.getTradeById(id)
+            val result = useCaseTibiaTrade.getTradeById(id, itemId, itemTier, currencyType, type)
             result.onSuccess {data->
                 _item.update { it.copy(data = data, isLoding = false, error = null) }
             }
@@ -88,7 +101,7 @@ class ViewModelTibiaTrade(private val useCaseTibiaTrade: UseCaseTibiaTrade, sava
 
     data class UIStateItem(
         val isLoding: Boolean = false,
-        val data: TibiaTradeItemModel? = null,
+        val data: TibiaTradeItemProfileModelDto? = null,
         val error: String? = null
     )
 

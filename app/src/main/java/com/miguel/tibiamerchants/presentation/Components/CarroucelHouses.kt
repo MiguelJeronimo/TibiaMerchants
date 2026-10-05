@@ -13,14 +13,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -28,16 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
-import com.miguel.tibiamerchants.utils.Carroucel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarroucelHouse(modifier: Modifier = Modifier, data: TibiaTradeItemModel?){
-    val houses = Carroucel().generateFloorImage(
-        screenshotCount = data?.screenshotCount!!,
-        tibiaId = data.ad.tibiaId!!
-    ).floor()
+fun CarroucelHouse(modifier: Modifier = Modifier, data: List<String>?){
+    val houses = data?: emptyList()
     val state = rememberCarouselState { houses.size }
     val animationScope = rememberCoroutineScope()
     HorizontalUncontainedCarousel(
@@ -87,12 +80,15 @@ fun CarroucelHouse(modifier: Modifier = Modifier, data: TibiaTradeItemModel?){
 fun PreviewCarroucel(){
     MaterialTheme {
         Scaffold {innerPadding ->
+            val data = listOf<String>(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeOpArQmIFN9IihNzwES7ILLLD7wveu9mqeiGOnuUrTpGUkS5Ejpstldn0&s=10"
+            )
             CarroucelHouse(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(innerPadding),
-                data = null
+                data = data
             )
         }
     }

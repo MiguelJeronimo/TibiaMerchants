@@ -49,6 +49,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.TradeItem
 import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
 import com.miguel.tibiamerchants.utils.Dates
 import com.miguel.tibiamerchants.utils.Money
@@ -65,8 +66,8 @@ import kotlin.text.replace
 fun ItemTradeList(
     modifier: Modifier = Modifier,
     state: LazyPagingItems<Trade>,
-    navigate: NavController? = null
-
+    onNavigationItem: (data: TradeItem) -> Unit = {},
+    onNavigateToUserProfile: (userName: String) -> Unit = {}
 ) {
     Log.d("ItemTradeList", "ItemTradeList: ${state.itemSnapshotList}")
     BoxWithConstraints {
@@ -85,22 +86,19 @@ fun ItemTradeList(
             items(state.itemCount) {
                 if (state[it]?.town != null) {
                     Log.d(
-                        "Town",
-                        "${BuildConfig.API_TIBIA_TRADE}/images/house/location/${state[it]?.tibiaId}"
+                        "DEBUG",
+                        "ItemTradeList: ${state[it]?.town}"
                     )
                 }
-                state[it]?.let {
+                state[it]?.let { data->
+                    Log.i("DEBUG", "ItemTradeList: $data")
                     ItemTrade(
                         modifier = Modifier
                             .padding(5.dp),
-                        tibia = it,
-                        hightLight = !it.highlightedUntil.isNullOrEmpty(),
-                        onClick = {
-                            navigate?.navigate(NavigationTibiaTrade.routeWithId(it.id))
-                        },
-                        onClickButtonUser = {
-                            navigate?.navigate(NavigationTibiaTrade.routeWithName(it.userName ?: ""))
-                        }
+                        tibia = data,
+                        hightLight = !data.highlightedUntil.isNullOrEmpty(),
+                        onClick = onNavigationItem,
+                        onClickButtonUser = { onNavigateToUserProfile(data.userName?:"" )}
                     )
                 }
             }
@@ -137,14 +135,25 @@ fun ItemTradeList(
 fun ItemTrade(
     modifier: Modifier = Modifier,
     tibia: Trade,
-    onClick: () -> Unit = {},
+    onClick: (data: TradeItem) -> Unit = {},
     onClickButtonUser: () -> Unit = {},
     hightLight: Boolean = false,
 ) {
 
     OutlinedCard(
         modifier = modifier,
-        onClick = onClick,
+        onClick = {
+           Log.i("DEBUG", "Tibia: $tibia")
+            val data = TradeItem(
+                id = tibia.id,
+                itemId = tibia.itemId ?: 5124,
+                itemTier = tibia.itemTier,
+                currencyType = tibia.currencyType,
+                type = tibia.type
+            )
+            Log.d("DEBUG", "ItemTradeList: $data")
+            onClick(data)
+        },
         border = if (hightLight) BorderStroke(2.dp, Color(0xFFB8A672)) else BorderStroke(
             1.dp,
             MaterialTheme.colorScheme.surfaceVariant
