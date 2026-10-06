@@ -36,6 +36,7 @@ android {
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+            buildConfigField("String", "URL_TIBIA_TRADE", "\"${project.findProperty("URL_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TOKEN_TIBIA_MERCHANTS", "\"${project.findProperty("TOKEN_TIBIA_MERCHANTS")}\"")
         }
         create("prod"){
@@ -48,6 +49,7 @@ android {
             buildConfigField ("String", "API_TIBIA_MERCHANTS_URL_BASE", "\"${project.findProperty("API_TIBIA_MERCHANTS_URL_BASE")}\"")
             buildConfigField ("String", "API_TIBIA_TRADE", "\"${project.findProperty("API_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TIBIA_MAPS_URL", "\"${project.findProperty("TIBIA_MAPS_URL")}\"")
+            buildConfigField("String", "URL_TIBIA_TRADE", "\"${project.findProperty("URL_TIBIA_TRADE")}\"")
             buildConfigField ("String", "TOKEN_TIBIA_MERCHANTS", "\"${project.findProperty("TOKEN_TIBIA_MERCHANTS")}\"")
         }
     }
