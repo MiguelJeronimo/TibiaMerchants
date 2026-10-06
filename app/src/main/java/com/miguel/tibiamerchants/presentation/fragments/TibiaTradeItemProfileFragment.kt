@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,9 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -53,7 +47,6 @@ import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import com.miguel.tibiamerchants.utils.Dates
 import org.koin.androidx.compose.koinViewModel
-import kotlin.Int
 
 
 @Composable
@@ -397,7 +390,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                             val name = state.data.itemName?.replace(" ", "-")
                                             val item = "${name}-${state.data.id}"
                                             action = Intent.ACTION_SEND
-                                            putExtra(Intent.EXTRA_TEXT, "${BuildConfig.API_TIBIA_TRADE}trade/$item")
+                                            putExtra(Intent.EXTRA_TEXT, "${BuildConfig.URL_TIBIA_TRADE}trade/$item")
                                             type = "text/plain"
                                         }
 
@@ -416,7 +409,7 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                     onClick = {
                                         val name = state.data.itemName?.replace(" ", "-")
                                         val item = "${name}-${state.data.id}"
-                                        val url = "${BuildConfig.API_TIBIA_TRADE}trade/$item"
+                                        val url = "${BuildConfig.URL_TIBIA_TRADE}trade/$item"
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                                         context.startActivity(intent)
                                     },
