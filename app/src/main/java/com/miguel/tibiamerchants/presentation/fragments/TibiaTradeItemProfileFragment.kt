@@ -147,11 +147,9 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                     tonalElevation = 4.dp
                                 ) {
                                     Box(modifier = Modifier.wrapContentSize()) {
-                                        state.data.itemName?.let {
-                                            val name = it.replace(" ", "_")
-                                            val img = "${BuildConfig.API_TIBIA_TRADE}images/item/$name.gif"
+                                        state.data.imageUrl?.let {
                                             GlideImage(
-                                                model = img,
+                                                model = it,
                                                 contentDescription = null,
                                                 modifier = Modifier
                                                     .padding(5.dp)
@@ -160,32 +158,6 @@ fun TibiaTradeItemDetails(modifier: Modifier = Modifier, state: ViewModelTibiaTr
                                                 failure = placeholder(R.drawable.error_image_icon),
                                             )
                                         }
-//                                        Row(
-//                                            modifier = Modifier
-//                                                .padding(5.dp)
-//                                                .align(Alignment.BottomEnd)
-//                                        ) {
-//                                            Surface(
-//                                                modifier = Modifier.background(MaterialTheme.colorScheme.background),
-//                                                shape = MaterialTheme.shapes.medium,
-//                                            ) {
-//                                                Text(
-//                                                    text = state.data.likes ?: "0",
-//                                                    modifier = Modifier.padding(start = 5.dp, end = 5.dp),
-//                                                    textAlign = TextAlign.Center,
-//                                                    style = MaterialTheme.typography.labelSmall
-//                                                )
-//
-//                                            }
-//                                            Icon(
-//                                                imageVector = Icons.Filled.FavoriteBorder,
-//                                                tint = MaterialTheme.colorScheme.error,
-//                                                contentDescription = "Likes",
-//                                                modifier = Modifier
-//                                                    .padding(top = 5.dp, end = 5.dp, bottom = 5.dp)
-//                                                    .size(25.dp)
-//                                            )
-//                                        }
                                     }
                                 }
                                 HorizontalDivider(modifier = Modifier
