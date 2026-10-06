@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.miguel.tibiamerchants.data.network.retrofit.ApiTibiaTradeClient
 import com.miguel.tibiamerchants.data.network.retrofit.responses.PriceModel
 import com.miguel.tibiamerchants.data.network.retrofit.responses.TibiaTradeItemProfileModel
+import com.miguel.tibiamerchants.data.network.retrofit.responses.TibiaTradeUserProfileModel
 import com.miguel.tibiamerchants.data.repositories.pagingresources.PagingTibiaTradeResource
 import com.miguel.tibiamerchants.domain.models.Profile
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
@@ -62,7 +63,7 @@ class RepositoryTibiaClientImpl(private val api: ApiTibiaTradeClient): Repositor
         ).flow
     }
 
-    override suspend fun getUserProfile(user: String): Profile? {
-        return api.userProfile(user).body()
+    override suspend fun getUserProfile(user: String): TibiaTradeUserProfileModel? {
+        return api.userProfile(user).body()?.body
     }
 }

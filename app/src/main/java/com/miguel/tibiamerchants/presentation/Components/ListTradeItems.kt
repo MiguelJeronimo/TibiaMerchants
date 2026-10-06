@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import com.miguel.tibiamerchants.R
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
 import androidx.core.graphics.toColorInt
-import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
@@ -49,16 +48,10 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.miguel.tibiamerchants.BuildConfig
 import com.miguel.tibiamerchants.domain.models.ConverterPriceModel
 import com.miguel.tibiamerchants.domain.models.Trade
+import com.miguel.tibiamerchants.domain.models.TradeDto
 import com.miguel.tibiamerchants.domain.models.TradeItem
-import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
+import com.miguel.tibiamerchants.domain.models.toDomain
 import com.miguel.tibiamerchants.utils.Dates
-import com.miguel.tibiamerchants.utils.Money
-import java.text.NumberFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlin.text.replace
 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
@@ -95,7 +88,7 @@ fun ItemTradeList(
                     ItemTrade(
                         modifier = Modifier
                             .padding(5.dp),
-                        tibia = data,
+                        tibia = data.toDomain(),
                         hightLight = !data.highlightedUntil.isNullOrEmpty(),
                         onClick = onNavigationItem,
                         onClickButtonUser = { onNavigateToUserProfile(data.userName?:"" )}
@@ -134,8 +127,8 @@ fun ItemTradeList(
 @Composable
 fun ItemTrade(
     modifier: Modifier = Modifier,
-    tibia: Trade,
-    onClick: (data: TradeItem) -> Unit = {},
+    tibia: TradeDto,
+    onClick: (TradeItem) -> Unit = {},
     onClickButtonUser: () -> Unit = {},
     hightLight: Boolean = false,
 ) {

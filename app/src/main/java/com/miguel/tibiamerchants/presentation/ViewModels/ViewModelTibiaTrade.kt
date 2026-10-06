@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.miguel.tibiamerchants.domain.models.Profile
+import com.miguel.tibiamerchants.domain.models.ProfileDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeItemProfileModelDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
-import com.miguel.tibiamerchants.domain.models.TradeItem
 import com.miguel.tibiamerchants.domain.usecases.UseCaseTibiaTrade
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,7 +94,7 @@ class ViewModelTibiaTrade(private val useCaseTibiaTrade: UseCaseTibiaTrade, sava
 
     data class UIStateProfile(
         val isLoding: Boolean = false,
-        val data: Profile? = null,
+        val data: ProfileDto? = null,
         val error: String? = null
     )
 

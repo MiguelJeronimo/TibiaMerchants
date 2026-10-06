@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.miguel.tibiamerchants.R
-import com.miguel.tibiamerchants.domain.models.Profile
+import com.miguel.tibiamerchants.domain.models.ProfileDto
 import com.miguel.tibiamerchants.domain.models.Trade
-import com.miguel.tibiamerchants.domain.models.navigation.NavigationTibiaTrade
+import com.miguel.tibiamerchants.domain.models.TradeDto
+import com.miguel.tibiamerchants.domain.models.TradeItem
+import com.miguel.tibiamerchants.domain.models.toDomain
 import com.miguel.tibiamerchants.presentation.Components.ItemTrade
 import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.ui.theme.TibiaMerchantsTheme
@@ -40,7 +43,7 @@ import com.miguel.tibiamerchants.utils.Dates
 @Composable
 fun UserGeneralData(
     modifier: Modifier = Modifier,
-    tibia: Trade,
+    tibia: TradeDto,
     user: String,
     varified: Boolean,
     createdAt: String
@@ -114,8 +117,8 @@ fun AdsHeader(modifier: Modifier = Modifier, text:String= "Ads Active") {
 @Composable
 fun UserAdsActive(
     modifier: Modifier = Modifier,
-    tibia: Profile? = null,
-    navigate: NavHostController = NavHostController(LocalContext.current)
+    tibia: ProfileDto? = null,
+    onNavigationItem: (data: TradeItem) -> Unit = {},
 ) {
     BoxWithConstraints {
         val colum = when {
@@ -134,15 +137,17 @@ fun UserAdsActive(
                 ) {
                     item {
                         Column {
-                            UserGeneralData(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .fillMaxWidth(),
-                                tibia = tibia!!.ads[0],
-                                user = tibia.ads[0].userName ?: "",
-                                varified = tibia.isVerified,
-                                createdAt = tibia.createdAt ?: ""
-                            )
+                            tibia!!.ads?.let {
+                                UserGeneralData(
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .fillMaxWidth(),
+                                    tibia = it[0],
+                                    user = it[0].userName ?: "",
+                                    varified = tibia.isVerified,
+                                    createdAt = tibia.createdAt ?: ""
+                                )
+                            }
                             AdsHeader(
                                 modifier = Modifier
                                     .padding(5.dp)
@@ -151,30 +156,43 @@ fun UserAdsActive(
                         }
                     }
                     tibia?.ads?.let{trade->
-                        items(trade.size){
+                        items(trade){ item->
                             ItemTrade(
                                 modifier = Modifier
                                     .padding(5.dp),
-                                tibia = trade[it],
-//                                onClick = {
-//                                    navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
-//                                },
-                                hightLight = !trade[it].highlightedUntil.isNullOrEmpty()
+                                tibia = item,
+                                onClick = {
+                                    onNavigationItem(
+                                        TradeItem(
+                                            id = item.id,
+                                            itemId = item.itemId ?: 5124,
+                                            itemTier = item.itemTier,
+                                            currencyType = item.currencyType,
+                                            type = item.type
+                                        )
+                                    )
+                                },
+                                hightLight = !item.highlightedUntil.isNullOrEmpty()
                             )
                         }
                     }
                 }
             }
             else->{
-                Row(modifier = modifier.fillMaxWidth().padding(5.dp)){
-                    UserGeneralData(
-                        modifier = Modifier
-                            .padding(5.dp).weight(0.30f),
-                        tibia = tibia!!.ads[0],
-                        user = tibia.ads[0].userName ?: "",
-                        varified = tibia.isVerified,
-                        createdAt = tibia.createdAt ?: ""
-                    )
+                Row(modifier = modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)){
+                    tibia?.ads?.let {
+                        UserGeneralData(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .weight(0.30f),
+                            tibia = it[0],
+                            user = it[0].userName ?: "",
+                            varified = tibia.isVerified,
+                            createdAt = tibia.createdAt ?: ""
+                        )
+                    }
                     Column(modifier = Modifier.weight(1f)) {
                         AdsHeader(
                             modifier = Modifier
@@ -186,15 +204,26 @@ fun UserAdsActive(
                             columns = GridCells.Fixed(count = colum)
                         ) {
                             tibia?.ads?.let {trade->
-                                items(trade.size){
+                                items(trade){item->
                                     ItemTrade(
                                         modifier = Modifier
                                             .padding(5.dp),
-                                        tibia = trade[it],
+                                        tibia = item,
+                                        onClick = {
+                                            onNavigationItem(
+                                                TradeItem(
+                                                    id = item.id,
+                                                    itemId = item.itemId ?: 5124,
+                                                    itemTier = item.itemTier,
+                                                    currencyType = item.currencyType,
+                                                    type = item.type
+                                                )
+                                            )
+                                        },
 //                                        onClick = {
 //                                            navigate.navigate(NavigationTibiaTrade.routeWithId(trade[it].id))
 //                                        },
-                                        hightLight = !trade[it].highlightedUntil.isNullOrEmpty()
+                                        hightLight = !item.highlightedUntil.isNullOrEmpty()
                                     )
                                 }
                             }
@@ -253,8 +282,8 @@ fun PreviewUSerTibiaTrade(){
                 isUserVerified = true,
                 convertedPrice = 4003
             )
-            val profile = Profile(
-                ads = listOf(tibia) as ArrayList<Trade>,
+            val profile = ProfileDto(
+                ads = listOf(tibia.toDomain()),
                 avatar = "rashid",
                 isVerified = true,
                 createdAt = "2025-06-26T09:39:05.299Z",

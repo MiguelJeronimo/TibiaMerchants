@@ -3,12 +3,10 @@ package com.miguel.tibiamerchants.data.network.retrofit
 import com.miguel.tibiamerchants.data.network.retrofit.responses.ApiResponse
 import com.miguel.tibiamerchants.data.network.retrofit.responses.PriceModel
 import com.miguel.tibiamerchants.data.network.retrofit.responses.TibiaTradeItemProfileModel
-import com.miguel.tibiamerchants.domain.models.Profile
-import com.miguel.tibiamerchants.domain.models.TibiaTradeItemModel
+import com.miguel.tibiamerchants.data.network.retrofit.responses.TibiaTradeUserProfileModel
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
@@ -37,9 +35,6 @@ interface ApiTibiaTradeClient {
     ): Response<ApiResponse<TibiaTradeItemProfileModel>>
 
 
-    @GET("api/user/profile/{user}")
-    suspend fun userProfile(@Path("user") user: String): Response<Profile>
-
-
-
+    @GET("api/v1/trade/user-profile")
+    suspend fun userProfile(@Query("username") user: String): Response<ApiResponse<TibiaTradeUserProfileModel>>
 }

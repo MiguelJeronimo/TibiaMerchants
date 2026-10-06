@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.paging.PagingData
 import com.miguel.tibiamerchants.data.repositories.RepositoryTibiaClient
 import com.miguel.tibiamerchants.domain.models.Profile
+import com.miguel.tibiamerchants.domain.models.ProfileDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeItemProfileModelDto
 import com.miguel.tibiamerchants.domain.models.TibiaTradeModel
 import com.miguel.tibiamerchants.domain.models.Trade
@@ -64,9 +65,9 @@ class UseCaseTibiaTrade(private val repository: RepositoryTibiaClient) {
         return repository.getItemsType()
     }
 
-    suspend fun profile(userName:String): Result<Profile?> {
+    suspend fun profile(userName:String): Result<ProfileDto?> {
         return try {
-            val response = repository.getUserProfile(userName)
+            val response = repository.getUserProfile(userName)?.toDomain()
             Log.d("UseCase Profile", "profile: $response")
             Result.success(response)
         }catch (e: Exception){

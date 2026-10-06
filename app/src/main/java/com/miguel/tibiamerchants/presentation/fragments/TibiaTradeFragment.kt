@@ -26,12 +26,14 @@ import com.miguel.tibiamerchants.presentation.Components.ErrorMessage
 import com.miguel.tibiamerchants.presentation.Components.ItemTradeList
 import com.miguel.tibiamerchants.presentation.Components.Loading
 import com.miguel.tibiamerchants.presentation.Components.Toobar
+import com.miguel.tibiamerchants.presentation.Components.Toolbar
 import com.miguel.tibiamerchants.presentation.ViewModels.ViewModelTibiaTrade
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TibiaTradeFragment(
-    viewModel: ViewModelTibiaTrade = koinViewModel()
+    viewModel: ViewModelTibiaTrade = koinViewModel(),
+    onProfileNavigate: (username: String) -> Unit = {}
 ){
     val state = viewModel.items.collectAsLazyPagingItems()
     //val profile = viewModel.profile.collectAsState()
@@ -71,18 +73,30 @@ fun TibiaTradeFragment(
                                 )
                             }
                         )
+
                         NavigationTibiaTrade.TibiaTradeProfile -> {
                             it.arguments?.getString("userName").let { userName ->
                                 Column {
-//                                    Toolbar(title = "User", onClick = {navController.popBackStack()})
-//                                    TibiaTradeProfile(
-//                                        toolBarTitle = userName!!,
-//                                        modifier = Modifier.fillMaxSize(),
-//                                        navigate = navController
-//                                    )
+                                    Toolbar(title = "User", onClick = {onProfileNavigate(userName?: "")})
+                                    TibiaTradeProfile(
+                                        toolBarTitle = userName!!,
+                                        modifier = Modifier.fillMaxSize(),
+                                        onNavigationItem = { item ->
+                                            navigate.navigate(
+                                                NavigationTibiaTrade.routeWithId(
+                                                    id = item.id,
+                                                    itemId = item.itemId,
+                                                    itemTier = item.itemTier,
+                                                    currencyType = item.currencyType,
+                                                    type = item.type
+                                                )
+                                            )
+                                        }
+                                    )
                                 }
                             }
                         }
+
                         NavigationTibiaTrade.TibiaTradeItem -> {
                             val data = TradeItem(
                                 id = it.arguments?.getString("id")?.toInt() ?: 0,
